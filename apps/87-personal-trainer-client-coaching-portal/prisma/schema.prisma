@@ -1,0 +1,99 @@
+// Auto-generated for CoachLink Personal Trainer Client Coaching Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clients Client[] @relation("Client_user_User")
+}
+
+model Client {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Client_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  trainerId String?
+  goal String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  programs Program[] @relation("Program_client_Client")
+  workoutLogs WorkoutLog[] @relation("WorkoutLog_client_Client")
+  checkIns CheckIn[] @relation("CheckIn_client_Client")
+  messages Message[] @relation("Message_client_Client")
+  @@index([userId])
+}
+
+model Program {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Program_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  weeks String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sessions Session[] @relation("Session_program_Program")
+  @@index([clientId])
+}
+
+model Session {
+  id String @id @default(cuid())
+  programId String?
+  program Program? @relation("Session_program_Program", fields: [programId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  week String?
+  day String?
+  exercises String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workoutLogs WorkoutLog[] @relation("WorkoutLog_session_Session")
+  @@index([programId])
+}
+
+model WorkoutLog {
+  id String @id @default(cuid())
+  sessionId String?
+  session Session? @relation("WorkoutLog_session_Session", fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  clientId String?
+  client Client? @relation("WorkoutLog_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  completedAt DateTime @default(now())
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sessionId])
+  @@index([clientId])
+}
+
+model CheckIn {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("CheckIn_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  weight String?
+  measurements String?
+  photoUrl String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientId])
+}
+
+model Message {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Message_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fromId String?
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientId])
+}

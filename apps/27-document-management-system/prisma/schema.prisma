@@ -1,0 +1,88 @@
+// Auto-generated for DocVault Document Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  folders Folder[] @relation("Folder_owner_User")
+  documents Document[] @relation("Document_owner_User")
+  documentVersions DocumentVersion[] @relation("DocumentVersion_uploadedBy_User")
+  permissions Permission[] @relation("Permission_user_User")
+}
+
+model Folder {
+  id String @id @default(cuid())
+  parentId String?
+  name String
+  ownerId String?
+  owner User? @relation("Folder_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  documents Document[] @relation("Document_folder_Folder")
+  @@index([ownerId])
+}
+
+model Document {
+  id String @id @default(cuid())
+  folderId String?
+  folder Folder? @relation("Document_folder_Folder", fields: [folderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  currentVersionId String?
+  ownerId String?
+  owner User? @relation("Document_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tags String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  documentVersions DocumentVersion[] @relation("DocumentVersion_document_Document")
+  @@index([folderId])
+  @@index([ownerId])
+}
+
+model DocumentVersion {
+  id String @id @default(cuid())
+  documentId String?
+  document Document? @relation("DocumentVersion_document_Document", fields: [documentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  version String?
+  fileMeta String?
+  uploadedById String?
+  uploadedBy User? @relation("DocumentVersion_uploadedBy_User", fields: [uploadedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([documentId])
+  @@index([uploadedById])
+}
+
+model Permission {
+  id String @id @default(cuid())
+  resourceType String?
+  resourceId String?
+  userId String?
+  user User? @relation("Permission_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  level Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  resourceType String?
+  resourceId String?
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

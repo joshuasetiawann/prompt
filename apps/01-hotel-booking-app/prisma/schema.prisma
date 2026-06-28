@@ -1,0 +1,87 @@
+// Auto-generated for StayEase Hotel Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  guests Guest[] @relation("Guest_user_User")
+}
+
+model RoomType {
+  id String @id @default(cuid())
+  name String
+  description String?
+  basePrice Float @default(0)
+  capacity Int @default(0)
+  amenities String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rooms Room[] @relation("Room_roomType_RoomType")
+}
+
+model Room {
+  id String @id @default(cuid())
+  roomTypeId String?
+  roomType RoomType? @relation("Room_roomType_RoomType", fields: [roomTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  number String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_room_Room")
+  @@index([roomTypeId])
+}
+
+model Booking {
+  id String @id @default(cuid())
+  roomId String?
+  room Room? @relation("Booking_room_Room", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  guestId String?
+  guest Guest? @relation("Booking_guest_Guest", fields: [guestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  checkIn DateTime @default(now())
+  checkOut DateTime @default(now())
+  status String?
+  total Float @default(0)
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  @@index([roomId])
+  @@index([guestId])
+}
+
+model Guest {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Guest_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  phone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_guest_Guest")
+  @@index([userId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}

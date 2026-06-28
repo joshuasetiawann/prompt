@@ -1,0 +1,97 @@
+// Auto-generated for FarmGate Agriculture Marketplace for Farmers. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  farms Farm[] @relation("Farm_user_User")
+}
+
+model Farm {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Farm_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  location String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  produces Produce[] @relation("Produce_farm_Farm")
+  reviews Review[] @relation("Review_farm_Farm")
+  @@index([userId])
+}
+
+model Produce {
+  id String @id @default(cuid())
+  farmId String?
+  farm Farm? @relation("Produce_farm_Farm", fields: [farmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  unit String?
+  pricePerUnit Float @default(0)
+  stock Int @default(0)
+  harvestDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_produce_Produce")
+  @@index([farmId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  buyerId String?
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  produceId String?
+  produce Produce? @relation("OrderItem_produce_Produce", fields: [produceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([produceId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  farmId String?
+  farm Farm? @relation("Review_farm_Farm", fields: [farmId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  buyerId String?
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([farmId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

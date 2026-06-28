@@ -1,0 +1,103 @@
+// Auto-generated for StockPilot Inventory Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stockMovements StockMovement[] @relation("StockMovement_user_User")
+  auditLogs AuditLog[] @relation("AuditLog_user_User")
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products Product[] @relation("Product_category_Category")
+}
+
+model Product {
+  id String @id @default(cuid())
+  categoryId String?
+  category Category? @relation("Product_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sku String?
+  name String
+  stock Int @default(0)
+  lowStockThreshold Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stockMovements StockMovement[] @relation("StockMovement_product_Product")
+  pOItems POItem[] @relation("POItem_product_Product")
+  @@index([categoryId])
+}
+
+model StockMovement {
+  id String @id @default(cuid())
+  productId String?
+  product Product? @relation("StockMovement_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  qty Int @default(0)
+  reason String?
+  userId String?
+  user User? @relation("StockMovement_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productId])
+  @@index([userId])
+}
+
+model Supplier {
+  id String @id @default(cuid())
+  name String
+  contact String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  purchaseOrders PurchaseOrder[] @relation("PurchaseOrder_supplier_Supplier")
+}
+
+model PurchaseOrder {
+  id String @id @default(cuid())
+  supplierId String?
+  supplier Supplier? @relation("PurchaseOrder_supplier_Supplier", fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([supplierId])
+}
+
+model POItem {
+  id String @id @default(cuid())
+  poId String?
+  productId String?
+  product Product? @relation("POItem_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  received String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  entity String?
+  entityId String?
+  action String?
+  userId String?
+  user User? @relation("AuditLog_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

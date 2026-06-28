@@ -1,0 +1,110 @@
+// Auto-generated for ClassConnect Parent-Teacher Communication Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  classRooms ClassRoom[] @relation("ClassRoom_teacher_User")
+  guardians Guardian[] @relation("Guardian_user_User")
+  notes Note[] @relation("Note_author_User")
+}
+
+model ClassRoom {
+  id String @id @default(cuid())
+  name String
+  teacherId String?
+  teacher User? @relation("ClassRoom_teacher_User", fields: [teacherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  students Student[] @relation("Student_classRoom_ClassRoom")
+  announcements Announcement[] @relation("Announcement_classRoom_ClassRoom")
+  events Event[] @relation("Event_classRoom_ClassRoom")
+  @@index([teacherId])
+}
+
+model Student {
+  id String @id @default(cuid())
+  classRoomId String?
+  classRoom ClassRoom? @relation("Student_classRoom_ClassRoom", fields: [classRoomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  guardians Guardian[] @relation("Guardian_student_Student")
+  messages Message[] @relation("Message_student_Student")
+  notes Note[] @relation("Note_student_Student")
+  @@index([classRoomId])
+}
+
+model Guardian {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Guardian_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  student Student? @relation("Guardian_student_Student", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([studentId])
+}
+
+model Message {
+  id String @id @default(cuid())
+  studentId String?
+  student Student? @relation("Message_student_Student", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fromId String?
+  toId String?
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([studentId])
+}
+
+model Announcement {
+  id String @id @default(cuid())
+  scope String?
+  classRoomId String?
+  classRoom ClassRoom? @relation("Announcement_classRoom_ClassRoom", fields: [classRoomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([classRoomId])
+}
+
+model Note {
+  id String @id @default(cuid())
+  studentId String?
+  student Student? @relation("Note_student_Student", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Note_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  kind String?
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([studentId])
+  @@index([authorId])
+}
+
+model Event {
+  id String @id @default(cuid())
+  classRoomId String?
+  classRoom ClassRoom? @relation("Event_classRoom_ClassRoom", fields: [classRoomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  datetime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([classRoomId])
+}

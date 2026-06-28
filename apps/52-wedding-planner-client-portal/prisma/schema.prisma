@@ -1,0 +1,109 @@
+// Auto-generated for Knot & Co Wedding Planner Client Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clientLinks ClientLink[] @relation("ClientLink_user_User")
+}
+
+model Wedding {
+  id String @id @default(cuid())
+  plannerId String?
+  coupleNames String?
+  date DateTime @default(now())
+  venue String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clientLinks ClientLink[] @relation("ClientLink_wedding_Wedding")
+  taskItems TaskItem[] @relation("TaskItem_wedding_Wedding")
+  budgetItems BudgetItem[] @relation("BudgetItem_wedding_Wedding")
+  vendors Vendor[] @relation("Vendor_wedding_Wedding")
+  guests Guest[] @relation("Guest_wedding_Wedding")
+  docFiles DocFile[] @relation("DocFile_wedding_Wedding")
+}
+
+model ClientLink {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("ClientLink_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("ClientLink_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+  @@index([userId])
+}
+
+model TaskItem {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("TaskItem_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  dueDate DateTime @default(now())
+  done Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+}
+
+model BudgetItem {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("BudgetItem_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category String?
+  estimated String?
+  actual String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+}
+
+model Vendor {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("Vendor_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  category String?
+  status String?
+  contact String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+}
+
+model Guest {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("Guest_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  rsvp String?
+  meal String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+}
+
+model DocFile {
+  id String @id @default(cuid())
+  weddingId String?
+  wedding Wedding? @relation("DocFile_wedding_Wedding", fields: [weddingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  kind String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([weddingId])
+}

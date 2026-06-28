@@ -1,0 +1,94 @@
+// Auto-generated for MediConnect Telemedicine Consultation Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  doctors Doctor[] @relation("Doctor_user_User")
+  patients Patient[] @relation("Patient_user_User")
+}
+
+model Doctor {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Doctor_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  specialty String?
+  workingHours Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  consultations Consultation[] @relation("Consultation_doctor_Doctor")
+  @@index([userId])
+}
+
+model Patient {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Patient_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  dob String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  consultations Consultation[] @relation("Consultation_patient_Patient")
+  @@index([userId])
+}
+
+model Consultation {
+  id String @id @default(cuid())
+  doctorId String?
+  doctor Doctor? @relation("Consultation_doctor_Doctor", fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  patientId String?
+  patient Patient? @relation("Consultation_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  visitNotes VisitNote[] @relation("VisitNote_consultation_Consultation")
+  prescriptions Prescription[] @relation("Prescription_consultation_Consultation")
+  payments Payment[] @relation("Payment_consultation_Consultation")
+  @@index([doctorId])
+  @@index([patientId])
+}
+
+model VisitNote {
+  id String @id @default(cuid())
+  consultationId String?
+  consultation Consultation? @relation("VisitNote_consultation_Consultation", fields: [consultationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([consultationId])
+}
+
+model Prescription {
+  id String @id @default(cuid())
+  consultationId String?
+  consultation Consultation? @relation("Prescription_consultation_Consultation", fields: [consultationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  items String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([consultationId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  consultationId String?
+  consultation Consultation? @relation("Payment_consultation_Consultation", fields: [consultationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([consultationId])
+}

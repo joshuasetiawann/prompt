@@ -1,0 +1,85 @@
+// Auto-generated for TutorMatch Tutor Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tutors Tutor[] @relation("Tutor_user_User")
+}
+
+model Tutor {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Tutor_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bio String?
+  subjects String?
+  hourlyRate Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  availabilities Availability[] @relation("Availability_tutor_Tutor")
+  sessions Session[] @relation("Session_tutor_Tutor")
+  @@index([userId])
+}
+
+model Availability {
+  id String @id @default(cuid())
+  tutorId String?
+  tutor Tutor? @relation("Availability_tutor_Tutor", fields: [tutorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  day String?
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([tutorId])
+}
+
+model Session {
+  id String @id @default(cuid())
+  tutorId String?
+  tutor Tutor? @relation("Session_tutor_Tutor", fields: [tutorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  startTime DateTime @default(now())
+  status String?
+  total Float @default(0)
+  paid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviews Review[] @relation("Review_session_Session")
+  payments Payment[] @relation("Payment_session_Session")
+  @@index([tutorId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  sessionId String?
+  session Session? @relation("Review_session_Session", fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sessionId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  sessionId String?
+  session Session? @relation("Payment_session_Session", fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([sessionId])
+}

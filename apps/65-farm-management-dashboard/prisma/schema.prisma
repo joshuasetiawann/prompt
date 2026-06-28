@@ -1,0 +1,105 @@
+// Auto-generated for AgriTrack Farm Management Dashboard. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks Task[] @relation("Task_assignee_User")
+}
+
+model Field {
+  id String @id @default(cuid())
+  name String
+  areaHa String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  crops Crop[] @relation("Crop_field_Field")
+  tasks Task[] @relation("Task_field_Field")
+  inputUsages InputUsage[] @relation("InputUsage_field_Field")
+}
+
+model Crop {
+  id String @id @default(cuid())
+  fieldId String?
+  field Field? @relation("Crop_field_Field", fields: [fieldId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  plantedOn String?
+  expectedHarvest String?
+  stage Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  yields Yield[] @relation("Yield_crop_Crop")
+  @@index([fieldId])
+}
+
+model Livestock {
+  id String @id @default(cuid())
+  type String?
+  count Int @default(0)
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id String @id @default(cuid())
+  fieldId String?
+  field Field? @relation("Task_field_Field", fields: [fieldId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  dueDate DateTime @default(now())
+  done Boolean @default(false)
+  assigneeId String?
+  assignee User? @relation("Task_assignee_User", fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([fieldId])
+  @@index([assigneeId])
+}
+
+model Input {
+  id String @id @default(cuid())
+  name String
+  unit String?
+  stock Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  inputUsages InputUsage[] @relation("InputUsage_input_Input")
+}
+
+model InputUsage {
+  id String @id @default(cuid())
+  inputId String?
+  input Input? @relation("InputUsage_input_Input", fields: [inputId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fieldId String?
+  field Field? @relation("InputUsage_field_Field", fields: [fieldId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([inputId])
+  @@index([fieldId])
+}
+
+model Yield {
+  id String @id @default(cuid())
+  cropId String?
+  crop Crop? @relation("Yield_crop_Crop", fields: [cropId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  quantity Int @default(0)
+  harvestedOn String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([cropId])
+}

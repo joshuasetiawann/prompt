@@ -1,0 +1,95 @@
+// Auto-generated for ScholarGate Scholarship Application Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviewAssignments ReviewAssignment[] @relation("ReviewAssignment_reviewer_User")
+  scores Score[] @relation("Score_reviewer_User")
+}
+
+model Scholarship {
+  id String @id @default(cuid())
+  name String
+  amount Float @default(0)
+  deadline DateTime @default(now())
+  eligibility String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  applications Application[] @relation("Application_scholarship_Scholarship")
+}
+
+model Application {
+  id String @id @default(cuid())
+  scholarshipId String?
+  scholarship Scholarship? @relation("Application_scholarship_Scholarship", fields: [scholarshipId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  applicantId String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appDocs AppDoc[] @relation("AppDoc_application_Application")
+  reviewAssignments ReviewAssignment[] @relation("ReviewAssignment_application_Application")
+  scores Score[] @relation("Score_application_Application")
+  awards Award[] @relation("Award_application_Application")
+  @@index([scholarshipId])
+}
+
+model AppDoc {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("AppDoc_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}
+
+model ReviewAssignment {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("ReviewAssignment_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reviewerId String?
+  reviewer User? @relation("ReviewAssignment_reviewer_User", fields: [reviewerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+  @@index([reviewerId])
+}
+
+model Score {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("Score_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reviewerId String?
+  reviewer User? @relation("Score_reviewer_User", fields: [reviewerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  value Float @default(0)
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+  @@index([reviewerId])
+}
+
+model Award {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("Award_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  awardedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}

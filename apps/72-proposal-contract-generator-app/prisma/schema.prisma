@@ -1,0 +1,89 @@
+// Auto-generated for ProposalForge Proposal & Contract Generator App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Template {
+  id String @id @default(cuid())
+  name String
+  kind String?
+  sections String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  proposals Proposal[] @relation("Proposal_client_Client")
+}
+
+model Proposal {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Proposal_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  status String?
+  subtotal Float @default(0)
+  total Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lineItems LineItem[] @relation("LineItem_proposal_Proposal")
+  signatures Signature[] @relation("Signature_proposal_Proposal")
+  contracts Contract[] @relation("Contract_proposal_Proposal")
+  @@index([clientId])
+}
+
+model LineItem {
+  id String @id @default(cuid())
+  proposalId String?
+  proposal Proposal? @relation("LineItem_proposal_Proposal", fields: [proposalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  description String?
+  qty Int @default(0)
+  rate Float @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([proposalId])
+}
+
+model Signature {
+  id String @id @default(cuid())
+  proposalId String?
+  proposal Proposal? @relation("Signature_proposal_Proposal", fields: [proposalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  signerName String?
+  signedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([proposalId])
+}
+
+model Contract {
+  id String @id @default(cuid())
+  proposalId String?
+  proposal Proposal? @relation("Contract_proposal_Proposal", fields: [proposalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  signedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([proposalId])
+}

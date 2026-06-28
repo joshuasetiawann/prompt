@@ -1,0 +1,127 @@
+// Auto-generated for DeskHub Coworking Space Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_user_User")
+  memberships Membership[] @relation("Membership_user_User")
+  checkIns CheckIn[] @relation("CheckIn_user_User")
+  waitlistEntries WaitlistEntry[] @relation("WaitlistEntry_user_User")
+  reviews Review[] @relation("Review_user_User")
+}
+
+model Space {
+  id String @id @default(cuid())
+  type String?
+  name String
+  capacity Int @default(0)
+  amenities String @default("")
+  pricePerHour Float @default(0)
+  pricePerDay Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_space_Space")
+  waitlistEntries WaitlistEntry[] @relation("WaitlistEntry_space_Space")
+  reviews Review[] @relation("Review_space_Space")
+}
+
+model Booking {
+  id String @id @default(cuid())
+  spaceId String?
+  space Space? @relation("Booking_space_Space", fields: [spaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Booking_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  status String?
+  total Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  checkIns CheckIn[] @relation("CheckIn_booking_Booking")
+  @@index([spaceId])
+  @@index([userId])
+}
+
+model Membership {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  credits String?
+  tier Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}
+
+model CheckIn {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("CheckIn_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("CheckIn_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  checkInAt DateTime @default(now())
+  checkOutAt DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+  @@index([userId])
+}
+
+model WaitlistEntry {
+  id String @id @default(cuid())
+  spaceId String?
+  space Space? @relation("WaitlistEntry_space_Space", fields: [spaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("WaitlistEntry_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  status String?
+  notifiedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([spaceId])
+  @@index([userId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  spaceId String?
+  space Space? @relation("Review_space_Space", fields: [spaceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Review_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([spaceId])
+  @@index([userId])
+}

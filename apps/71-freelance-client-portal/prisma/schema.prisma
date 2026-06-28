@@ -1,0 +1,110 @@
+// Auto-generated for SoloDesk Freelance Client Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects Project[] @relation("Project_client_Client")
+  invoices Invoice[] @relation("Invoice_client_Client")
+}
+
+model Project {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Project_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks Task[] @relation("Task_project_Project")
+  timeEntries TimeEntry[] @relation("TimeEntry_project_Project")
+  fileItems FileItem[] @relation("FileItem_project_Project")
+  invoices Invoice[] @relation("Invoice_project_Project")
+  @@index([clientId])
+}
+
+model Task {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("Task_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  status String?
+  estimateMin String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  timeEntries TimeEntry[] @relation("TimeEntry_task_Task")
+  @@index([projectId])
+}
+
+model TimeEntry {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("TimeEntry_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  taskId String?
+  task Task? @relation("TimeEntry_task_Task", fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  minutes Int @default(0)
+  date DateTime @default(now())
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+  @@index([taskId])
+}
+
+model FileItem {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("FileItem_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Invoice_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
+  project Project? @relation("Invoice_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  dueDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_invoice_Invoice")
+  @@index([clientId])
+  @@index([projectId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  invoiceId String?
+  invoice Invoice? @relation("Payment_invoice_Invoice", fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([invoiceId])
+}

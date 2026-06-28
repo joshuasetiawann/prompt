@@ -1,0 +1,84 @@
+// Auto-generated for BinCycle Waste Collection Scheduling App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  households Household[] @relation("Household_user_User")
+}
+
+model Zone {
+  id String @id @default(cuid())
+  name String
+  collectionDay String?
+  wasteType String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  households Household[] @relation("Household_zone_Zone")
+  routes Route[] @relation("Route_zone_Zone")
+}
+
+model Household {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Household_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  zoneId String?
+  zone Zone? @relation("Household_zone_Zone", fields: [zoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  address String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  specialPickups SpecialPickup[] @relation("SpecialPickup_household_Household")
+  stops Stop[] @relation("Stop_household_Household")
+  @@index([userId])
+  @@index([zoneId])
+}
+
+model SpecialPickup {
+  id String @id @default(cuid())
+  householdId String?
+  household Household? @relation("SpecialPickup_household_Household", fields: [householdId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  requestedDate DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([householdId])
+}
+
+model Route {
+  id String @id @default(cuid())
+  zoneId String?
+  zone Zone? @relation("Route_zone_Zone", fields: [zoneId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  driverId String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stops Stop[] @relation("Stop_route_Route")
+  @@index([zoneId])
+}
+
+model Stop {
+  id String @id @default(cuid())
+  routeId String?
+  route Route? @relation("Stop_route_Route", fields: [routeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  householdId String?
+  household Household? @relation("Stop_household_Household", fields: [householdId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([routeId])
+  @@index([householdId])
+}

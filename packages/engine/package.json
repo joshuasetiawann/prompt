@@ -1,0 +1,17 @@
+{
+  "name": "@scaffold/engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server/index.ts",
+    "./tailwind-preset": "./tailwind-preset.cjs",
+    "./globals.css": "./src/globals.css"
+  },
+  "peerDependencies": {
+    "next": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}

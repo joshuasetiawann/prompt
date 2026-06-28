@@ -1,0 +1,101 @@
+// Auto-generated for BoxCycle Subscription Box Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id String @id @default(cuid())
+  name String
+  interval String?
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subscriptions Subscription[] @relation("Subscription_plan_Plan")
+  boxItems BoxItem[] @relation("BoxItem_plan_Plan")
+}
+
+model Subscription {
+  id String @id @default(cuid())
+  customerId String?
+  planId String?
+  plan Plan? @relation("Subscription_plan_Plan", fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  startedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  billingCycles BillingCycle[] @relation("BillingCycle_subscription_Subscription")
+  @@index([planId])
+}
+
+model BillingCycle {
+  id String @id @default(cuid())
+  subscriptionId String?
+  subscription Subscription? @relation("BillingCycle_subscription_Subscription", fields: [subscriptionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  periodStart DateTime @default(now())
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shipments Shipment[] @relation("Shipment_billingCycle_BillingCycle")
+  payments Payment[] @relation("Payment_billingCycle_BillingCycle")
+  @@index([subscriptionId])
+}
+
+model Shipment {
+  id String @id @default(cuid())
+  billingCycleId String?
+  billingCycle BillingCycle? @relation("Shipment_billingCycle_BillingCycle", fields: [billingCycleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  shippedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([billingCycleId])
+}
+
+model Product {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  boxItems BoxItem[] @relation("BoxItem_product_Product")
+}
+
+model BoxItem {
+  id String @id @default(cuid())
+  planId String?
+  plan Plan? @relation("BoxItem_plan_Plan", fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String?
+  product Product? @relation("BoxItem_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cycleLabel String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([planId])
+  @@index([productId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  billingCycleId String?
+  billingCycle BillingCycle? @relation("Payment_billingCycle_BillingCycle", fields: [billingCycleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([billingCycleId])
+}

@@ -1,0 +1,92 @@
+// Auto-generated for CaterFlow Food Catering Order Management App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MenuItem {
+  id String @id @default(cuid())
+  name String
+  category String?
+  pricePerHead Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_menuItem_MenuItem")
+}
+
+model Package {
+  id String @id @default(cuid())
+  name String
+  pricePerHead Float @default(0)
+  items String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuoteRequest {
+  id String @id @default(cuid())
+  customerId String?
+  eventDate DateTime @default(now())
+  headcount Int @default(0)
+  details String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[] @relation("Order_quoteRequest_QuoteRequest")
+}
+
+model Order {
+  id String @id @default(cuid())
+  quoteRequestId String?
+  quoteRequest QuoteRequest? @relation("Order_quoteRequest_QuoteRequest", fields: [quoteRequestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  total Float @default(0)
+  deposit Float @default(0)
+  status String?
+  deliveryTime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([quoteRequestId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  menuItemId String?
+  menuItem MenuItem? @relation("OrderItem_menuItem_MenuItem", fields: [menuItemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([menuItemId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

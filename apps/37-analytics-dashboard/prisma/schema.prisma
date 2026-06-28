@@ -1,0 +1,120 @@
+// Auto-generated for InsightBoard Analytics Dashboard. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dashboards Dashboard[] @relation("Dashboard_user_User")
+  savedViews SavedView[] @relation("SavedView_user_User")
+  reports Report[] @relation("Report_user_User")
+}
+
+model MetricDaily {
+  id String @id @default(cuid())
+  date DateTime @default(now())
+  segment String?
+  channel String?
+  metric String?
+  value Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Segment {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  widgets Widget[] @relation("Widget_segment_Segment")
+  savedViews SavedView[] @relation("SavedView_segment_Segment")
+}
+
+model Channel {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  widgets Widget[] @relation("Widget_channel_Channel")
+  savedViews SavedView[] @relation("SavedView_channel_Channel")
+}
+
+model Dashboard {
+  id String @id @default(cuid())
+  name String
+  description String?
+  isDefault Boolean @default(false)
+  userId String?
+  user User? @relation("Dashboard_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  widgets Widget[] @relation("Widget_dashboard_Dashboard")
+  reports Report[] @relation("Report_dashboard_Dashboard")
+  @@index([userId])
+}
+
+model Widget {
+  id String @id @default(cuid())
+  title String
+  chartType String?
+  metric String?
+  position Int @default(0)
+  dashboardId String?
+  dashboard Dashboard? @relation("Widget_dashboard_Dashboard", fields: [dashboardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  segmentId String?
+  segment Segment? @relation("Widget_segment_Segment", fields: [segmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channelId String?
+  channel Channel? @relation("Widget_channel_Channel", fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([dashboardId])
+  @@index([segmentId])
+  @@index([channelId])
+}
+
+model SavedView {
+  id String @id @default(cuid())
+  name String
+  dateRange String?
+  isPinned Boolean @default(false)
+  userId String?
+  user User? @relation("SavedView_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  segmentId String?
+  segment Segment? @relation("SavedView_segment_Segment", fields: [segmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channelId String?
+  channel Channel? @relation("SavedView_channel_Channel", fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([segmentId])
+  @@index([channelId])
+}
+
+model Report {
+  id String @id @default(cuid())
+  name String
+  description String?
+  fileType String?
+  status String?
+  lastRunAt DateTime @default(now())
+  dashboardId String?
+  dashboard Dashboard? @relation("Report_dashboard_Dashboard", fields: [dashboardId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Report_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([dashboardId])
+  @@index([userId])
+}

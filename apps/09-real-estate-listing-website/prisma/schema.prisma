@@ -1,0 +1,144 @@
+// Auto-generated for Estatly Real Estate Listing Website. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  properties Property[] @relation("Property_agent_User")
+  favorites Favorite[] @relation("Favorite_user_User")
+  leads Lead[] @relation("Lead_agent_User")
+  viewings_user Viewing[] @relation("Viewing_user_User")
+  viewings_agent Viewing[] @relation("Viewing_agent_User")
+  offers Offer[] @relation("Offer_user_User")
+  reviews_agent Review[] @relation("Review_agent_User")
+  reviews_user Review[] @relation("Review_user_User")
+  savedSearches SavedSearch[] @relation("SavedSearch_user_User")
+}
+
+model Property {
+  id String @id @default(cuid())
+  agentId String?
+  agent User? @relation("Property_agent_User", fields: [agentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  type String?
+  price Float @default(0)
+  bedrooms String?
+  bathrooms String?
+  area String?
+  location String?
+  description String?
+  photos String @default("")
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  favorites Favorite[] @relation("Favorite_property_Property")
+  leads Lead[] @relation("Lead_property_Property")
+  viewings Viewing[] @relation("Viewing_property_Property")
+  offers Offer[] @relation("Offer_property_Property")
+  @@index([agentId])
+}
+
+model Favorite {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Favorite_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  propertyId String?
+  property Property? @relation("Favorite_property_Property", fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Lead {
+  id String @id @default(cuid())
+  propertyId String?
+  property Property? @relation("Lead_property_Property", fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  agentId String?
+  agent User? @relation("Lead_agent_User", fields: [agentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  email String @unique
+  phone String?
+  message Int @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([propertyId])
+  @@index([agentId])
+}
+
+model Viewing {
+  id String @id @default(cuid())
+  propertyId String?
+  property Property? @relation("Viewing_property_Property", fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Viewing_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  agentId String?
+  agent User? @relation("Viewing_agent_User", fields: [agentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scheduledFor DateTime @default(now())
+  status String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([propertyId])
+  @@index([userId])
+  @@index([agentId])
+}
+
+model Offer {
+  id String @id @default(cuid())
+  propertyId String?
+  property Property? @relation("Offer_property_Property", fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Offer_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  message Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([propertyId])
+  @@index([userId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  agentId String?
+  agent User? @relation("Review_agent_User", fields: [agentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Review_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([agentId])
+  @@index([userId])
+}
+
+model SavedSearch {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("SavedSearch_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  location String?
+  type String?
+  minPrice Float @default(0)
+  maxPrice Float @default(0)
+  bedrooms String?
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

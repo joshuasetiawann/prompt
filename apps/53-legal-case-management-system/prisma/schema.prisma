@@ -1,0 +1,112 @@
+// Auto-generated for CaseDesk Legal Case Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_user_User")
+  timeEntries TimeEntry[] @relation("TimeEntry_user_User")
+}
+
+model Client {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  phone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cases Case[] @relation("Case_client_Client")
+}
+
+model Case {
+  id String @id @default(cuid())
+  clientId String?
+  client Client? @relation("Case_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  type String?
+  status String?
+  openedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_case_Case")
+  deadlines Deadline[] @relation("Deadline_case_Case")
+  caseDocs CaseDoc[] @relation("CaseDoc_case_Case")
+  timeEntries TimeEntry[] @relation("TimeEntry_case_Case")
+  @@index([clientId])
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  caseId String?
+  case Case? @relation("Assignment_case_Case", fields: [caseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Assignment_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([caseId])
+  @@index([userId])
+}
+
+model Deadline {
+  id String @id @default(cuid())
+  caseId String?
+  case Case? @relation("Deadline_case_Case", fields: [caseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  dueDate DateTime @default(now())
+  done Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([caseId])
+}
+
+model CaseDoc {
+  id String @id @default(cuid())
+  caseId String?
+  case Case? @relation("CaseDoc_case_Case", fields: [caseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  kind String?
+  access String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([caseId])
+}
+
+model TimeEntry {
+  id String @id @default(cuid())
+  caseId String?
+  case Case? @relation("TimeEntry_case_Case", fields: [caseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("TimeEntry_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  minutes Int @default(0)
+  rate Float @default(0)
+  note String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([caseId])
+  @@index([userId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  entity String?
+  entityId String?
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

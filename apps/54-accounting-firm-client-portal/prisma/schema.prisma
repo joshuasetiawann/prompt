@@ -1,0 +1,112 @@
+// Auto-generated for LedgerLink Accounting Firm Client Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_user_User")
+  tasks Task[] @relation("Task_assignee_User")
+  messages Message[] @relation("Message_author_User")
+}
+
+model ClientOrg {
+  id String @id @default(cuid())
+  name String
+  contactEmail String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_clientOrg_ClientOrg")
+  docRequests DocRequest[] @relation("DocRequest_clientOrg_ClientOrg")
+  tasks Task[] @relation("Task_clientOrg_ClientOrg")
+  invoices Invoice[] @relation("Invoice_clientOrg_ClientOrg")
+  messages Message[] @relation("Message_clientOrg_ClientOrg")
+}
+
+model Membership {
+  id String @id @default(cuid())
+  clientOrgId String?
+  clientOrg ClientOrg? @relation("Membership_clientOrg_ClientOrg", fields: [clientOrgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientOrgId])
+  @@index([userId])
+}
+
+model DocRequest {
+  id String @id @default(cuid())
+  clientOrgId String?
+  clientOrg ClientOrg? @relation("DocRequest_clientOrg_ClientOrg", fields: [clientOrgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  status String?
+  dueDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  uploads Upload[] @relation("Upload_docRequest_DocRequest")
+  @@index([clientOrgId])
+}
+
+model Upload {
+  id String @id @default(cuid())
+  docRequestId String?
+  docRequest DocRequest? @relation("Upload_docRequest_DocRequest", fields: [docRequestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fileName String?
+  uploadedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([docRequestId])
+}
+
+model Task {
+  id String @id @default(cuid())
+  clientOrgId String?
+  clientOrg ClientOrg? @relation("Task_clientOrg_ClientOrg", fields: [clientOrgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  status String?
+  assigneeId String?
+  assignee User? @relation("Task_assignee_User", fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientOrgId])
+  @@index([assigneeId])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  clientOrgId String?
+  clientOrg ClientOrg? @relation("Invoice_clientOrg_ClientOrg", fields: [clientOrgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  number String?
+  amount Float @default(0)
+  status String?
+  dueDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientOrgId])
+}
+
+model Message {
+  id String @id @default(cuid())
+  clientOrgId String?
+  clientOrg ClientOrg? @relation("Message_clientOrg_ClientOrg", fields: [clientOrgId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Message_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([clientOrgId])
+  @@index([authorId])
+}

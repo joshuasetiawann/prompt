@@ -1,0 +1,114 @@
+// Auto-generated for MarketHub Multi-Vendor Marketplace. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vendors Vendor[] @relation("Vendor_user_User")
+}
+
+model Vendor {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Vendor_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shopName String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products Product[] @relation("Product_vendor_Vendor")
+  subOrders SubOrder[] @relation("SubOrder_vendor_Vendor")
+  @@index([userId])
+}
+
+model Product {
+  id String @id @default(cuid())
+  vendorId String?
+  vendor Vendor? @relation("Product_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  price Float @default(0)
+  stock Int @default(0)
+  photos String @default("")
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_product_Product")
+  reviews Review[] @relation("Review_product_Product")
+  @@index([vendorId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  customerId String?
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subOrders SubOrder[] @relation("SubOrder_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+}
+
+model SubOrder {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("SubOrder_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vendorId String?
+  vendor Vendor? @relation("SubOrder_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  subtotal Float @default(0)
+  commission Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_subOrder_SubOrder")
+  @@index([orderId])
+  @@index([vendorId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  subOrderId String?
+  subOrder SubOrder? @relation("OrderItem_subOrder_SubOrder", fields: [subOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String?
+  product Product? @relation("OrderItem_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([subOrderId])
+  @@index([productId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  productId String?
+  product Product? @relation("Review_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

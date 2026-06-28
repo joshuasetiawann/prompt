@@ -1,0 +1,105 @@
+// Auto-generated for TrackR Delivery Tracking Dashboard. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  drivers Driver[] @relation("Driver_user_User")
+}
+
+model Driver {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Driver_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shipments Shipment[] @relation("Shipment_driver_Driver")
+  routes Route[] @relation("Route_driver_Driver")
+  @@index([userId])
+}
+
+model Shipment {
+  id String @id @default(cuid())
+  trackingNumber String?
+  recipientName String?
+  address String?
+  driverId String?
+  driver Driver? @relation("Shipment_driver_Driver", fields: [driverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  customer Customer? @relation("Shipment_customer_Customer", fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  routeId String?
+  route Route? @relation("Shipment_route_Route", fields: [routeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  statusEvents StatusEvent[] @relation("StatusEvent_shipment_Shipment")
+  deliveryProofs DeliveryProof[] @relation("DeliveryProof_shipment_Shipment")
+  @@index([driverId])
+  @@index([customerId])
+  @@index([routeId])
+}
+
+model StatusEvent {
+  id String @id @default(cuid())
+  shipmentId String?
+  shipment Shipment? @relation("StatusEvent_shipment_Shipment", fields: [shipmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([shipmentId])
+}
+
+model Customer {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  phone String?
+  address String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shipments Shipment[] @relation("Shipment_customer_Customer")
+}
+
+model Route {
+  id String @id @default(cuid())
+  name String
+  driverId String?
+  driver Driver? @relation("Route_driver_Driver", fields: [driverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  stopCount Int @default(0)
+  scheduledFor DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shipments Shipment[] @relation("Shipment_route_Route")
+  @@index([driverId])
+}
+
+model DeliveryProof {
+  id String @id @default(cuid())
+  shipmentId String?
+  shipment Shipment? @relation("DeliveryProof_shipment_Shipment", fields: [shipmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recipientName String?
+  signatureUrl String?
+  photoUrl String?
+  notes String?
+  deliveredAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([shipmentId])
+}

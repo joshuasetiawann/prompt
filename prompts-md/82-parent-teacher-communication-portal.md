@@ -1,0 +1,295 @@
+# ClassConnect Parent-Teacher Communication Portal
+
+> Connect teachers and parents with messages, announcements, behavior/progress notes, and events
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 82 |
+| **Title** | Parent-Teacher Communication Portal |
+| **Slug** | parent-teacher-communication-portal |
+| **Category** | Education Communication |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Parent; Teacher; Admin |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building school-home communication portals (distinct from a student grades portal).
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Auth
+2. Parent dashboard (children, announcements, messages)
+3. Student detail (notes, attendance summary)
+4. Messages (teacher-parent threads)
+5. Announcements (class/school)
+6. Events and signups
+7. Teacher: classes, students, and updates
+8. Admin: users, classes, and settings
+9. Reports
+
+## Required features
+
+- Teacher-parent message threads scoped to a student
+- Class and school announcements
+- Behavior/progress notes per student visible to parents
+- Attendance summaries
+- Events with parent signups
+- Role-scoped access (parents see only their children)
+- Reports: engagement and message volume
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### ClassRoom
+**Fields:** `id`, `name`, `teacherId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- teacherId -> references the related record
+
+### Student
+**Fields:** `id`, `classRoomId`, `name`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- classRoomId -> references the related record
+
+### Guardian
+**Fields:** `id`, `userId`, `studentId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- studentId -> references the related record
+
+### Message
+**Fields:** `id`, `studentId`, `fromId`, `toId`, `body`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- studentId -> references the related record
+- fromId -> references the related record
+- toId -> references the related record
+
+### Announcement
+**Fields:** `id`, `scope`, `classRoomId`, `title`, `body`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- classRoomId -> references the related record
+
+### Note
+**Fields:** `id`, `studentId`, `authorId`, `kind`, `body`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- studentId -> references the related record
+- authorId -> references the related record
+
+### Event
+**Fields:** `id`, `classRoomId`, `title`, `datetime`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- classRoomId -> references the related record
+
+## Backend logic
+
+- Student-scoped messaging between teacher and guardians
+- Announcement distribution by scope
+- Notes and attendance visible to guardians
+- Event signups
+- Role-scoped access and reporting
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Parents see only their own children's information
+- [ ] Messages thread between the right teacher and guardian
+- [ ] Announcements reach the correct class or school scope
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds school-home communication portals, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: ClassConnect Parent-Teacher Communication Portal
+Type: Parent-Teacher Communication Portal (Education Communication)
+Target users: teachers communicating with parents and parents staying informed about their children.
+Business goal: Connect teachers and parents with messages, announcements, behavior/progress notes, and events.
+
+BRAND & DESIGN
+Brand style: friendly, clear, school-appropriate. Colors: blue, green accent, white. Clean, modern, message threads and student update cards. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Auth
+2. Parent dashboard (children, announcements, messages)
+3. Student detail (notes, attendance summary)
+4. Messages (teacher-parent threads)
+5. Announcements (class/school)
+6. Events and signups
+7. Teacher: classes, students, and updates
+8. Admin: users, classes, and settings
+9. Reports
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Parent — read updates and message teachers
+- Teacher — post updates, announcements, and reply
+- Admin — manage classes, users, and settings
+
+CORE FEATURES
+- Teacher-parent message threads scoped to a student
+- Class and school announcements
+- Behavior/progress notes per student visible to parents
+- Attendance summaries
+- Events with parent signups
+- Role-scoped access (parents see only their children)
+- Reports: engagement and message volume
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, createdAt, updatedAt
+- ClassRoom: id, name, teacherId, createdAt, updatedAt
+- Student: id, classRoomId, name, createdAt, updatedAt
+- Guardian: id, userId, studentId, createdAt, updatedAt
+- Message: id, studentId, fromId, toId, body, createdAt, updatedAt
+- Announcement: id, scope, classRoomId, title, body, createdAt, updatedAt
+- Note: id, studentId, authorId, kind, body, createdAt, updatedAt
+- Event: id, classRoomId, title, datetime, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Student-scoped messaging between teacher and guardians
+- Announcement distribution by scope
+- Notes and attendance visible to guardians
+- Event signups
+- Role-scoped access and reporting
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: ~4 classes, students with guardians, message threads, announcements, notes, events, 1 admin, 2 teachers, 3 parents. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

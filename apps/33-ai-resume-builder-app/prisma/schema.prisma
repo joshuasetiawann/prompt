@@ -1,0 +1,126 @@
+// Auto-generated for ResuMint AI Resume Builder App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  resumes Resume[] @relation("Resume_user_User")
+  usageCredits UsageCredit[] @relation("UsageCredit_user_User")
+  coverLetters CoverLetter[] @relation("CoverLetter_user_User")
+  jobApplications JobApplication[] @relation("JobApplication_user_User")
+  resumeExports ResumeExport[] @relation("ResumeExport_user_User")
+}
+
+model Resume {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Resume_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  templateId String?
+  sections String?
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  suggestions Suggestion[] @relation("Suggestion_resume_Resume")
+  coverLetters CoverLetter[] @relation("CoverLetter_resume_Resume")
+  jobApplications JobApplication[] @relation("JobApplication_resume_Resume")
+  resumeExports ResumeExport[] @relation("ResumeExport_resume_Resume")
+  @@index([userId])
+}
+
+model Suggestion {
+  id String @id @default(cuid())
+  resumeId String?
+  resume Resume? @relation("Suggestion_resume_Resume", fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  sectionRef String?
+  input String?
+  output String?
+  accepted String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([resumeId])
+}
+
+model UsageCredit {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("UsageCredit_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  period String?
+  used String?
+  limit String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model ResumeTemplate {
+  id String @id @default(cuid())
+  name String
+  description String?
+  category String?
+  layout String?
+  colorScheme String?
+  isFeatured Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CoverLetter {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("CoverLetter_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId String?
+  resume Resume? @relation("CoverLetter_resume_Resume", fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  content String?
+  tone String?
+  isArchived Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([resumeId])
+}
+
+model JobApplication {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("JobApplication_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  resumeId String?
+  resume Resume? @relation("JobApplication_resume_Resume", fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  company String?
+  jobTitle String?
+  status String?
+  appliedDate DateTime @default(now())
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([resumeId])
+}
+
+model ResumeExport {
+  id String @id @default(cuid())
+  resumeId String?
+  resume Resume? @relation("ResumeExport_resume_Resume", fields: [resumeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("ResumeExport_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fileType String?
+  status String?
+  fileName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([resumeId])
+  @@index([userId])
+}

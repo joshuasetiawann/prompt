@@ -1,0 +1,96 @@
+// Auto-generated for BiblioHub Library Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members Member[] @relation("Member_user_User")
+}
+
+model Book {
+  id String @id @default(cuid())
+  title String
+  author String?
+  subject String?
+  isbn String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  copies Copy[] @relation("Copy_book_Book")
+  holds Hold[] @relation("Hold_book_Book")
+}
+
+model Copy {
+  id String @id @default(cuid())
+  bookId String?
+  book Book? @relation("Copy_book_Book", fields: [bookId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  barcode String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  loans Loan[] @relation("Loan_copy_Copy")
+  @@index([bookId])
+}
+
+model Member {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Member_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  limit String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  loans Loan[] @relation("Loan_member_Member")
+  holds Hold[] @relation("Hold_member_Member")
+  @@index([userId])
+}
+
+model Loan {
+  id String @id @default(cuid())
+  copyId String?
+  copy Copy? @relation("Loan_copy_Copy", fields: [copyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  memberId String?
+  member Member? @relation("Loan_member_Member", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  dueDate DateTime @default(now())
+  returnedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fines Fine[] @relation("Fine_loan_Loan")
+  @@index([copyId])
+  @@index([memberId])
+}
+
+model Hold {
+  id String @id @default(cuid())
+  bookId String?
+  book Book? @relation("Hold_book_Book", fields: [bookId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  memberId String?
+  member Member? @relation("Hold_member_Member", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookId])
+  @@index([memberId])
+}
+
+model Fine {
+  id String @id @default(cuid())
+  loanId String?
+  loan Loan? @relation("Fine_loan_Loan", fields: [loanId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  paid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([loanId])
+}

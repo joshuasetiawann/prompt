@@ -1,0 +1,140 @@
+// Auto-generated for Hangout Community Mobile-First Web App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  profiles Profile[] @relation("Profile_user_User")
+  groupMembers GroupMember[] @relation("GroupMember_user_User")
+  posts Post[] @relation("Post_author_User")
+  comments Comment[] @relation("Comment_author_User")
+  reactions Reaction[] @relation("Reaction_user_User")
+  rSVPs RSVP[] @relation("RSVP_user_User")
+  notifications Notification[] @relation("Notification_user_User")
+}
+
+model Profile {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Profile_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bio String?
+  avatar String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Group {
+  id String @id @default(cuid())
+  name String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  groupMembers GroupMember[] @relation("GroupMember_group_Group")
+  posts Post[] @relation("Post_group_Group")
+  events Event[] @relation("Event_group_Group")
+}
+
+model GroupMember {
+  id String @id @default(cuid())
+  groupId String?
+  group Group? @relation("GroupMember_group_Group", fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("GroupMember_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Post {
+  id String @id @default(cuid())
+  authorId String?
+  author User? @relation("Post_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupId String?
+  group Group? @relation("Post_group_Group", fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comments Comment[] @relation("Comment_post_Post")
+  reactions Reaction[] @relation("Reaction_post_Post")
+  @@index([authorId])
+  @@index([groupId])
+}
+
+model Comment {
+  id String @id @default(cuid())
+  postId String?
+  post Post? @relation("Comment_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Comment_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([postId])
+  @@index([authorId])
+}
+
+model Reaction {
+  id String @id @default(cuid())
+  postId String?
+  post Post? @relation("Reaction_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Reaction_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([postId])
+  @@index([userId])
+}
+
+model Event {
+  id String @id @default(cuid())
+  groupId String?
+  group Group? @relation("Event_group_Group", fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  datetime DateTime @default(now())
+  location String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rSVPs RSVP[] @relation("RSVP_event_Event")
+  @@index([groupId])
+}
+
+model RSVP {
+  id String @id @default(cuid())
+  eventId String?
+  event Event? @relation("RSVP_event_Event", fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("RSVP_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([eventId])
+  @@index([userId])
+}
+
+model Notification {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Notification_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  refId String?
+  read Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

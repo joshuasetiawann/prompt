@@ -1,0 +1,55 @@
+# ShopKart General Online Store
+
+Let customers browse, add to cart, check out, and track orders, and let the owner manage the store
+
+A production-grade full-stack **scaffold** generated from prompt `11` — *General Online Store* (E-commerce).
+It runs end-to-end locally on seeded demo data with mock payment/notification modes and **no paid API keys**.
+
+> This is a scaffold, not a finished product. Going live still needs your own credentials, a production database, real provider setup, and a security review. See `.env.example`.
+
+## Tech stack
+- Next.js (App Router) + TypeScript
+- Tailwind CSS + a shared component engine (`@scaffold/engine`)
+- Prisma ORM (SQLite locally, PostgreSQL-ready for production)
+- Zod validation, cookie-based demo auth, mock payments & notifications
+
+## Run locally
+From the **repo root** (dependencies are installed once for the whole workspace):
+
+```bash
+# 1. generate the Prisma client for this app
+npm --workspace @app/11-general-online-store run db:generate
+# 2. create the local SQLite database
+npm --workspace @app/11-general-online-store run db:push
+# 3. load demo data
+npm --workspace @app/11-general-online-store run seed
+# 4. start the dev server  ->  http://localhost:3111
+npm --workspace @app/11-general-online-store run dev
+```
+
+Or, inside this app folder: `npm run setup && npm run dev`.
+
+## Demo logins
+| Role  | Email            | Password   |
+|-------|------------------|------------|
+| Admin | admin@demo.test  | demo1234   |
+| User  | user@demo.test   | demo1234   |
+
+## Screens
+- Home with featured and categories
+- Catalog with search/filter/sort
+- Product detail with variants and gallery
+- Cart
+- Checkout (address, mock payment)
+- Customer account: orders and tracking
+- Order tracking page
+- Auth
+- Admin: product and inventory management
+- Admin: orders and basic reports
+
+## Deployment
+- `docker build -t general-online-store .` then run with a `DATABASE_URL` env var, **or** deploy to Vercel with a managed PostgreSQL database.
+- Set `DATABASE_URL` to PostgreSQL, run `prisma migrate deploy`, then `prisma db seed` (optional).
+- Swap mock payment/notification for real providers via the variables in `.env.example`.
+
+_Screenshots of this build live in `./screenshots`._

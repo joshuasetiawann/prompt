@@ -1,0 +1,88 @@
+// Auto-generated for VillaNest Villa Booking Website. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Villa {
+  id String @id @default(cuid())
+  name String
+  description String?
+  location String?
+  pricePerNight Float @default(0)
+  maxGuests String?
+  amenities String @default("")
+  photos String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  availabilities Availability[] @relation("Availability_villa_Villa")
+  bookings Booking[] @relation("Booking_villa_Villa")
+  reviews Review[] @relation("Review_villa_Villa")
+}
+
+model Availability {
+  id String @id @default(cuid())
+  villaId String?
+  villa Villa? @relation("Availability_villa_Villa", fields: [villaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  isBlocked String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([villaId])
+}
+
+model Booking {
+  id String @id @default(cuid())
+  villaId String?
+  villa Villa? @relation("Booking_villa_Villa", fields: [villaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  guestId String?
+  checkIn DateTime @default(now())
+  checkOut DateTime @default(now())
+  guests String?
+  status String?
+  total Float @default(0)
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  @@index([villaId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  villaId String?
+  villa Villa? @relation("Review_villa_Villa", fields: [villaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  guestId String?
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([villaId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}

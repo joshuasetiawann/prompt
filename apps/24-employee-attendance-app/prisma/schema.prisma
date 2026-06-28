@@ -1,0 +1,121 @@
+// Auto-generated for ClockWise Employee Attendance App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  employees Employee[] @relation("Employee_user_User")
+  timesheets Timesheet[] @relation("Timesheet_approver_User")
+}
+
+model Employee {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Employee_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  department String?
+  shiftId String?
+  shift Shift? @relation("Employee_shift_Shift", fields: [shiftId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  attendances Attendance[] @relation("Attendance_employee_Employee")
+  leaveRequests LeaveRequest[] @relation("LeaveRequest_employee_Employee")
+  shiftAssignments ShiftAssignment[] @relation("ShiftAssignment_employee_Employee")
+  leaveBalances LeaveBalance[] @relation("LeaveBalance_employee_Employee")
+  timesheets Timesheet[] @relation("Timesheet_employee_Employee")
+  @@index([userId])
+  @@index([shiftId])
+}
+
+model Shift {
+  id String @id @default(cuid())
+  name String
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  employees Employee[] @relation("Employee_shift_Shift")
+  shiftAssignments ShiftAssignment[] @relation("ShiftAssignment_shift_Shift")
+}
+
+model Attendance {
+  id String @id @default(cuid())
+  employeeId String?
+  employee Employee? @relation("Attendance_employee_Employee", fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  clockIn String?
+  clockOut String?
+  hoursWorked Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([employeeId])
+}
+
+model LeaveRequest {
+  id String @id @default(cuid())
+  employeeId String?
+  employee Employee? @relation("LeaveRequest_employee_Employee", fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+  status String?
+  reason String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([employeeId])
+}
+
+model ShiftAssignment {
+  id String @id @default(cuid())
+  employeeId String?
+  employee Employee? @relation("ShiftAssignment_employee_Employee", fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  shiftId String?
+  shift Shift? @relation("ShiftAssignment_shift_Shift", fields: [shiftId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  status String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([employeeId])
+  @@index([shiftId])
+}
+
+model LeaveBalance {
+  id String @id @default(cuid())
+  employeeId String?
+  employee Employee? @relation("LeaveBalance_employee_Employee", fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  allocatedDays Int @default(0)
+  usedDays Int @default(0)
+  remainingDays Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([employeeId])
+}
+
+model Timesheet {
+  id String @id @default(cuid())
+  employeeId String?
+  employee Employee? @relation("Timesheet_employee_Employee", fields: [employeeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  approverId String?
+  approver User? @relation("Timesheet_approver_User", fields: [approverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  periodStart DateTime @default(now())
+  periodEnd DateTime @default(now())
+  totalHours Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([employeeId])
+  @@index([approverId])
+}

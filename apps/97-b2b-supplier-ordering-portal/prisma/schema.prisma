@@ -1,0 +1,109 @@
+// Auto-generated for SupplyDesk B2B Supplier Ordering Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_user_User")
+}
+
+model Account {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_account_Account")
+  accountPrices AccountPrice[] @relation("AccountPrice_account_Account")
+  orders Order[] @relation("Order_account_Account")
+}
+
+model Membership {
+  id String @id @default(cuid())
+  accountId String?
+  account Account? @relation("Membership_account_Account", fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([accountId])
+  @@index([userId])
+}
+
+model Product {
+  id String @id @default(cuid())
+  name String
+  listPrice Float @default(0)
+  stock Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  accountPrices AccountPrice[] @relation("AccountPrice_product_Product")
+  orderItems OrderItem[] @relation("OrderItem_product_Product")
+}
+
+model AccountPrice {
+  id String @id @default(cuid())
+  accountId String?
+  account Account? @relation("AccountPrice_account_Account", fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String?
+  product Product? @relation("AccountPrice_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([accountId])
+  @@index([productId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  accountId String?
+  account Account? @relation("Order_account_Account", fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  buyerId String?
+  total Float @default(0)
+  status String?
+  requiresApproval String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([accountId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String?
+  product Product? @relation("OrderItem_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  unitPrice Float @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

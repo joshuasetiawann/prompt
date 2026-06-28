@@ -1,0 +1,92 @@
+// Auto-generated for FlexGym Gym Membership Management App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members Member[] @relation("Member_user_User")
+}
+
+model Plan {
+  id String @id @default(cuid())
+  name String
+  price Float @default(0)
+  durationDays Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members Member[] @relation("Member_plan_Plan")
+}
+
+model Member {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Member_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  planId String?
+  plan Plan? @relation("Member_plan_Plan", fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  checkIns CheckIn[] @relation("CheckIn_member_Member")
+  classBookings ClassBooking[] @relation("ClassBooking_member_Member")
+  payments Payment[] @relation("Payment_member_Member")
+  @@index([userId])
+  @@index([planId])
+}
+
+model CheckIn {
+  id String @id @default(cuid())
+  memberId String?
+  member Member? @relation("CheckIn_member_Member", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  timestamp String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([memberId])
+}
+
+model GymClass {
+  id String @id @default(cuid())
+  name String
+  trainerId String?
+  startTime DateTime @default(now())
+  capacity Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ClassBooking {
+  id String @id @default(cuid())
+  classId String?
+  memberId String?
+  member Member? @relation("ClassBooking_member_Member", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([memberId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  memberId String?
+  member Member? @relation("Payment_member_Member", fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  period String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([memberId])
+}

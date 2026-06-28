@@ -1,0 +1,87 @@
+// Auto-generated for BudgetWise Personal Budgeting App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  accounts Account[] @relation("Account_user_User")
+  categories Category[] @relation("Category_user_User")
+  savingsGoals SavingsGoal[] @relation("SavingsGoal_user_User")
+}
+
+model Account {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Account_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  balance Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transactions Transaction[] @relation("Transaction_account_Account")
+  @@index([userId])
+}
+
+model Category {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Category_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  type String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  transactions Transaction[] @relation("Transaction_category_Category")
+  budgets Budget[] @relation("Budget_category_Category")
+  @@index([userId])
+}
+
+model Transaction {
+  id String @id @default(cuid())
+  accountId String?
+  account Account? @relation("Transaction_account_Account", fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId String?
+  category Category? @relation("Transaction_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  amount Float @default(0)
+  date DateTime @default(now())
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([accountId])
+  @@index([categoryId])
+}
+
+model Budget {
+  id String @id @default(cuid())
+  categoryId String?
+  category Category? @relation("Budget_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  month String?
+  limit String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([categoryId])
+}
+
+model SavingsGoal {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("SavingsGoal_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  target String?
+  saved String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

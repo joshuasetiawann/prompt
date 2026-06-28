@@ -1,0 +1,80 @@
+// Auto-generated for VendorVille Event Vendor Directory Platform. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vendors Vendor[] @relation("Vendor_user_User")
+}
+
+model Vendor {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Vendor_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  category String?
+  area String?
+  gallery String @default("")
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quoteRequests QuoteRequest[] @relation("QuoteRequest_vendor_Vendor")
+  favorites Favorite[] @relation("Favorite_vendor_Vendor")
+  reviews Review[] @relation("Review_vendor_Vendor")
+  @@index([userId])
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model QuoteRequest {
+  id String @id @default(cuid())
+  vendorId String?
+  vendor Vendor? @relation("QuoteRequest_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  eventDate DateTime @default(now())
+  details String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vendorId])
+}
+
+model Favorite {
+  id String @id @default(cuid())
+  customerId String?
+  vendorId String?
+  vendor Vendor? @relation("Favorite_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vendorId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  vendorId String?
+  vendor Vendor? @relation("Review_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vendorId])
+}

@@ -1,0 +1,112 @@
+// Auto-generated for PlaybookHQ Business SOP & Training Manual Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  acknowledgements Acknowledgement[] @relation("Acknowledgement_user_User")
+  assignments Assignment[] @relation("Assignment_user_User")
+  quizAttempts QuizAttempt[] @relation("QuizAttempt_user_User")
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sOPs SOP[] @relation("SOP_category_Category")
+}
+
+model SOP {
+  id String @id @default(cuid())
+  categoryId String?
+  category Category? @relation("SOP_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  currentVersionId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([categoryId])
+}
+
+model SOPVersion {
+  id String @id @default(cuid())
+  sopId String?
+  version String?
+  content String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Acknowledgement {
+  id String @id @default(cuid())
+  sopId String?
+  userId String?
+  user User? @relation("Acknowledgement_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  acknowledgedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Module {
+  id String @id @default(cuid())
+  title String
+  lessons String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizes Quiz[] @relation("Quiz_module_Module")
+  assignments Assignment[] @relation("Assignment_module_Module")
+}
+
+model Quiz {
+  id String @id @default(cuid())
+  moduleId String?
+  module Module? @relation("Quiz_module_Module", fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questions String?
+  passScore String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizAttempts QuizAttempt[] @relation("QuizAttempt_quiz_Quiz")
+  @@index([moduleId])
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  moduleId String?
+  module Module? @relation("Assignment_module_Module", fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Assignment_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  dueDate DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([moduleId])
+  @@index([userId])
+}
+
+model QuizAttempt {
+  id String @id @default(cuid())
+  quizId String?
+  quiz Quiz? @relation("QuizAttempt_quiz_Quiz", fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("QuizAttempt_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  score String?
+  passed String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([quizId])
+  @@index([userId])
+}

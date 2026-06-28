@@ -1,0 +1,73 @@
+// Auto-generated for HandsOn Volunteer Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Opportunity {
+  id String @id @default(cuid())
+  title String
+  description String?
+  location String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shifts Shift[] @relation("Shift_opportunity_Opportunity")
+}
+
+model Shift {
+  id String @id @default(cuid())
+  opportunityId String?
+  opportunity Opportunity? @relation("Shift_opportunity_Opportunity", fields: [opportunityId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  capacity Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  signups Signup[] @relation("Signup_shift_Shift")
+  @@index([opportunityId])
+}
+
+model Signup {
+  id String @id @default(cuid())
+  shiftId String?
+  shift Shift? @relation("Signup_shift_Shift", fields: [shiftId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  volunteerId String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  attendances Attendance[] @relation("Attendance_signup_Signup")
+  @@index([shiftId])
+}
+
+model Attendance {
+  id String @id @default(cuid())
+  signupId String?
+  signup Signup? @relation("Attendance_signup_Signup", fields: [signupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hoursLogged Int @default(0)
+  confirmed String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([signupId])
+}
+
+model Organization {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

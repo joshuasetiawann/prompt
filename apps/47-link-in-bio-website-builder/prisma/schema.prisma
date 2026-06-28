@@ -1,0 +1,109 @@
+// Auto-generated for BioLink Link-in-Bio Website Builder. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bioPages BioPage[] @relation("BioPage_user_User")
+  customThemes CustomTheme[] @relation("CustomTheme_user_User")
+}
+
+model BioPage {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("BioPage_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  username String @unique
+  displayName String?
+  bio String?
+  avatar String?
+  theme String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  links Link[] @relation("Link_bioPage_BioPage")
+  pageViews PageView[] @relation("PageView_bioPage_BioPage")
+  socialLinks SocialLink[] @relation("SocialLink_bioPage_BioPage")
+  subscribers Subscriber[] @relation("Subscriber_bioPage_BioPage")
+  @@index([userId])
+}
+
+model Link {
+  id String @id @default(cuid())
+  bioPageId String?
+  bioPage BioPage? @relation("Link_bioPage_BioPage", fields: [bioPageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  url String?
+  sortOrder Int @default(0)
+  visible String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  clickEvents ClickEvent[] @relation("ClickEvent_link_Link")
+  @@index([bioPageId])
+}
+
+model ClickEvent {
+  id String @id @default(cuid())
+  linkId String?
+  link Link? @relation("ClickEvent_link_Link", fields: [linkId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([linkId])
+}
+
+model PageView {
+  id String @id @default(cuid())
+  bioPageId String?
+  bioPage BioPage? @relation("PageView_bioPage_BioPage", fields: [bioPageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bioPageId])
+}
+
+model SocialLink {
+  id String @id @default(cuid())
+  bioPageId String?
+  bioPage BioPage? @relation("SocialLink_bioPage_BioPage", fields: [bioPageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  platform String?
+  url String?
+  sortOrder Int @default(0)
+  visible String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bioPageId])
+}
+
+model Subscriber {
+  id String @id @default(cuid())
+  bioPageId String?
+  bioPage BioPage? @relation("Subscriber_bioPage_BioPage", fields: [bioPageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  email String @unique
+  name String
+  source String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bioPageId])
+}
+
+model CustomTheme {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("CustomTheme_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  description String?
+  isDefault Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

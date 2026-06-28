@@ -1,0 +1,89 @@
+// Auto-generated for TicketWave Event Ticketing App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[] @relation("Order_user_User")
+}
+
+model Event {
+  id String @id @default(cuid())
+  organizerId String?
+  title String
+  datetime DateTime @default(now())
+  venue String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ticketTypes TicketType[] @relation("TicketType_event_Event")
+  orders Order[] @relation("Order_event_Event")
+}
+
+model TicketType {
+  id String @id @default(cuid())
+  eventId String?
+  event Event? @relation("TicketType_event_Event", fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  price Float @default(0)
+  quantity Int @default(0)
+  sold String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets Ticket[] @relation("Ticket_ticketType_TicketType")
+  @@index([eventId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Order_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventId String?
+  event Event? @relation("Order_event_Event", fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets Ticket[] @relation("Ticket_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([userId])
+  @@index([eventId])
+}
+
+model Ticket {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Ticket_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ticketTypeId String?
+  ticketType TicketType? @relation("Ticket_ticketType_TicketType", fields: [ticketTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  code String?
+  checkedIn String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([ticketTypeId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

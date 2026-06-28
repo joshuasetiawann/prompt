@@ -1,0 +1,96 @@
+// Auto-generated for TableTime Restaurant Table Reservation System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RestaurantTable {
+  id String @id @default(cuid())
+  label String?
+  seats Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reservation {
+  id String @id @default(cuid())
+  guestId String?
+  datetime DateTime @default(now())
+  partySize String?
+  tableId String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notificationLogs NotificationLog[] @relation("NotificationLog_reservation_Reservation")
+}
+
+model Waitlist {
+  id String @id @default(cuid())
+  guestName String?
+  partySize String?
+  addedAt DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Hours {
+  id String @id @default(cuid())
+  dayOfWeek String?
+  openTime DateTime @default(now())
+  closeTime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DiningArea {
+  id String @id @default(cuid())
+  name String
+  description String?
+  capacity Int @default(0)
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ReservationPolicy {
+  id String @id @default(cuid())
+  name String
+  description String?
+  cancellationWindowHours Int @default(0)
+  depositAmount Float @default(0)
+  noShowFee Float @default(0)
+  maxCapacity Int @default(0)
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NotificationLog {
+  id String @id @default(cuid())
+  reservationId String?
+  reservation Reservation? @relation("NotificationLog_reservation_Reservation", fields: [reservationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channel String?
+  recipient String?
+  content String?
+  status String?
+  sentAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([reservationId])
+}

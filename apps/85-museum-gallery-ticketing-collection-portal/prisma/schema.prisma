@@ -1,0 +1,75 @@
+// Auto-generated for Curate Museum / Gallery Ticketing & Collection Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exhibition {
+  id String @id @default(cuid())
+  title String
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entrySlots EntrySlot[] @relation("EntrySlot_exhibition_Exhibition")
+}
+
+model EntrySlot {
+  id String @id @default(cuid())
+  exhibitionId String?
+  exhibition Exhibition? @relation("EntrySlot_exhibition_Exhibition", fields: [exhibitionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  datetime DateTime @default(now())
+  capacity Int @default(0)
+  sold String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([exhibitionId])
+}
+
+model Ticket {
+  id String @id @default(cuid())
+  slotId String?
+  visitorId String?
+  code String?
+  checkedIn String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_ticket_Ticket")
+}
+
+model CollectionItem {
+  id String @id @default(cuid())
+  title String
+  artist String?
+  year String?
+  description String?
+  imageUrl Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(cuid())
+  ticketId String?
+  ticket Ticket? @relation("Payment_ticket_Ticket", fields: [ticketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ticketId])
+}

@@ -1,0 +1,43 @@
+{
+  "name": "production-grade-app-builds",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Runnable app builds generated from the 50 production-grade app prompts.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "generate": "node tools/generate.mjs",
+    "shoot": "node tools/screenshot.mjs"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "3.10.0",
+    "@prisma/client": "6.2.1",
+    "bcryptjs": "2.4.3",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "0.469.0",
+    "next": "15.1.6",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-hook-form": "7.54.2",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "2.6.0",
+    "zod": "3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "autoprefixer": "10.4.20",
+    "js-yaml": "4.1.0",
+    "playwright-core": "1.49.1",
+    "postcss": "8.4.49",
+    "prisma": "6.2.1",
+    "tailwindcss": "3.4.17",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3"
+  }
+}

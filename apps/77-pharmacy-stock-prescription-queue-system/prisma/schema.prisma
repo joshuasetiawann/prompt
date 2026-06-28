@@ -1,0 +1,89 @@
+// Auto-generated for RxQueue Pharmacy Stock & Prescription Queue System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Medicine {
+  id String @id @default(cuid())
+  name String
+  stock Int @default(0)
+  batch String?
+  expiry String?
+  lowStockThreshold Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  prescriptionItems PrescriptionItem[] @relation("PrescriptionItem_medicine_Medicine")
+  stockMovements StockMovement[] @relation("StockMovement_medicine_Medicine")
+}
+
+model Patient {
+  id String @id @default(cuid())
+  fullName String?
+  phone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  prescriptions Prescription[] @relation("Prescription_patient_Patient")
+}
+
+model Prescription {
+  id String @id @default(cuid())
+  patientId String?
+  patient Patient? @relation("Prescription_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  prescriptionItems PrescriptionItem[] @relation("PrescriptionItem_prescription_Prescription")
+  @@index([patientId])
+}
+
+model PrescriptionItem {
+  id String @id @default(cuid())
+  prescriptionId String?
+  prescription Prescription? @relation("PrescriptionItem_prescription_Prescription", fields: [prescriptionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  medicineId String?
+  medicine Medicine? @relation("PrescriptionItem_medicine_Medicine", fields: [medicineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([prescriptionId])
+  @@index([medicineId])
+}
+
+model StockMovement {
+  id String @id @default(cuid())
+  medicineId String?
+  medicine Medicine? @relation("StockMovement_medicine_Medicine", fields: [medicineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  qty Int @default(0)
+  reason String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([medicineId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  entity String?
+  entityId String?
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

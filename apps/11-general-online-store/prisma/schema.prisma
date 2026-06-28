@@ -1,0 +1,131 @@
+// Auto-generated for ShopKart General Online Store. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  carts Cart[] @relation("Cart_user_User")
+  orders Order[] @relation("Order_user_User")
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  products Product[] @relation("Product_category_Category")
+}
+
+model Product {
+  id String @id @default(cuid())
+  categoryId String?
+  category Category? @relation("Product_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  price Float @default(0)
+  photos String @default("")
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  variants Variant[] @relation("Variant_product_Product")
+  @@index([categoryId])
+}
+
+model Variant {
+  id String @id @default(cuid())
+  productId String?
+  product Product? @relation("Variant_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  sku String?
+  stock Int @default(0)
+  priceDelta Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cartItems CartItem[] @relation("CartItem_variant_Variant")
+  orderItems OrderItem[] @relation("OrderItem_variant_Variant")
+  @@index([productId])
+}
+
+model Cart {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Cart_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cartItems CartItem[] @relation("CartItem_cart_Cart")
+  @@index([userId])
+}
+
+model CartItem {
+  id String @id @default(cuid())
+  cartId String?
+  cart Cart? @relation("CartItem_cart_Cart", fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variantId String?
+  variant Variant? @relation("CartItem_variant_Variant", fields: [variantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([cartId])
+  @@index([variantId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Order_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  total Float @default(0)
+  status String?
+  address String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([userId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variantId String?
+  variant Variant? @relation("OrderItem_variant_Variant", fields: [variantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([variantId])
+}
+
+model Coupon {
+  id String @id @default(cuid())
+  code String?
+  type String?
+  value Float @default(0)
+  active Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

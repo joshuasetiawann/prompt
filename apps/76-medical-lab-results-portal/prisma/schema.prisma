@@ -1,0 +1,81 @@
+// Auto-generated for LabLink Medical Lab Results Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  patients Patient[] @relation("Patient_user_User")
+}
+
+model Patient {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Patient_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  dob String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  labOrders LabOrder[] @relation("LabOrder_patient_Patient")
+  @@index([userId])
+}
+
+model TestType {
+  id String @id @default(cuid())
+  name String
+  unit String?
+  refLow String?
+  refHigh String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  results Result[] @relation("Result_testType_TestType")
+}
+
+model LabOrder {
+  id String @id @default(cuid())
+  patientId String?
+  patient Patient? @relation("LabOrder_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  doctorId String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  results Result[] @relation("Result_labOrder_LabOrder")
+  @@index([patientId])
+}
+
+model Result {
+  id String @id @default(cuid())
+  labOrderId String?
+  labOrder LabOrder? @relation("Result_labOrder_LabOrder", fields: [labOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  testTypeId String?
+  testType TestType? @relation("Result_testType_TestType", fields: [testTypeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  value Float @default(0)
+  released String?
+  flag String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([labOrderId])
+  @@index([testTypeId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  entity String?
+  entityId String?
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

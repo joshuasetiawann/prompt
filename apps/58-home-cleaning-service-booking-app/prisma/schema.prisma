@@ -1,0 +1,107 @@
+// Auto-generated for TidyNest Home Cleaning Service Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  addresses Address[] @relation("Address_user_User")
+  cleaners Cleaner[] @relation("Cleaner_user_User")
+}
+
+model Service {
+  id String @id @default(cuid())
+  name String
+  basePrice Float @default(0)
+  addons String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id String @id @default(cuid())
+  customerId String?
+  addressId String?
+  address Address? @relation("Booking_address_Address", fields: [addressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  recurrence String?
+  status String?
+  total Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_booking_Booking")
+  jobChecklists JobChecklist[] @relation("JobChecklist_booking_Booking")
+  payments Payment[] @relation("Payment_booking_Booking")
+  @@index([addressId])
+}
+
+model Address {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Address_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  line String?
+  area String?
+  size String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_address_Address")
+  @@index([userId])
+}
+
+model Cleaner {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Cleaner_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  workingHours Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_cleaner_Cleaner")
+  @@index([userId])
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Assignment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cleanerId String?
+  cleaner Cleaner? @relation("Assignment_cleaner_Cleaner", fields: [cleanerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+  @@index([cleanerId])
+}
+
+model JobChecklist {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("JobChecklist_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item String?
+  done Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}

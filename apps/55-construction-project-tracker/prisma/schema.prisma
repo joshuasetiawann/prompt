@@ -1,0 +1,117 @@
+// Auto-generated for BuildTrack Construction Project Tracker. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id String @id @default(cuid())
+  name String
+  client String?
+  startDate DateTime @default(now())
+  budget Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  phases Phase[] @relation("Phase_project_Project")
+  dailyLogs DailyLog[] @relation("DailyLog_project_Project")
+  materials Material[] @relation("Material_project_Project")
+  assignments Assignment[] @relation("Assignment_project_Project")
+  costItems CostItem[] @relation("CostItem_project_Project")
+}
+
+model Phase {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("Phase_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  percentComplete String?
+  order String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}
+
+model DailyLog {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("DailyLog_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  weather String?
+  notes String?
+  crewCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logPhotos LogPhoto[] @relation("LogPhoto_dailyLog_DailyLog")
+  @@index([projectId])
+}
+
+model LogPhoto {
+  id String @id @default(cuid())
+  dailyLogId String?
+  dailyLog DailyLog? @relation("LogPhoto_dailyLog_DailyLog", fields: [dailyLogId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([dailyLogId])
+}
+
+model Material {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("Material_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  qty Int @default(0)
+  delivered String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}
+
+model Crew {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_crew_Crew")
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("Assignment_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  crewId String?
+  crew Crew? @relation("Assignment_crew_Crew", fields: [crewId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+  @@index([crewId])
+}
+
+model CostItem {
+  id String @id @default(cuid())
+  projectId String?
+  project Project? @relation("CostItem_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category String?
+  budgeted Float @default(0)
+  actual String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([projectId])
+}

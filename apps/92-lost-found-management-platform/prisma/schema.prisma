@@ -1,0 +1,105 @@
+// Auto-generated for FoundIt Lost & Found Management Platform. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  handovers Handover[] @relation("Handover_staff_User")
+}
+
+model Item {
+  id String @id @default(cuid())
+  kind String?
+  category String?
+  description String?
+  location String?
+  photoUrl String?
+  status String?
+  reporterId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  claims Claim[] @relation("Claim_item_Item")
+  verificationQuestions VerificationQuestion[] @relation("VerificationQuestion_item_Item")
+  handovers Handover[] @relation("Handover_item_Item")
+}
+
+model MatchSuggestion {
+  id String @id @default(cuid())
+  lostItemId String?
+  foundItemId String?
+  score String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Claim {
+  id String @id @default(cuid())
+  itemId String?
+  item Item? @relation("Claim_item_Item", fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  claimantId String?
+  answers String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  handovers Handover[] @relation("Handover_claim_Claim")
+  @@index([itemId])
+}
+
+model Location {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationQuestion {
+  id String @id @default(cuid())
+  itemId String?
+  item Item? @relation("VerificationQuestion_item_Item", fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  question String?
+  expectedAnswer String?
+  hint String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([itemId])
+}
+
+model Handover {
+  id String @id @default(cuid())
+  itemId String?
+  item Item? @relation("Handover_item_Item", fields: [itemId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  claimId String?
+  claim Claim? @relation("Handover_claim_Claim", fields: [claimId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  staffId String?
+  staff User? @relation("Handover_staff_User", fields: [staffId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recipientName String?
+  isVerified Boolean @default(false)
+  notes String?
+  returnedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([itemId])
+  @@index([claimId])
+  @@index([staffId])
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

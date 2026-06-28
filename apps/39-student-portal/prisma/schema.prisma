@@ -1,0 +1,95 @@
+// Auto-generated for CampusOne Student Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses Course[] @relation("Course_teacher_User")
+}
+
+model Course {
+  id String @id @default(cuid())
+  teacherId String?
+  teacher User? @relation("Course_teacher_User", fields: [teacherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  term String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  enrollments Enrollment[] @relation("Enrollment_course_Course")
+  assignments Assignment[] @relation("Assignment_course_Course")
+  scheduleSlots ScheduleSlot[] @relation("ScheduleSlot_course_Course")
+  announcements Announcement[] @relation("Announcement_course_Course")
+  @@index([teacherId])
+}
+
+model Enrollment {
+  id String @id @default(cuid())
+  courseId String?
+  course Course? @relation("Enrollment_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([courseId])
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  courseId String?
+  course Course? @relation("Assignment_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  dueDate DateTime @default(now())
+  maxScore String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  submissions Submission[] @relation("Submission_assignment_Assignment")
+  @@index([courseId])
+}
+
+model Submission {
+  id String @id @default(cuid())
+  assignmentId String?
+  assignment Assignment? @relation("Submission_assignment_Assignment", fields: [assignmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  score String?
+  submittedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([assignmentId])
+}
+
+model ScheduleSlot {
+  id String @id @default(cuid())
+  courseId String?
+  course Course? @relation("ScheduleSlot_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  day String?
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([courseId])
+}
+
+model Announcement {
+  id String @id @default(cuid())
+  scope String?
+  courseId String?
+  course Course? @relation("Announcement_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([courseId])
+}

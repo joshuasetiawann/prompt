@@ -1,0 +1,115 @@
+// Auto-generated for Wanderly Travel Package Booking Website. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Package {
+  id String @id @default(cuid())
+  title String
+  destination String?
+  durationDays Int @default(0)
+  pricePerPerson Float @default(0)
+  itinerary String?
+  inclusions String?
+  photos String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  departures Departure[] @relation("Departure_package_Package")
+  reviews Review[] @relation("Review_package_Package")
+  wishlists Wishlist[] @relation("Wishlist_package_Package")
+}
+
+model Departure {
+  id String @id @default(cuid())
+  packageId String?
+  package Package? @relation("Departure_package_Package", fields: [packageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  capacity Int @default(0)
+  booked String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_departure_Departure")
+  @@index([packageId])
+}
+
+model Booking {
+  id String @id @default(cuid())
+  departureId String?
+  departure Departure? @relation("Booking_departure_Departure", fields: [departureId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  travelers String?
+  status String?
+  total Float @default(0)
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  travelers_booking Traveler[] @relation("Traveler_booking_Booking")
+  @@index([departureId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}
+
+model Review {
+  id String @id @default(cuid())
+  packageId String?
+  package Package? @relation("Review_package_Package", fields: [packageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  rating Int @default(0)
+  title String
+  comment String?
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([packageId])
+}
+
+model Traveler {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Traveler_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  birthDate DateTime @default(now())
+  passportNumber String?
+  nationality String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}
+
+model Wishlist {
+  id String @id @default(cuid())
+  customerId String?
+  packageId String?
+  package Package? @relation("Wishlist_package_Package", fields: [packageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([packageId])
+}

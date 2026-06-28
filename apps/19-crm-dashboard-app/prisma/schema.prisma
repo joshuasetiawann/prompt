@@ -1,0 +1,150 @@
+// Auto-generated for LeadDesk CRM Dashboard App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contacts Contact[] @relation("Contact_owner_User")
+  deals Deal[] @relation("Deal_owner_User")
+  activities Activity[] @relation("Activity_owner_User")
+  companies Company[] @relation("Company_owner_User")
+  leads Lead[] @relation("Lead_owner_User")
+  notes Note[] @relation("Note_owner_User")
+  notificationLogs NotificationLog[] @relation("NotificationLog_user_User")
+}
+
+model Contact {
+  id String @id @default(cuid())
+  ownerId String?
+  owner User? @relation("Contact_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  email String @unique
+  phone String?
+  company String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deals Deal[] @relation("Deal_contact_Contact")
+  activities Activity[] @relation("Activity_contact_Contact")
+  notes_contact Note[] @relation("Note_contact_Contact")
+  notificationLogs NotificationLog[] @relation("NotificationLog_contact_Contact")
+  @@index([ownerId])
+}
+
+model Deal {
+  id String @id @default(cuid())
+  contactId String?
+  contact Contact? @relation("Deal_contact_Contact", fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId String?
+  owner User? @relation("Deal_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  value Float @default(0)
+  stage Int @default(0)
+  createdAt DateTime @default(now())
+  closedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  activities Activity[] @relation("Activity_deal_Deal")
+  notes Note[] @relation("Note_deal_Deal")
+  @@index([contactId])
+  @@index([ownerId])
+}
+
+model Activity {
+  id String @id @default(cuid())
+  dealId String?
+  deal Deal? @relation("Activity_deal_Deal", fields: [dealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  contactId String?
+  contact Contact? @relation("Activity_contact_Contact", fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId String?
+  owner User? @relation("Activity_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  dueDate DateTime @default(now())
+  done Boolean @default(false)
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([dealId])
+  @@index([contactId])
+  @@index([ownerId])
+}
+
+model Company {
+  id String @id @default(cuid())
+  ownerId String?
+  owner User? @relation("Company_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  industry String?
+  website String?
+  phone String?
+  address String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  leads Lead[] @relation("Lead_company_Company")
+  @@index([ownerId])
+}
+
+model Lead {
+  id String @id @default(cuid())
+  ownerId String?
+  owner User? @relation("Lead_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  companyId String?
+  company Company? @relation("Lead_company_Company", fields: [companyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  email String @unique
+  phone String?
+  source String?
+  status String?
+  estimatedValue Float @default(0)
+  createdAt DateTime @default(now())
+  convertedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ownerId])
+  @@index([companyId])
+}
+
+model Note {
+  id String @id @default(cuid())
+  contactId String?
+  contact Contact? @relation("Note_contact_Contact", fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  dealId String?
+  deal Deal? @relation("Note_deal_Deal", fields: [dealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ownerId String?
+  owner User? @relation("Note_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([contactId])
+  @@index([dealId])
+  @@index([ownerId])
+}
+
+model NotificationLog {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("NotificationLog_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  contactId String?
+  contact Contact? @relation("NotificationLog_contact_Contact", fields: [contactId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channel String?
+  subject String?
+  body String?
+  status String?
+  sentAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([contactId])
+}

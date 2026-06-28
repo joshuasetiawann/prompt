@@ -1,0 +1,67 @@
+// Auto-generated for PageOne Ebook Sales Page. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[] @relation("Order_user_User")
+}
+
+model Ebook {
+  id String @id @default(cuid())
+  title String
+  description String?
+  price Float @default(0)
+  sample String?
+  fileMeta String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Order_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  downloadTokens DownloadToken[] @relation("DownloadToken_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([userId])
+}
+
+model DownloadToken {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("DownloadToken_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  token String?
+  used String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

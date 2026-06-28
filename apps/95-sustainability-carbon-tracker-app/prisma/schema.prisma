@@ -1,0 +1,92 @@
+// Auto-generated for CarbonLedger Sustainability / Carbon Tracker App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  activities Activity[] @relation("Activity_user_User")
+  goals Goal[] @relation("Goal_user_User")
+  offsets Offset[] @relation("Offset_user_User")
+  memberships Membership[] @relation("Membership_user_User")
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  factor String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  activities Activity[] @relation("Activity_category_Category")
+}
+
+model Activity {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Activity_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  categoryId String?
+  category Category? @relation("Activity_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  emissions String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([categoryId])
+}
+
+model Goal {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Goal_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  targetReductionPct String?
+  period String?
+  progress Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Offset {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Offset_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  source String?
+  date DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Team {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_team_Team")
+}
+
+model Membership {
+  id String @id @default(cuid())
+  teamId String?
+  team Team? @relation("Membership_team_Team", fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([teamId])
+  @@index([userId])
+}

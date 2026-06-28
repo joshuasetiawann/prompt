@@ -1,0 +1,88 @@
+// Auto-generated for AdmitFlow School Admission Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Program {
+  id String @id @default(cuid())
+  name String
+  intakeTerm String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  applications Application[] @relation("Application_program_Program")
+}
+
+model Application {
+  id String @id @default(cuid())
+  programId String?
+  program Program? @relation("Application_program_Program", fields: [programId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  applicantId String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appDocs AppDoc[] @relation("AppDoc_application_Application")
+  interviews Interview[] @relation("Interview_application_Application")
+  decisions Decision[] @relation("Decision_application_Application")
+  payments Payment[] @relation("Payment_application_Application")
+  @@index([programId])
+}
+
+model AppDoc {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("AppDoc_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}
+
+model Interview {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("Interview_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scheduledFor DateTime @default(now())
+  score String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}
+
+model Decision {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("Decision_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  outcome String?
+  decidedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  applicationId String?
+  application Application? @relation("Payment_application_Application", fields: [applicationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([applicationId])
+}

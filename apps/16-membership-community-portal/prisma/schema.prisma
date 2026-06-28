@@ -1,0 +1,111 @@
+// Auto-generated for CircleSpace Membership Community Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_user_User")
+  posts Post[] @relation("Post_author_User")
+  comments Comment[] @relation("Comment_author_User")
+  reactions Reaction[] @relation("Reaction_user_User")
+}
+
+model Tier {
+  id String @id @default(cuid())
+  name String
+  price Float @default(0)
+  perks String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_tier_Tier")
+}
+
+model Membership {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tierId String?
+  tier Tier? @relation("Membership_tier_Tier", fields: [tierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  startDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_membership_Membership")
+  @@index([userId])
+  @@index([tierId])
+}
+
+model Channel {
+  id String @id @default(cuid())
+  name String
+  minTier Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts Post[] @relation("Post_channel_Channel")
+}
+
+model Post {
+  id String @id @default(cuid())
+  channelId String?
+  channel Channel? @relation("Post_channel_Channel", fields: [channelId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Post_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comments Comment[] @relation("Comment_post_Post")
+  reactions Reaction[] @relation("Reaction_post_Post")
+  @@index([channelId])
+  @@index([authorId])
+}
+
+model Comment {
+  id String @id @default(cuid())
+  postId String?
+  post Post? @relation("Comment_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Comment_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([postId])
+  @@index([authorId])
+}
+
+model Reaction {
+  id String @id @default(cuid())
+  postId String?
+  post Post? @relation("Reaction_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Reaction_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([postId])
+  @@index([userId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  membershipId String?
+  membership Membership? @relation("Payment_membership_Membership", fields: [membershipId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  period String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([membershipId])
+}

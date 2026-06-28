@@ -1,0 +1,90 @@
+// Auto-generated for LeagueHQ Sports League Management App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teams Team[] @relation("Team_manager_User")
+}
+
+model League {
+  id String @id @default(cuid())
+  name String
+  season String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teams Team[] @relation("Team_league_League")
+  fixtures Fixture[] @relation("Fixture_league_League")
+  standings Standing[] @relation("Standing_league_League")
+}
+
+model Team {
+  id String @id @default(cuid())
+  leagueId String?
+  league League? @relation("Team_league_League", fields: [leagueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  managerId String?
+  manager User? @relation("Team_manager_User", fields: [managerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  players Player[] @relation("Player_team_Team")
+  standings Standing[] @relation("Standing_team_Team")
+  @@index([leagueId])
+  @@index([managerId])
+}
+
+model Player {
+  id String @id @default(cuid())
+  teamId String?
+  team Team? @relation("Player_team_Team", fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  position Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([teamId])
+}
+
+model Fixture {
+  id String @id @default(cuid())
+  leagueId String?
+  league League? @relation("Fixture_league_League", fields: [leagueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  homeTeamId String?
+  awayTeamId String?
+  datetime DateTime @default(now())
+  homeScore String?
+  awayScore String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([leagueId])
+}
+
+model Standing {
+  id String @id @default(cuid())
+  leagueId String?
+  league League? @relation("Standing_league_League", fields: [leagueId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teamId String?
+  team Team? @relation("Standing_team_Team", fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  played String?
+  won String?
+  drawn String?
+  lost String?
+  points Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([leagueId])
+  @@index([teamId])
+}

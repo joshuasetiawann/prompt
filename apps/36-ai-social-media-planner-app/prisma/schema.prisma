@@ -1,0 +1,117 @@
+// Auto-generated for SocialPlan AI Social Media Planner App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts Post[] @relation("Post_user_User")
+  ideas Idea[] @relation("Idea_user_User")
+  brandVoices BrandVoice[] @relation("BrandVoice_user_User")
+  usageCredits UsageCredit[] @relation("UsageCredit_user_User")
+  campaigns Campaign[] @relation("Campaign_user_User")
+  mediaAssets MediaAsset[] @relation("MediaAsset_user_User")
+}
+
+model Post {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Post_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  platform String?
+  caption String?
+  status String?
+  scheduledFor DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mediaAssets MediaAsset[] @relation("MediaAsset_post_Post")
+  postMetrics PostMetric[] @relation("PostMetric_post_Post")
+  @@index([userId])
+}
+
+model Idea {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Idea_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topic String?
+  output String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model BrandVoice {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("BrandVoice_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tone String?
+  keywords String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model UsageCredit {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("UsageCredit_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  period String?
+  used String?
+  limit String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Campaign {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Campaign_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  description String?
+  status String?
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model MediaAsset {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("MediaAsset_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postId String?
+  post Post? @relation("MediaAsset_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url String?
+  type String?
+  altText String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([postId])
+}
+
+model PostMetric {
+  id String @id @default(cuid())
+  postId String?
+  post Post? @relation("PostMetric_post_Post", fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  views Int @default(0)
+  likeCount Int @default(0)
+  shareCount Int @default(0)
+  engagementRate Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([postId])
+}

@@ -1,0 +1,122 @@
+// Auto-generated for DriveNow Car Rental Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id String @id @default(cuid())
+  name String
+  type String?
+  seats Int @default(0)
+  transmission String?
+  pricePerDay Float @default(0)
+  photos String @default("")
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_vehicle_Vehicle")
+  reviews Review[] @relation("Review_vehicle_Vehicle")
+  maintenanceLogs MaintenanceLog[] @relation("MaintenanceLog_vehicle_Vehicle")
+  damageReports DamageReport[] @relation("DamageReport_vehicle_Vehicle")
+}
+
+model Booking {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("Booking_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  pickupDate DateTime @default(now())
+  returnDate DateTime @default(now())
+  status String?
+  total Float @default(0)
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  damageReports DamageReport[] @relation("DamageReport_booking_Booking")
+  @@index([vehicleId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}
+
+model Location {
+  id String @id @default(cuid())
+  name String
+  address String?
+  city String?
+  phone String?
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  maintenanceLogs MaintenanceLog[] @relation("MaintenanceLog_location_Location")
+}
+
+model Review {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("Review_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  rating Int @default(0)
+  comment String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vehicleId])
+}
+
+model MaintenanceLog {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("MaintenanceLog_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  locationId String?
+  location Location? @relation("MaintenanceLog_location_Location", fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  description String?
+  cost Float @default(0)
+  scheduledFor DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vehicleId])
+  @@index([locationId])
+}
+
+model DamageReport {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("DamageReport_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vehicleId String?
+  vehicle Vehicle? @relation("DamageReport_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  description String?
+  repairCost Float @default(0)
+  status String?
+  reportedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+  @@index([vehicleId])
+}

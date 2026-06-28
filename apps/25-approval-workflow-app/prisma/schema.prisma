@@ -1,0 +1,121 @@
+// Auto-generated for ApproveIt Approval Workflow App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  requests Request[] @relation("Request_requester_User")
+  approvalSteps ApprovalStep[] @relation("ApprovalStep_approver_User")
+  attachments Attachment[] @relation("Attachment_uploadedBy_User")
+  comments Comment[] @relation("Comment_author_User")
+  notifications Notification[] @relation("Notification_user_User")
+}
+
+model WorkflowType {
+  id String @id @default(cuid())
+  name String
+  steps Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Request {
+  id String @id @default(cuid())
+  typeId String?
+  requesterId String?
+  requester User? @relation("Request_requester_User", fields: [requesterId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  details String?
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  approvalSteps ApprovalStep[] @relation("ApprovalStep_request_Request")
+  auditLogs AuditLog[] @relation("AuditLog_request_Request")
+  attachments Attachment[] @relation("Attachment_request_Request")
+  comments Comment[] @relation("Comment_request_Request")
+  notifications Notification[] @relation("Notification_request_Request")
+  @@index([requesterId])
+}
+
+model ApprovalStep {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("ApprovalStep_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stepOrder String?
+  approverId String?
+  approver User? @relation("ApprovalStep_approver_User", fields: [approverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  comment String?
+  decidedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([requestId])
+  @@index([approverId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("AuditLog_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([requestId])
+}
+
+model Attachment {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("Attachment_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  uploadedById String?
+  uploadedBy User? @relation("Attachment_uploadedBy_User", fields: [uploadedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fileName String?
+  fileUrl String?
+  fileType String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([requestId])
+  @@index([uploadedById])
+}
+
+model Comment {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("Comment_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Comment_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([requestId])
+  @@index([authorId])
+}
+
+model Notification {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Notification_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  requestId String?
+  request Request? @relation("Notification_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  channel String?
+  message Int @default(0)
+  isRead Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([requestId])
+}

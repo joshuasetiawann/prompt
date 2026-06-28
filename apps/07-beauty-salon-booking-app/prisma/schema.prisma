@@ -1,0 +1,88 @@
+// Auto-generated for GlowBook Beauty Salon Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stylists Stylist[] @relation("Stylist_user_User")
+  clients Client[] @relation("Client_user_User")
+}
+
+model Service {
+  id String @id @default(cuid())
+  categoryId String?
+  name String
+  durationMin Int @default(0)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_service_Service")
+}
+
+model Stylist {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Stylist_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  workingHours Int @default(0)
+  services String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_stylist_Stylist")
+  @@index([userId])
+}
+
+model Client {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Client_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  phone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[] @relation("Booking_client_Client")
+  @@index([userId])
+}
+
+model Booking {
+  id String @id @default(cuid())
+  serviceId String?
+  service Service? @relation("Booking_service_Service", fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  stylistId String?
+  stylist Stylist? @relation("Booking_stylist_Stylist", fields: [stylistId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  clientId String?
+  client Client? @relation("Booking_client_Client", fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  status String?
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_booking_Booking")
+  @@index([serviceId])
+  @@index([stylistId])
+  @@index([clientId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  bookingId String?
+  booking Booking? @relation("Payment_booking_Booking", fields: [bookingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([bookingId])
+}

@@ -1,0 +1,123 @@
+// Auto-generated for MediSlot Clinic Appointment Booking App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  patients Patient[] @relation("Patient_user_User")
+}
+
+model Doctor {
+  id String @id @default(cuid())
+  name String
+  specialty String?
+  departmentId String?
+  department Department? @relation("Doctor_department_Department", fields: [departmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  workingHours Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] @relation("Appointment_doctor_Doctor")
+  medicalRecords MedicalRecord[] @relation("MedicalRecord_doctor_Doctor")
+  @@index([departmentId])
+}
+
+model Patient {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Patient_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fullName String?
+  phone String?
+  dob String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] @relation("Appointment_patient_Patient")
+  medicalRecords MedicalRecord[] @relation("MedicalRecord_patient_Patient")
+  payments Payment[] @relation("Payment_patient_Patient")
+  @@index([userId])
+}
+
+model Appointment {
+  id String @id @default(cuid())
+  doctorId String?
+  doctor Doctor? @relation("Appointment_doctor_Doctor", fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  patientId String?
+  patient Patient? @relation("Appointment_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  endTime DateTime @default(now())
+  status String?
+  reason String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notifications Notification[] @relation("Notification_appointment_Appointment")
+  medicalRecords MedicalRecord[] @relation("MedicalRecord_appointment_Appointment")
+  payments Payment[] @relation("Payment_appointment_Appointment")
+  @@index([doctorId])
+  @@index([patientId])
+}
+
+model Notification {
+  id String @id @default(cuid())
+  appointmentId String?
+  appointment Appointment? @relation("Notification_appointment_Appointment", fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  sentAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([appointmentId])
+}
+
+model Department {
+  id String @id @default(cuid())
+  name String
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  doctors Doctor[] @relation("Doctor_department_Department")
+}
+
+model MedicalRecord {
+  id String @id @default(cuid())
+  appointmentId String?
+  appointment Appointment? @relation("MedicalRecord_appointment_Appointment", fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  patientId String?
+  patient Patient? @relation("MedicalRecord_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  doctorId String?
+  doctor Doctor? @relation("MedicalRecord_doctor_Doctor", fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  diagnosis String?
+  notes String?
+  followUpDate DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([appointmentId])
+  @@index([patientId])
+  @@index([doctorId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  appointmentId String?
+  appointment Appointment? @relation("Payment_appointment_Appointment", fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  patientId String?
+  patient Patient? @relation("Payment_patient_Patient", fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  method String?
+  paidAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([appointmentId])
+  @@index([patientId])
+}

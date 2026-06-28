@@ -1,0 +1,114 @@
+// Auto-generated for PawCare Pro Pet Grooming & Veterinary Care Scheduler. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pets Pet[] @relation("Pet_owner_User")
+  providers Provider[] @relation("Provider_user_User")
+}
+
+model Pet {
+  id String @id @default(cuid())
+  ownerId String?
+  owner User? @relation("Pet_owner_User", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  species String?
+  breed String?
+  dob String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] @relation("Appointment_pet_Pet")
+  reminders Reminder[] @relation("Reminder_pet_Pet")
+  @@index([ownerId])
+}
+
+model Service {
+  id String @id @default(cuid())
+  type String?
+  name String
+  durationMin Int @default(0)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] @relation("Appointment_service_Service")
+}
+
+model Provider {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Provider_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  role String?
+  workingHours Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] @relation("Appointment_provider_Provider")
+  @@index([userId])
+}
+
+model Appointment {
+  id String @id @default(cuid())
+  petId String?
+  pet Pet? @relation("Appointment_pet_Pet", fields: [petId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  serviceId String?
+  service Service? @relation("Appointment_service_Service", fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  providerId String?
+  provider Provider? @relation("Appointment_provider_Provider", fields: [providerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startTime DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  visitNotes VisitNote[] @relation("VisitNote_appointment_Appointment")
+  payments Payment[] @relation("Payment_appointment_Appointment")
+  @@index([petId])
+  @@index([serviceId])
+  @@index([providerId])
+}
+
+model VisitNote {
+  id String @id @default(cuid())
+  appointmentId String?
+  appointment Appointment? @relation("VisitNote_appointment_Appointment", fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([appointmentId])
+}
+
+model Reminder {
+  id String @id @default(cuid())
+  petId String?
+  pet Pet? @relation("Reminder_pet_Pet", fields: [petId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  kind String?
+  dueDate DateTime @default(now())
+  sent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([petId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  appointmentId String?
+  appointment Appointment? @relation("Payment_appointment_Appointment", fields: [appointmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([appointmentId])
+}

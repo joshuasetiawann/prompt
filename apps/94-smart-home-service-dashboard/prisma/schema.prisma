@@ -1,0 +1,87 @@
+// Auto-generated for HomeHub Smart Home Service Dashboard. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memberships Membership[] @relation("Membership_user_User")
+}
+
+model Room {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  devices Device[] @relation("Device_room_Room")
+  memberships Membership[] @relation("Membership_room_Room")
+}
+
+model Device {
+  id String @id @default(cuid())
+  roomId String?
+  room Room? @relation("Device_room_Room", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  schedules Schedule[] @relation("Schedule_device_Device")
+  energyReadings EnergyReading[] @relation("EnergyReading_device_Device")
+  @@index([roomId])
+}
+
+model Scene {
+  id String @id @default(cuid())
+  name String
+  deviceStates String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Schedule {
+  id String @id @default(cuid())
+  deviceId String?
+  device Device? @relation("Schedule_device_Device", fields: [deviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  action String?
+  time DateTime @default(now())
+  enabled Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([deviceId])
+}
+
+model EnergyReading {
+  id String @id @default(cuid())
+  deviceId String?
+  device Device? @relation("EnergyReading_device_Device", fields: [deviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  watts String?
+  recordedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([deviceId])
+}
+
+model Membership {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Membership_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  roomId String?
+  room Room? @relation("Membership_room_Room", fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([roomId])
+}

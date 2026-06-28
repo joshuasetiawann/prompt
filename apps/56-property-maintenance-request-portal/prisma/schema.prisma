@@ -1,0 +1,102 @@
+// Auto-generated for FixFlow Property Maintenance Request Portal. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Property {
+  id String @id @default(cuid())
+  name String
+  address String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  units Unit[] @relation("Unit_property_Property")
+}
+
+model Unit {
+  id String @id @default(cuid())
+  propertyId String?
+  property Property? @relation("Unit_property_Property", fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  label String?
+  tenantId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  requests Request[] @relation("Request_unit_Unit")
+  @@index([propertyId])
+}
+
+model Request {
+  id String @id @default(cuid())
+  unitId String?
+  unit Unit? @relation("Request_unit_Unit", fields: [unitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tenantId String?
+  category String?
+  priority String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  requestPhotos RequestPhoto[] @relation("RequestPhoto_request_Request")
+  workOrders WorkOrder[] @relation("WorkOrder_request_Request")
+  @@index([unitId])
+}
+
+model RequestPhoto {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("RequestPhoto_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([requestId])
+}
+
+model WorkOrder {
+  id String @id @default(cuid())
+  requestId String?
+  request Request? @relation("WorkOrder_request_Request", fields: [requestId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vendorId String?
+  vendor Vendor? @relation("WorkOrder_vendor_Vendor", fields: [vendorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  scheduledFor DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  statusEvents StatusEvent[] @relation("StatusEvent_workOrder_WorkOrder")
+  @@index([requestId])
+  @@index([vendorId])
+}
+
+model Vendor {
+  id String @id @default(cuid())
+  name String
+  trade String?
+  contact String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workOrders WorkOrder[] @relation("WorkOrder_vendor_Vendor")
+}
+
+model StatusEvent {
+  id String @id @default(cuid())
+  workOrderId String?
+  workOrder WorkOrder? @relation("StatusEvent_workOrder_WorkOrder", fields: [workOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([workOrderId])
+}

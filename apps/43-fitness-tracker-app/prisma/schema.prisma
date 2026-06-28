@@ -1,0 +1,100 @@
+// Auto-generated for FitTrack Fitness Tracker App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  routines Routine[] @relation("Routine_user_User")
+  workouts Workout[] @relation("Workout_user_User")
+  goals Goal[] @relation("Goal_user_User")
+}
+
+model Exercise {
+  id String @id @default(cuid())
+  name String
+  muscleGroup String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  routineItems RoutineItem[] @relation("RoutineItem_exercise_Exercise")
+  setLogs SetLog[] @relation("SetLog_exercise_Exercise")
+}
+
+model Routine {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Routine_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  routineItems RoutineItem[] @relation("RoutineItem_routine_Routine")
+  workouts Workout[] @relation("Workout_routine_Routine")
+  @@index([userId])
+}
+
+model RoutineItem {
+  id String @id @default(cuid())
+  routineId String?
+  routine Routine? @relation("RoutineItem_routine_Routine", fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  exerciseId String?
+  exercise Exercise? @relation("RoutineItem_exercise_Exercise", fields: [exerciseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  targetSets Int @default(0)
+  targetReps Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([routineId])
+  @@index([exerciseId])
+}
+
+model Workout {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Workout_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  routineId String?
+  routine Routine? @relation("Workout_routine_Routine", fields: [routineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  setLogs SetLog[] @relation("SetLog_workout_Workout")
+  @@index([userId])
+  @@index([routineId])
+}
+
+model SetLog {
+  id String @id @default(cuid())
+  workoutId String?
+  workout Workout? @relation("SetLog_workout_Workout", fields: [workoutId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  exerciseId String?
+  exercise Exercise? @relation("SetLog_exercise_Exercise", fields: [exerciseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  setNumber String?
+  reps Int @default(0)
+  weight String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([workoutId])
+  @@index([exerciseId])
+}
+
+model Goal {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Goal_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  metric String?
+  target String?
+  progress Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

@@ -1,0 +1,122 @@
+// Auto-generated for LearnLoop Online Course Platform. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courses Course[] @relation("Course_instructor_User")
+}
+
+model Course {
+  id String @id @default(cuid())
+  instructorId String?
+  instructor User? @relation("Course_instructor_User", fields: [instructorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  description String?
+  price Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  modules Module[] @relation("Module_course_Course")
+  enrollments Enrollment[] @relation("Enrollment_course_Course")
+  @@index([instructorId])
+}
+
+model Module {
+  id String @id @default(cuid())
+  courseId String?
+  course Course? @relation("Module_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lessons Lesson[] @relation("Lesson_module_Module")
+  @@index([courseId])
+}
+
+model Lesson {
+  id String @id @default(cuid())
+  moduleId String?
+  module Module? @relation("Lesson_module_Module", fields: [moduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  title String
+  contentType String?
+  content String?
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lessonProgresses LessonProgress[] @relation("LessonProgress_lesson_Lesson")
+  quizes Quiz[] @relation("Quiz_lesson_Lesson")
+  @@index([moduleId])
+}
+
+model Enrollment {
+  id String @id @default(cuid())
+  courseId String?
+  course Course? @relation("Enrollment_course_Course", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  progress Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lessonProgresses LessonProgress[] @relation("LessonProgress_enrollment_Enrollment")
+  payments Payment[] @relation("Payment_enrollment_Enrollment")
+  @@index([courseId])
+}
+
+model LessonProgress {
+  id String @id @default(cuid())
+  enrollmentId String?
+  enrollment Enrollment? @relation("LessonProgress_enrollment_Enrollment", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  lessonId String?
+  lesson Lesson? @relation("LessonProgress_lesson_Lesson", fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  completed Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([enrollmentId])
+  @@index([lessonId])
+}
+
+model Quiz {
+  id String @id @default(cuid())
+  lessonId String?
+  lesson Lesson? @relation("Quiz_lesson_Lesson", fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questions String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizAttempts QuizAttempt[] @relation("QuizAttempt_quiz_Quiz")
+  @@index([lessonId])
+}
+
+model QuizAttempt {
+  id String @id @default(cuid())
+  quizId String?
+  quiz Quiz? @relation("QuizAttempt_quiz_Quiz", fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?
+  score String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([quizId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  enrollmentId String?
+  enrollment Enrollment? @relation("Payment_enrollment_Enrollment", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([enrollmentId])
+}

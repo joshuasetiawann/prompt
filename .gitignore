@@ -1,0 +1,29 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+
+# Node / dependencies
+node_modules/
+
+# Next.js / build output
+.next/
+generated/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local data & secrets
+.env
+.env.local
+**/prisma/dev.db
+**/prisma/dev.db-journal
+**/prisma/*.db
+dev.db
+
+# Transient build run logs (scripts under tools/.run are kept)
+tools/.run/*.log
+tools/.run/*.out

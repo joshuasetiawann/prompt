@@ -1,0 +1,112 @@
+// Auto-generated for FreshFold Laundry Pickup & Delivery App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  addresses Address[] @relation("Address_user_User")
+  drivers Driver[] @relation("Driver_user_User")
+}
+
+model Service {
+  id String @id @default(cuid())
+  name String
+  unit String?
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_service_Service")
+}
+
+model Address {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Address_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  label String?
+  line String?
+  area String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[] @relation("Order_address_Address")
+  @@index([userId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  customerId String?
+  addressId String?
+  address Address? @relation("Order_address_Address", fields: [addressId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pickupSlot String?
+  deliverySlot String?
+  status String?
+  total Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  assignments Assignment[] @relation("Assignment_order_Order")
+  payments Payment[] @relation("Payment_order_Order")
+  @@index([addressId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  serviceId String?
+  service Service? @relation("OrderItem_service_Service", fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([serviceId])
+}
+
+model Driver {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Driver_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignments Assignment[] @relation("Assignment_driver_Driver")
+  @@index([userId])
+}
+
+model Assignment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Assignment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  driverId String?
+  driver Driver? @relation("Assignment_driver_Driver", fields: [driverId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  leg String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([driverId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Payment_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

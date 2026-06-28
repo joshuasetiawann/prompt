@@ -1,0 +1,93 @@
+// Auto-generated for ClaimDesk Insurance Claim Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Policy {
+  id String @id @default(cuid())
+  holderId String?
+  type String?
+  number String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  claims Claim[] @relation("Claim_policy_Policy")
+}
+
+model Claim {
+  id String @id @default(cuid())
+  policyId String?
+  policy Policy? @relation("Claim_policy_Policy", fields: [policyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  claimantId String?
+  type String?
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  claimDocs ClaimDoc[] @relation("ClaimDoc_claim_Claim")
+  decisions Decision[] @relation("Decision_claim_Claim")
+  payouts Payout[] @relation("Payout_claim_Claim")
+  auditLogs AuditLog[] @relation("AuditLog_claim_Claim")
+  @@index([policyId])
+}
+
+model ClaimDoc {
+  id String @id @default(cuid())
+  claimId String?
+  claim Claim? @relation("ClaimDoc_claim_Claim", fields: [claimId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([claimId])
+}
+
+model Decision {
+  id String @id @default(cuid())
+  claimId String?
+  claim Claim? @relation("Decision_claim_Claim", fields: [claimId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  adjusterId String?
+  outcome String?
+  note String?
+  decidedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([claimId])
+}
+
+model Payout {
+  id String @id @default(cuid())
+  claimId String?
+  claim Claim? @relation("Payout_claim_Claim", fields: [claimId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([claimId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  claimId String?
+  claim Claim? @relation("AuditLog_claim_Claim", fields: [claimId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([claimId])
+}

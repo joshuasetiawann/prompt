@@ -1,0 +1,90 @@
+// Auto-generated for TalentFlow Applicant Tracking System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model JobRole {
+  id String @id @default(cuid())
+  title String
+  department String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Candidate {
+  id String @id @default(cuid())
+  roleId String?
+  name String
+  email String @unique
+  resumeUrl String?
+  stage Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  interviews Interview[] @relation("Interview_candidate_Candidate")
+  scorecards Scorecard[] @relation("Scorecard_candidate_Candidate")
+  offers Offer[] @relation("Offer_candidate_Candidate")
+  activities Activity[] @relation("Activity_candidate_Candidate")
+}
+
+model Interview {
+  id String @id @default(cuid())
+  candidateId String?
+  candidate Candidate? @relation("Interview_candidate_Candidate", fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  interviewerId String?
+  scheduledFor DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([candidateId])
+}
+
+model Scorecard {
+  id String @id @default(cuid())
+  candidateId String?
+  candidate Candidate? @relation("Scorecard_candidate_Candidate", fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  interviewerId String?
+  rating Int @default(0)
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([candidateId])
+}
+
+model Offer {
+  id String @id @default(cuid())
+  candidateId String?
+  candidate Candidate? @relation("Offer_candidate_Candidate", fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status String?
+  details String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([candidateId])
+}
+
+model Activity {
+  id String @id @default(cuid())
+  candidateId String?
+  candidate Candidate? @relation("Activity_candidate_Candidate", fields: [candidateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  actorId String?
+  type String?
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([candidateId])
+}

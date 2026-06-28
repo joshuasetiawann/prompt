@@ -1,0 +1,96 @@
+// Auto-generated for LinguaGo Language Learning App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviewStates ReviewState[] @relation("ReviewState_user_User")
+  quizAttempts QuizAttempt[] @relation("QuizAttempt_user_User")
+  progresses Progress[] @relation("Progress_user_User")
+}
+
+model Lesson {
+  id String @id @default(cuid())
+  title String
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  vocabs Vocab[] @relation("Vocab_lesson_Lesson")
+  quizes Quiz[] @relation("Quiz_lesson_Lesson")
+}
+
+model Vocab {
+  id String @id @default(cuid())
+  lessonId String?
+  lesson Lesson? @relation("Vocab_lesson_Lesson", fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  term String?
+  translation String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  reviewStates ReviewState[] @relation("ReviewState_vocab_Vocab")
+  @@index([lessonId])
+}
+
+model ReviewState {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("ReviewState_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  vocabId String?
+  vocab Vocab? @relation("ReviewState_vocab_Vocab", fields: [vocabId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  ease String?
+  dueDate DateTime @default(now())
+  mastery String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([vocabId])
+}
+
+model Quiz {
+  id String @id @default(cuid())
+  lessonId String?
+  lesson Lesson? @relation("Quiz_lesson_Lesson", fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  questions String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quizAttempts QuizAttempt[] @relation("QuizAttempt_quiz_Quiz")
+  @@index([lessonId])
+}
+
+model QuizAttempt {
+  id String @id @default(cuid())
+  quizId String?
+  quiz Quiz? @relation("QuizAttempt_quiz_Quiz", fields: [quizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("QuizAttempt_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  score String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([quizId])
+  @@index([userId])
+}
+
+model Progress {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Progress_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  xp String?
+  streak Int @default(0)
+  lastActive String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

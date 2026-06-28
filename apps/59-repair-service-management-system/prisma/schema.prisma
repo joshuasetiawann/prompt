@@ -1,0 +1,98 @@
+// Auto-generated for FixItPro Repair Service Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id String @id @default(cuid())
+  name String
+  baseLaborRate Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RepairRequest {
+  id String @id @default(cuid())
+  customerId String?
+  deviceOrItem String?
+  issue String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Job {
+  id String @id @default(cuid())
+  requestId String?
+  technicianId String?
+  status String?
+  scheduledFor DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jobParts JobPart[] @relation("JobPart_job_Job")
+  invoices Invoice[] @relation("Invoice_job_Job")
+}
+
+model Part {
+  id String @id @default(cuid())
+  name String
+  stock Int @default(0)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  jobParts JobPart[] @relation("JobPart_part_Part")
+}
+
+model JobPart {
+  id String @id @default(cuid())
+  jobId String?
+  job Job? @relation("JobPart_job_Job", fields: [jobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  partId String?
+  part Part? @relation("JobPart_part_Part", fields: [partId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([jobId])
+  @@index([partId])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  jobId String?
+  job Job? @relation("Invoice_job_Job", fields: [jobId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  laborTotal Float @default(0)
+  partsTotal Float @default(0)
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  payments Payment[] @relation("Payment_invoice_Invoice")
+  @@index([jobId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  invoiceId String?
+  invoice Invoice? @relation("Payment_invoice_Invoice", fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([invoiceId])
+}

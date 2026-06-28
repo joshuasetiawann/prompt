@@ -1,0 +1,84 @@
+// Auto-generated for GearRent Rental Equipment Booking System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Equipment {
+  id String @id @default(cuid())
+  name String
+  category String?
+  dailyRate Float @default(0)
+  deposit Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  rentals Rental[] @relation("Rental_equipment_Equipment")
+  maintenances Maintenance[] @relation("Maintenance_equipment_Equipment")
+}
+
+model Rental {
+  id String @id @default(cuid())
+  equipmentId String?
+  equipment Equipment? @relation("Rental_equipment_Equipment", fields: [equipmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customerId String?
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+  status String?
+  total Float @default(0)
+  depositPaid Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  conditionLogs ConditionLog[] @relation("ConditionLog_rental_Rental")
+  payments Payment[] @relation("Payment_rental_Rental")
+  @@index([equipmentId])
+}
+
+model ConditionLog {
+  id String @id @default(cuid())
+  rentalId String?
+  rental Rental? @relation("ConditionLog_rental_Rental", fields: [rentalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  phase String?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([rentalId])
+}
+
+model Maintenance {
+  id String @id @default(cuid())
+  equipmentId String?
+  equipment Equipment? @relation("Maintenance_equipment_Equipment", fields: [equipmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  reason String?
+  until String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([equipmentId])
+}
+
+model Payment {
+  id String @id @default(cuid())
+  rentalId String?
+  rental Rental? @relation("Payment_rental_Rental", fields: [rentalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  type String?
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([rentalId])
+}

@@ -1,0 +1,93 @@
+// Auto-generated for FleetCare Logistics Fleet Maintenance System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id String @id @default(cuid())
+  plate String?
+  model String?
+  mileage Int @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  maintenanceSchedules MaintenanceSchedule[] @relation("MaintenanceSchedule_vehicle_Vehicle")
+  workOrders WorkOrder[] @relation("WorkOrder_vehicle_Vehicle")
+  inspections Inspection[] @relation("Inspection_vehicle_Vehicle")
+}
+
+model MaintenanceSchedule {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("MaintenanceSchedule_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  intervalKm String?
+  lastServiceKm String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vehicleId])
+}
+
+model WorkOrder {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("WorkOrder_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mechanicId String?
+  status String?
+  cost Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workOrderParts WorkOrderPart[] @relation("WorkOrderPart_workOrder_WorkOrder")
+  @@index([vehicleId])
+}
+
+model Part {
+  id String @id @default(cuid())
+  name String
+  stock Int @default(0)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  workOrderParts WorkOrderPart[] @relation("WorkOrderPart_part_Part")
+}
+
+model WorkOrderPart {
+  id String @id @default(cuid())
+  workOrderId String?
+  workOrder WorkOrder? @relation("WorkOrderPart_workOrder_WorkOrder", fields: [workOrderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  partId String?
+  part Part? @relation("WorkOrderPart_part_Part", fields: [partId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([workOrderId])
+  @@index([partId])
+}
+
+model Inspection {
+  id String @id @default(cuid())
+  vehicleId String?
+  vehicle Vehicle? @relation("Inspection_vehicle_Vehicle", fields: [vehicleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  driverId String?
+  passed String?
+  defects String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([vehicleId])
+}

@@ -1,0 +1,116 @@
+// Auto-generated for HabitLoop Habit Tracker App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  habits Habit[] @relation("Habit_user_User")
+  goals Goal[] @relation("Goal_user_User")
+  reminders Reminder[] @relation("Reminder_user_User")
+  milestones Milestone[] @relation("Milestone_user_User")
+  journalEntries JournalEntry[] @relation("JournalEntry_user_User")
+}
+
+model Habit {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Habit_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  frequency String?
+  target String?
+  color String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  checkIns CheckIn[] @relation("CheckIn_habit_Habit")
+  goals Goal[] @relation("Goal_habit_Habit")
+  reminders Reminder[] @relation("Reminder_habit_Habit")
+  milestones Milestone[] @relation("Milestone_habit_Habit")
+  journalEntries JournalEntry[] @relation("JournalEntry_habit_Habit")
+  @@index([userId])
+}
+
+model CheckIn {
+  id String @id @default(cuid())
+  habitId String?
+  habit Habit? @relation("CheckIn_habit_Habit", fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  done Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([habitId])
+}
+
+model Goal {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Goal_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  habitId String?
+  habit Habit? @relation("Goal_habit_Habit", fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  targetCount Int @default(0)
+  deadline DateTime @default(now())
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([habitId])
+}
+
+model Reminder {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Reminder_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  habitId String?
+  habit Habit? @relation("Reminder_habit_Habit", fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  message Int @default(0)
+  scheduledFor DateTime @default(now())
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([habitId])
+}
+
+model Milestone {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Milestone_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  habitId String?
+  habit Habit? @relation("Milestone_habit_Habit", fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  description String?
+  points Int @default(0)
+  achievedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([habitId])
+}
+
+model JournalEntry {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("JournalEntry_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  habitId String?
+  habit Habit? @relation("JournalEntry_habit_Habit", fields: [habitId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date DateTime @default(now())
+  mood String?
+  content String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([habitId])
+}

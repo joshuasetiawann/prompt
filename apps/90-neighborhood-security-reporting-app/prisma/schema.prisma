@@ -1,0 +1,83 @@
+// Auto-generated for SafeStreet Neighborhood Security Reporting App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  updates Update[] @relation("Update_author_User")
+  follows Follow[] @relation("Follow_user_User")
+}
+
+model Area {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  incidents Incident[] @relation("Incident_area_Area")
+}
+
+model Incident {
+  id String @id @default(cuid())
+  reporterId String?
+  areaId String?
+  area Area? @relation("Incident_area_Area", fields: [areaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  type String?
+  description String?
+  status String?
+  lat DateTime @default(now())
+  lng String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  incidentPhotos IncidentPhoto[] @relation("IncidentPhoto_incident_Incident")
+  updates Update[] @relation("Update_incident_Incident")
+  follows Follow[] @relation("Follow_incident_Incident")
+  @@index([areaId])
+}
+
+model IncidentPhoto {
+  id String @id @default(cuid())
+  incidentId String?
+  incident Incident? @relation("IncidentPhoto_incident_Incident", fields: [incidentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  url String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([incidentId])
+}
+
+model Update {
+  id String @id @default(cuid())
+  incidentId String?
+  incident Incident? @relation("Update_incident_Incident", fields: [incidentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Update_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([incidentId])
+  @@index([authorId])
+}
+
+model Follow {
+  id String @id @default(cuid())
+  incidentId String?
+  incident Incident? @relation("Follow_incident_Incident", fields: [incidentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String?
+  user User? @relation("Follow_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([incidentId])
+  @@index([userId])
+}

@@ -1,0 +1,98 @@
+// Auto-generated for WholesaleOne Wholesale Order Management System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id String @id @default(cuid())
+  name String
+  tierId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders Order[] @relation("Order_customer_Customer")
+}
+
+model PriceTier {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id String @id @default(cuid())
+  name String
+  basePrice Float @default(0)
+  stock Int @default(0)
+  moq String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tierPrices TierPrice[] @relation("TierPrice_product_Product")
+  orderItems OrderItem[] @relation("OrderItem_product_Product")
+}
+
+model TierPrice {
+  id String @id @default(cuid())
+  tierId String?
+  productId String?
+  product Product? @relation("TierPrice_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  price Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productId])
+}
+
+model Order {
+  id String @id @default(cuid())
+  customerId String?
+  customer Customer? @relation("Order_customer_Customer", fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  total Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orderItems OrderItem[] @relation("OrderItem_order_Order")
+  invoices Invoice[] @relation("Invoice_order_Order")
+  @@index([customerId])
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("OrderItem_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId String?
+  product Product? @relation("OrderItem_product_Product", fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  qty Int @default(0)
+  unitPrice Float @default(0)
+  lineTotal Float @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Invoice {
+  id String @id @default(cuid())
+  orderId String?
+  order Order? @relation("Invoice_order_Order", fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  amount Float @default(0)
+  status String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([orderId])
+}

@@ -1,0 +1,116 @@
+// Auto-generated for ContentForge AI Content Generator App. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projects Project[] @relation("Project_user_User")
+  generations Generation[] @relation("Generation_user_User")
+  usageCredits UsageCredit[] @relation("UsageCredit_user_User")
+  brandVoices BrandVoice[] @relation("BrandVoice_user_User")
+  variations Variation[] @relation("Variation_user_User")
+  tags Tag[] @relation("Tag_user_User")
+}
+
+model Template {
+  id String @id @default(cuid())
+  name String
+  type String?
+  fields String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  generations Generation[] @relation("Generation_template_Template")
+}
+
+model Project {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Project_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  generations Generation[] @relation("Generation_project_Project")
+  @@index([userId])
+}
+
+model Generation {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Generation_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  projectId String?
+  project Project? @relation("Generation_project_Project", fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  templateId String?
+  template Template? @relation("Generation_template_Template", fields: [templateId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  input String?
+  output String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  variations Variation[] @relation("Variation_generation_Generation")
+  @@index([userId])
+  @@index([projectId])
+  @@index([templateId])
+}
+
+model UsageCredit {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("UsageCredit_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  period String?
+  used String?
+  limit String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model BrandVoice {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("BrandVoice_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  tone String?
+  description String?
+  isDefault Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}
+
+model Variation {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Variation_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  generationId String?
+  generation Generation? @relation("Variation_generation_Generation", fields: [generationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  content String?
+  rating Int @default(0)
+  isStarred Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([generationId])
+}
+
+model Tag {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation("Tag_user_User", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name String
+  color String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+}

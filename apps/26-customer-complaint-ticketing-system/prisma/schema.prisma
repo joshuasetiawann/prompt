@@ -1,0 +1,125 @@
+// Auto-generated for HelpTrack Customer Complaint Ticketing System. Edit prisma/schema.prisma to evolve the data model.
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  passwordHash String?
+  name String
+  role String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets Ticket[] @relation("Ticket_assignee_User")
+  messages Message[] @relation("Message_author_User")
+  cannedResponses CannedResponse[] @relation("CannedResponse_createdBy_User")
+  attachments Attachment[] @relation("Attachment_uploadedBy_User")
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets Ticket[] @relation("Ticket_category_Category")
+  cannedResponses CannedResponse[] @relation("CannedResponse_category_Category")
+  slaPolicies SlaPolicy[] @relation("SlaPolicy_category_Category")
+}
+
+model Ticket {
+  id String @id @default(cuid())
+  customerId String?
+  categoryId String?
+  category Category? @relation("Ticket_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subject String?
+  priority String?
+  status String?
+  assigneeId String?
+  assignee User? @relation("Ticket_assignee_User", fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  dueAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages Message[] @relation("Message_ticket_Ticket")
+  auditLogs AuditLog[] @relation("AuditLog_ticket_Ticket")
+  attachments Attachment[] @relation("Attachment_ticket_Ticket")
+  @@index([categoryId])
+  @@index([assigneeId])
+}
+
+model Message {
+  id String @id @default(cuid())
+  ticketId String?
+  ticket Ticket? @relation("Message_ticket_Ticket", fields: [ticketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  authorId String?
+  author User? @relation("Message_author_User", fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  body String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  attachments Attachment[] @relation("Attachment_message_Message")
+  @@index([ticketId])
+  @@index([authorId])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  ticketId String?
+  ticket Ticket? @relation("AuditLog_ticket_Ticket", fields: [ticketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  action String?
+  actorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ticketId])
+}
+
+model CannedResponse {
+  id String @id @default(cuid())
+  title String
+  body String?
+  categoryId String?
+  category Category? @relation("CannedResponse_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdById String?
+  createdBy User? @relation("CannedResponse_createdBy_User", fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([categoryId])
+  @@index([createdById])
+}
+
+model Attachment {
+  id String @id @default(cuid())
+  ticketId String?
+  ticket Ticket? @relation("Attachment_ticket_Ticket", fields: [ticketId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  messageId String?
+  message Message? @relation("Attachment_message_Message", fields: [messageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fileName String?
+  fileUrl String?
+  uploadedById String?
+  uploadedBy User? @relation("Attachment_uploadedBy_User", fields: [uploadedById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([ticketId])
+  @@index([messageId])
+  @@index([uploadedById])
+}
+
+model SlaPolicy {
+  id String @id @default(cuid())
+  name String
+  categoryId String?
+  category Category? @relation("SlaPolicy_category_Category", fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  priority String?
+  responseMinutes Int @default(0)
+  resolutionMinutes Int @default(0)
+  isActive Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([categoryId])
+}
