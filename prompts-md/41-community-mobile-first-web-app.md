@@ -7,7 +7,8 @@
 | **Prompt ID** | 41 |
 | **Title** | Community Mobile-First Web App |
 | **Slug** | community-mobile-first-web-app |
-| **Category** | Community & Social |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Community & Social |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Member; Admin/Moderator |

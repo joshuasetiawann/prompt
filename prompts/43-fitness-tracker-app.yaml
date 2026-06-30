@@ -2,13 +2,17 @@ prompt_id: '43'
 title: Fitness Tracker App
 slug: fitness-tracker-app
 category: Productivity & Personal
+domain: Productivity & Personal
 app_name: FitTrack Fitness Tracker App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building workout trackers for individuals or coaching clients.
 target_user: User; Admin
+target_users: people tracking their training and progress over time
+role_line: You are a senior full-stack engineer who builds fitness and workout-tracking apps
 business_goal: Let users build routines, log workouts, and see progress charts and goals
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: energetic, clean, motivating. Colors: lime, slate, white. Clean, modern, quick logging flow and clear progress charts.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -159,6 +163,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — log workouts, build routines, track progress
+- Admin — manage the exercise library (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: exercise library, 2 routines, several logged workouts over weeks, goals, 1 user (and 1 admin). Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

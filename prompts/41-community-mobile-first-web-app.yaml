@@ -1,14 +1,18 @@
 prompt_id: '41'
 title: Community Mobile-First Web App
 slug: community-mobile-first-web-app
-category: Community & Social
+category: Community, Civic & Nonprofit
+domain: Community & Social
 app_name: Hangout Community Mobile-First Web App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building mobile-first community or social apps for groups and local networks.
 target_user: Member; Admin/Moderator
+target_users: members of a local or interest-based community connecting on mobile
+role_line: You are a senior full-stack engineer who builds mobile-first social and community web apps
 business_goal: Let members post in a feed, join groups, attend events, and connect via profiles, optimized for mobile
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: friendly, lively, community-first. Colors: coral, white, deep teal accent. Clean, modern, app-like mobile layout with a bottom tab bar and thumb-friendly controls.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -190,6 +194,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Member — post, join groups, RSVP, connect
+- Admin/Moderator — manage groups, events, and moderate content
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~20 members, several groups, posts/comments/reactions, upcoming events with RSVPs, notifications, 1 admin and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

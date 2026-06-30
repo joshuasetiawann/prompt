@@ -8,6 +8,7 @@
 | **Title** | Habit Tracker App |
 | **Slug** | habit-tracker-app |
 | **Category** | Productivity & Personal |
+| **Domain** | Productivity & Personal |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Beginner |
 | **Target user** | User |
@@ -64,6 +65,9 @@
 - Calendar heatmap of completions per habit
 - Completion-rate stats overall and per habit
 - Reminder concept
+- Goals per habit with target count and deadline tracking
+- Milestones and achievements to celebrate progress
+- Daily journal entries with mood tracking
 - Per-user data
 
 ## Database models
@@ -86,11 +90,42 @@
 **Relationships:**
 - habitId -> references the related record
 
+### Goal
+**Fields:** `id`, `userId`, `habitId`, `name`, `targetCount`, `deadline`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- habitId -> references the related record
+
+### Reminder
+**Fields:** `id`, `userId`, `habitId`, `message`, `scheduledFor`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- habitId -> references the related record
+
+### Milestone
+**Fields:** `id`, `userId`, `habitId`, `name`, `description`, `points`, `achievedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- habitId -> references the related record
+
+### JournalEntry
+**Fields:** `id`, `userId`, `habitId`, `date`, `mood`, `content`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- habitId -> references the related record
+
 ## Backend logic
 
 - Check-in toggling per habit and date
 - Streak and completion-rate calculation
 - Heatmap data aggregation per habit
+- Goal progress tracking against check-in history
+- Reminder scheduling with mock notification dispatch
+- Milestone awarding when streak or goal thresholds are reached
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -192,18 +227,28 @@ CORE FEATURES
 - Calendar heatmap of completions per habit
 - Completion-rate stats overall and per habit
 - Reminder concept
+- Goals per habit with target count and deadline tracking
+- Milestones and achievements to celebrate progress
+- Daily journal entries with mood tracking
 - Per-user data
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
 - Habit: id, userId, name, frequency, target, color, createdAt, updatedAt
 - CheckIn: id, habitId, date, done, createdAt, updatedAt
+- Goal: id, userId, habitId, name, targetCount, deadline, status, createdAt, updatedAt
+- Reminder: id, userId, habitId, message, scheduledFor, isActive, createdAt, updatedAt
+- Milestone: id, userId, habitId, name, description, points, achievedAt, createdAt, updatedAt
+- JournalEntry: id, userId, habitId, date, mood, content, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Check-in toggling per habit and date
 - Streak and completion-rate calculation
 - Heatmap data aggregation per habit
+- Goal progress tracking against check-in history
+- Reminder scheduling with mock notification dispatch
+- Milestone awarding when streak or goal thresholds are reached
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

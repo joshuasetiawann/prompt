@@ -2,13 +2,17 @@ prompt_id: '45'
 title: Personal Budgeting App
 slug: personal-budgeting-app
 category: Productivity & Personal
+domain: Productivity & Personal
 app_name: BudgetWise Personal Budgeting App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building personal-finance trackers and budgeting tools.
 target_user: User
+target_users: individuals managing personal finances and savings
+role_line: You are a senior full-stack engineer who builds personal budgeting and money-tracking apps
 business_goal: Help users track spending across accounts, stick to budgets, and reach savings goals
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: friendly, trustworthy, clear. Colors: green, white, slate. Clean, modern, clean overview with charts, a transaction list, and budget bars.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -149,6 +153,11 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — manage personal finances
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 accounts, ~12 categories, ~80 transactions over recent months, budgets, 2 savings goals, 1 user. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -8,6 +8,7 @@
 | **Title** | Personal Budgeting App |
 | **Slug** | personal-budgeting-app |
 | **Category** | Productivity & Personal |
+| **Domain** | Productivity & Personal |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | User |

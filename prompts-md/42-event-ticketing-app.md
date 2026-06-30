@@ -7,7 +7,8 @@
 | **Prompt ID** | 42 |
 | **Title** | Event Ticketing App |
 | **Slug** | event-ticketing-app |
-| **Category** | E-commerce & Booking |
+| **Category** | E-commerce & Retail |
+| **Domain** | E-commerce & Booking |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Attendee; Organizer; Admin |
