@@ -7,7 +7,8 @@
 | **Prompt ID** | 80 |
 | **Title** | Logistics Fleet Maintenance System |
 | **Slug** | logistics-fleet-maintenance-system |
-| **Category** | Fleet & Maintenance |
+| **Category** | Logistics & Field Service |
+| **Domain** | Fleet & Maintenance |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/Fleet Manager; Mechanic; Driver |

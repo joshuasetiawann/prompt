@@ -1,14 +1,18 @@
 prompt_id: '77'
 title: Pharmacy Stock & Prescription Queue System
 slug: pharmacy-stock-prescription-queue-system
-category: Pharmacy & Operations
+category: Healthcare & Wellness
+domain: Pharmacy & Operations
 app_name: RxQueue Pharmacy Stock & Prescription Queue System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building stock-and-dispensing tools for pharmacies.
 target_user: Pharmacist; Technician; Admin
+target_users: pharmacists and technicians managing stock and filling prescriptions
+role_line: You are a senior full-stack engineer who builds pharmacy stock and dispensing-queue software
 business_goal: Track medicine stock and move prescriptions through a queue from received to dispensed
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clinical, efficient, organized. Colors: green, white, slate. Clean, modern, queue board plus a clear stock table.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -162,6 +166,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Pharmacist — review and dispense, manage stock
+- Technician — intake and prepare prescriptions
+- Admin — manage users and audit log
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~30 medicines with batches/expiry, sample prescriptions across queue states, stock movements, 1 admin, 1 pharmacist, 1 technician. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 76 |
 | **Title** | Medical Lab Results Portal |
 | **Slug** | medical-lab-results-portal |
-| **Category** | Healthcare Portals |
+| **Category** | Healthcare & Wellness |
+| **Domain** | Healthcare Portals |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Patient; Lab Staff; Doctor; Admin |

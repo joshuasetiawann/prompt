@@ -7,7 +7,8 @@
 | **Prompt ID** | 78 |
 | **Title** | Telemedicine Consultation Portal |
 | **Slug** | telemedicine-consultation-portal |
-| **Category** | Telehealth & Consultations |
+| **Category** | Healthcare & Wellness |
+| **Domain** | Telehealth & Consultations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Patient; Doctor; Admin |

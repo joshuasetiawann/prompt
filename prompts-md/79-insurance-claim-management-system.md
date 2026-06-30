@@ -7,7 +7,8 @@
 | **Prompt ID** | 79 |
 | **Title** | Insurance Claim Management System |
 | **Slug** | insurance-claim-management-system |
-| **Category** | Insurance & Claims |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Insurance & Claims |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Claimant; Adjuster; Admin |

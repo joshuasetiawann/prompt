@@ -7,7 +7,8 @@
 | **Prompt ID** | 77 |
 | **Title** | Pharmacy Stock & Prescription Queue System |
 | **Slug** | pharmacy-stock-prescription-queue-system |
-| **Category** | Pharmacy & Operations |
+| **Category** | Healthcare & Wellness |
+| **Domain** | Pharmacy & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Pharmacist; Technician; Admin |

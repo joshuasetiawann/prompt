@@ -1,14 +1,18 @@
 prompt_id: '76'
 title: Medical Lab Results Portal
 slug: medical-lab-results-portal
-category: Healthcare Portals
+category: Healthcare & Wellness
+domain: Healthcare Portals
 app_name: LabLink Medical Lab Results Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building secure results portals for diagnostic labs and clinics.
 target_user: Patient; Lab Staff; Doctor; Admin
+target_users: patients viewing results and lab staff and doctors managing orders and releases
+role_line: You are a senior full-stack engineer who builds secure patient-results portals for medical laboratories
 business_goal: Let labs record test results and release them securely to patients with reference ranges and history
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clinical, calm, trustworthy. Colors: teal, slate, white. Clean, modern, clear results tables with reference ranges and flags.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -152,6 +156,14 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Patient — view own results and history
+- Lab Staff — enter and release results
+- Doctor — order tests and review results
+- Admin — manage users, tests, and audit log
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: test catalog, ~10 patients, lab orders and released/unreleased results, 1 admin, 1 lab staff, 1 doctor, 2 patients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

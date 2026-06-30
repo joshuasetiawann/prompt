@@ -1,14 +1,18 @@
 prompt_id: '78'
 title: Telemedicine Consultation Portal
 slug: telemedicine-consultation-portal
-category: Telehealth & Consultations
+category: Healthcare & Wellness
+domain: Telehealth & Consultations
 app_name: MediConnect Telemedicine Consultation Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building telehealth scheduling and consultation portals.
 target_user: Patient; Doctor; Admin
+target_users: patients booking remote visits and doctors and admins running the practice
+role_line: You are a senior full-stack engineer who builds telehealth consultation and scheduling portals
 business_goal: Let patients book paid (mock) remote consultations and let doctors run visits with notes and prescriptions
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: reassuring, modern, clinical. Colors: sky blue, mint, white. Clean, modern, calm booking flow and a consultation room area.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -157,6 +161,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Patient — book and attend consultations
+- Doctor — run visits, write notes and prescriptions
+- Admin — manage doctors and oversight
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 doctors with specialties, sample consultations, notes and prescriptions, 1 admin, 1 doctor, 2 patients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

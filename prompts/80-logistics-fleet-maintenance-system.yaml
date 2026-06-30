@@ -1,14 +1,18 @@
 prompt_id: '80'
 title: Logistics Fleet Maintenance System
 slug: logistics-fleet-maintenance-system
-category: Fleet & Maintenance
+category: Logistics & Field Service
+domain: Fleet & Maintenance
 app_name: FleetCare Logistics Fleet Maintenance System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building fleet maintenance tools for logistics and transport operators (distinct from delivery tracking).
 target_user: Admin/Fleet Manager; Mechanic; Driver
+target_users: fleet managers, mechanics, and drivers keeping a vehicle fleet serviced and compliant
+role_line: You are a senior full-stack engineer who builds fleet maintenance and inspection management systems
 business_goal: Track vehicles, schedule preventive maintenance, manage work orders and parts, and log inspections
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: industrial, reliable, operational. Colors: steel blue, charcoal, amber accent. Clean, modern, fleet table with maintenance schedules and work-order board.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -161,6 +165,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/Fleet Manager — schedule maintenance and manage fleet
+- Mechanic — perform work orders and log parts
+- Driver — submit inspection checklists and defects
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~12 vehicles with schedules and history, work orders, parts, inspections, 1 admin, 2 mechanics, 2 drivers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
