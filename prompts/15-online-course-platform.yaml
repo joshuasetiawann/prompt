@@ -1,14 +1,18 @@
 prompt_id: '15'
 title: Online Course Platform
 slug: online-course-platform
-category: Education & E-learning
+category: Education & Learning
+domain: Education & E-learning
 app_name: LearnLoop Online Course Platform
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building course platforms for educators, coaches, and training businesses.
 target_user: Student; Instructor; Admin
+target_users: course creators publishing courses and students learning and tracking progress
+role_line: You are a senior full-stack engineer who builds learning management systems
 business_goal: Let creators build courses and students enroll, progress through lessons, and complete quizzes
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: focused, encouraging, modern education. Colors: indigo, white, soft green accent. Clean, modern, clean course pages, a distraction-free lesson view, and clear progress indicators.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -185,6 +189,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Student — enroll, learn, take quizzes
+- Instructor — create and manage courses
+- Admin — oversee users and courses
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 courses with modules, lessons, and quizzes, enrolled students with progress, 1 admin, 1 instructor, 2 students. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

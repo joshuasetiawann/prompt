@@ -7,7 +7,8 @@
 | **Prompt ID** | 15 |
 | **Title** | Online Course Platform |
 | **Slug** | online-course-platform |
-| **Category** | Education & E-learning |
+| **Category** | Education & Learning |
+| **Domain** | Education & E-learning |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Student; Instructor; Admin |

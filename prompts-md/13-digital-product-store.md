@@ -7,7 +7,8 @@
 | **Prompt ID** | 13 |
 | **Title** | Digital Product Store |
 | **Slug** | digital-product-store |
-| **Category** | Digital Products & E-commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | Digital Products & E-commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Customer; Admin/Creator |

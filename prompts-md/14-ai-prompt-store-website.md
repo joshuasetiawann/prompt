@@ -7,7 +7,8 @@
 | **Prompt ID** | 14 |
 | **Title** | AI Prompt Store Website |
 | **Slug** | ai-prompt-store-website |
-| **Category** | Digital Products & E-commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | Digital Products & E-commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Customer; Admin/Creator |

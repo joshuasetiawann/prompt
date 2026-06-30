@@ -1,14 +1,18 @@
 prompt_id: '12'
 title: Fashion E-commerce Store
 slug: fashion-ecommerce-store
-category: E-commerce
+category: E-commerce & Retail
+domain: E-commerce
 app_name: Thread & Co Fashion E-commerce Store
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers and agencies building stores for clothing and accessories brands.
 target_user: Customer; Admin/Owner
+target_users: fashion shoppers browsing apparel and a brand owner managing collections and orders
+role_line: You are a senior full-stack engineer who builds fashion and apparel e-commerce experiences
 business_goal: Sell apparel with size/color variants, an editorial feel, and full cart-to-order flow
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: editorial, minimal, premium fashion. Colors: black, cream, blush accent. Clean, modern, large imagery, lookbook sections, size selectors, and an elegant cart.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -194,6 +198,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — browse, wishlist, buy, track
+- Admin/Owner — manage products, collections, and orders
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 2 collections, ~24 products with size/color variants, sample wishlist and orders, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

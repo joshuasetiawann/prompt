@@ -1,14 +1,18 @@
 prompt_id: '13'
 title: Digital Product Store
 slug: digital-product-store
-category: Digital Products & E-commerce
+category: E-commerce & Retail
+domain: Digital Products & E-commerce
 app_name: PixelVault Digital Product Store
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Creators and freelancers building stores for templates, presets, graphics, and downloadable files.
 target_user: Customer; Admin/Creator
+target_users: creators selling templates, assets, or files and customers buying instant downloads
+role_line: You are a senior full-stack engineer who builds stores for digital downloads
 business_goal: Sell digital products and deliver secure download access immediately after purchase
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: sleek, creator-focused, modern. Colors: violet, near-black, electric accent. Clean, modern, bold product cards, preview galleries, and a frictionless checkout.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -161,6 +165,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — buy and download
+- Admin/Creator — manage products, files, and sales
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 categories, ~20 digital products with previews, sample orders and tokens, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

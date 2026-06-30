@@ -1,14 +1,18 @@
 prompt_id: '11'
 title: General Online Store
 slug: general-online-store
-category: E-commerce
+category: E-commerce & Retail
+domain: E-commerce
 app_name: ShopKart General Online Store
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers building stores for small brands and owners wanting a self-hosted shop.
 target_user: Customer; Admin/Owner
+target_users: online shoppers and a store owner managing products, inventory, and orders
+role_line: You are a senior full-stack engineer who builds clean, conversion-focused online stores
 business_goal: Let customers browse, add to cart, check out, and track orders, and let the owner manage the store
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, modern, retail. Colors: blue, white, soft grey. Clean, modern, crisp product grid, clear product pages, and a smooth checkout.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -194,6 +198,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — browse, buy, track
+- Admin/Owner — manage products, inventory, and orders
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 5 categories, ~30 products with variants, sample orders, a coupon, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

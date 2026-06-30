@@ -1,14 +1,18 @@
 prompt_id: '14'
 title: AI Prompt Store Website
 slug: ai-prompt-store-website
-category: Digital Products & E-commerce
+category: E-commerce & Retail
+domain: Digital Products & E-commerce
 app_name: PromptMarket AI Prompt Store Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Prompt sellers and creators who want their own storefront instead of a third-party marketplace.
 target_user: Customer; Admin/Creator
+target_users: creators selling prompt packs and buyers looking for ready-to-use prompts
+role_line: You are a senior full-stack engineer who builds digital storefronts for prompt and template products
 business_goal: Sell prompt packs, show safe previews, and unlock full prompts with copy-to-clipboard after a mock purchase
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: techy, premium, AI-native. Colors: deep indigo to violet gradient, white text, neon accent. Clean, modern, clean cards, category filters, and a readable prompt viewer.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -156,6 +160,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — buy and access prompts
+- Admin/Creator — manage packs, prompts, and sales
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 categories, ~12 packs each with several prompts and a sample, sample orders, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

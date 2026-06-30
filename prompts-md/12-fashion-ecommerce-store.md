@@ -7,7 +7,8 @@
 | **Prompt ID** | 12 |
 | **Title** | Fashion E-commerce Store |
 | **Slug** | fashion-ecommerce-store |
-| **Category** | E-commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | E-commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Customer; Admin/Owner |
