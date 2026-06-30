@@ -7,7 +7,8 @@
 | **Prompt ID** | 81 |
 | **Title** | School Admission Management System |
 | **Slug** | school-admission-management-system |
-| **Category** | Education Admissions |
+| **Category** | Education & Learning |
+| **Domain** | Education Admissions |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Applicant; Reviewer/Staff; Admin |

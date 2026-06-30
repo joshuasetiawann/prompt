@@ -7,7 +7,8 @@
 | **Prompt ID** | 84 |
 | **Title** | Library Management System |
 | **Slug** | library-management-system |
-| **Category** | Library & Lending |
+| **Category** | Education & Learning |
+| **Domain** | Library & Lending |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Member; Librarian/Admin |

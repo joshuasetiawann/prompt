@@ -7,7 +7,8 @@
 | **Prompt ID** | 82 |
 | **Title** | Parent-Teacher Communication Portal |
 | **Slug** | parent-teacher-communication-portal |
-| **Category** | Education Communication |
+| **Category** | Education & Learning |
+| **Domain** | Education Communication |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Parent; Teacher; Admin |

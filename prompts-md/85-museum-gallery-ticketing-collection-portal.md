@@ -7,7 +7,8 @@
 | **Prompt ID** | 85 |
 | **Title** | Museum / Gallery Ticketing & Collection Portal |
 | **Slug** | museum-gallery-ticketing-collection-portal |
-| **Category** | Culture & Ticketing |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Culture & Ticketing |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Visitor; Staff; Admin |

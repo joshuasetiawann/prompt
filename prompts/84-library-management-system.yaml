@@ -1,14 +1,18 @@
 prompt_id: '84'
 title: Library Management System
 slug: library-management-system
-category: Library & Lending
+category: Education & Learning
+domain: Library & Lending
 app_name: BiblioHub Library Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building catalog and circulation systems for libraries.
 target_user: Member; Librarian/Admin
+target_users: librarians managing the catalog and lending and members borrowing books
+role_line: You are a senior full-stack engineer who builds catalog and lending systems for libraries
 business_goal: Manage a catalog with copies, handle loans/returns and holds, and track fines
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: scholarly, calm, organized. Colors: forest green, cream, slate. Clean, modern, catalog search and a clean circulation desk view.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -159,6 +163,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Member — search, borrow, place holds, view fines
+- Librarian/Admin — manage catalog, circulation, and members
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~40 books with copies, ~20 members, loans, holds, and fines, 1 admin/librarian and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

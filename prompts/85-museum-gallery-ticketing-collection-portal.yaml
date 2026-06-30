@@ -1,14 +1,18 @@
 prompt_id: '85'
 title: Museum / Gallery Ticketing & Collection Portal
 slug: museum-gallery-ticketing-collection-portal
-category: Culture & Ticketing
+category: Community, Civic & Nonprofit
+domain: Culture & Ticketing
 app_name: Curate Museum / Gallery Ticketing & Collection Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building ticketing and collection portals for museums, galleries, and cultural venues.
 target_user: Visitor; Staff; Admin
+target_users: visitors buying tickets and browsing the collection, and staff managing exhibitions and entry
+role_line: You are a senior full-stack engineer who builds timed-entry ticketing and collection catalog portals for cultural venues
 business_goal: Sell timed-entry tickets to exhibitions and present a browsable collection, with staff check-in
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: cultured, elegant, minimal. Colors: charcoal, ivory, brass accent. Clean, modern, exhibition pages, a collection grid, and a timed-entry picker.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -151,6 +155,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Visitor — buy tickets and browse the collection
+- Staff — manage entry slots and check in visitors
+- Admin — manage exhibitions and the collection
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 exhibitions with entry slots, ~30 collection items, sample tickets some checked in, 1 admin, 1 staff, 2 visitors. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

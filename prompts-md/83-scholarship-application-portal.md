@@ -7,7 +7,8 @@
 | **Prompt ID** | 83 |
 | **Title** | Scholarship Application Portal |
 | **Slug** | scholarship-application-portal |
-| **Category** | Education & Scholarships |
+| **Category** | Education & Learning |
+| **Domain** | Education & Scholarships |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Applicant; Reviewer; Admin |
