@@ -41291,6 +41291,2685 @@ prompts:
     - Loading, empty, error, and success states are present; responsive layout works.
     - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
     - README setup steps and production deployment steps are complete.
+- prompt_id: '201'
+  title: Personal CRM & Relationship Manager
+  slug: personal-crm-app
+  category: Productivity & Personal
+  domain: Personal Relationship Management
+  app_name: KeepInTouch Personal CRM & Relationship Manager
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a private relationship manager for individuals who want to nurture personal and professional contacts; distinct from sales CRMs, plain address books, or team pipeline tools.
+  target_user: Indie developers; networkers, freelancers, and busy professionals
+  target_users: individuals such as freelancers, founders, and busy professionals who want to stay in touch with personal and professional contacts, plus an admin who manages the workspace
+  role_line: You are a senior full-stack engineer who builds personal-productivity apps
+  business_goal: Help individuals remember the people who matter by logging interactions, setting keep-in-touch reminders, and grouping contacts so no relationship goes cold
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: warm, personable, organized. Colors: warm sand, deep teal, coral accent. A contact-centric dashboard with a ''who to reach out to'' queue beside interaction timelines and relationship-strength badges.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Dashboard with the daily 'who to reach out to' queue and upcoming reminders
+  - Contacts list with search, filters, and group segments
+  - Contact detail with interaction timeline and relationship-strength badge
+  - Add / edit contact form with custom fields and important dates
+  - Interaction log timeline across all contacts
+  - Reminders and follow-ups calendar with snooze
+  - Groups and tags manager
+  - Settings (profile and keep-in-touch defaults)
+  - Admin console (users and workspace activity)
+  - Auth (sign in / register)
+  required_features:
+  - Contact profiles with custom fields, company, birthday, and a 'how we met' note
+  - Interaction logging for calls, meetings, and messages with a per-contact timeline
+  - Keep-in-touch cadences that surface a daily 'who to reach out to' queue
+  - Reminders and follow-ups with a calendar, snooze, and completion
+  - Relationship-strength scoring based on recency and frequency of contact
+  - Groups and tags to segment contacts into family, work, and network
+  - Full-text search across contacts, notes, and interactions
+  - Birthday and important-date tracking with upcoming-date reminders
+  - CSV import and export of contacts with duplicate detection
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Contact
+    fields:
+    - id
+    - ownerId
+    - fullName
+    - email
+    - phone
+    - company
+    - howWeMet
+    - birthday
+    - cadenceDays
+    - lastContactedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: Interaction
+    fields:
+    - id
+    - contactId
+    - ownerId
+    - type
+    - note
+    - occurredAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - contactId -> references the related record
+    - ownerId -> references the related record
+  - name: Reminder
+    fields:
+    - id
+    - contactId
+    - ownerId
+    - dueDate
+    - message
+    - status
+    - createdAt
+    - updatedAt
+    relationships:
+    - contactId -> references the related record
+    - ownerId -> references the related record
+  - name: Group
+    fields:
+    - id
+    - ownerId
+    - name
+    - color
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: ContactGroup
+    fields:
+    - id
+    - contactId
+    - groupId
+    - createdAt
+    - updatedAt
+    relationships:
+    - contactId -> references the related record
+    - groupId -> references the related record
+  - name: ImportantDate
+    fields:
+    - id
+    - contactId
+    - ownerId
+    - label
+    - date
+    - recurring
+    - createdAt
+    - updatedAt
+    relationships:
+    - contactId -> references the related record
+    - ownerId -> references the related record
+  backend_logic:
+  - Compute the daily 'who to reach out to' queue from each contact's cadence and lastContactedAt
+  - Log an interaction, then update the contact's lastContactedAt and recompute its relationship-strength score
+  - Generate a keep-in-touch reminder when a contact's cadence elapses without contact
+  - Calculate relationship-strength scores from interaction recency and frequency
+  - Surface upcoming birthdays and important dates within a configurable window
+  - Import contacts from a CSV file, deduplicating against existing records by email
+  - Snooze or complete a reminder and reschedule the next follow-up
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - User — manage their own contacts, log interactions, and set keep-in-touch reminders
+  - Admin — manage all users, review workspace activity, and configure reminder defaults
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 30 contacts across 5 groups, ~80 logged interactions, sample reminders and important dates, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Logging an interaction with a contact updates their lastContactedAt and removes them from today's reach-out queue until their cadence elapses again
+  - A contact whose cadence has elapsed appears in the 'who to reach out to' queue and generates a keep-in-touch reminder
+  - Importing a CSV row whose email matches an existing contact merges into that contact instead of creating a duplicate
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds personal-productivity apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: KeepInTouch Personal CRM & Relationship Manager
+    Type: Personal CRM & Relationship Manager (Personal Relationship Management)
+    Target users: individuals such as freelancers, founders, and busy professionals who want to stay in touch with personal and professional contacts, plus an admin who manages the workspace.
+    Business goal: Help individuals remember the people who matter by logging interactions, setting keep-in-touch reminders, and grouping contacts so no relationship goes cold.
+
+    BRAND & DESIGN
+    Brand style: warm, personable, organized. Colors: warm sand, deep teal, coral accent. A contact-centric dashboard with a 'who to reach out to' queue beside interaction timelines and relationship-strength badges. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Dashboard with the daily 'who to reach out to' queue and upcoming reminders
+    2. Contacts list with search, filters, and group segments
+    3. Contact detail with interaction timeline and relationship-strength badge
+    4. Add / edit contact form with custom fields and important dates
+    5. Interaction log timeline across all contacts
+    6. Reminders and follow-ups calendar with snooze
+    7. Groups and tags manager
+    8. Settings (profile and keep-in-touch defaults)
+    9. Admin console (users and workspace activity)
+    10. Auth (sign in / register)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - User — manage their own contacts, log interactions, and set keep-in-touch reminders
+    - Admin — manage all users, review workspace activity, and configure reminder defaults
+
+    CORE FEATURES
+    - Contact profiles with custom fields, company, birthday, and a 'how we met' note
+    - Interaction logging for calls, meetings, and messages with a per-contact timeline
+    - Keep-in-touch cadences that surface a daily 'who to reach out to' queue
+    - Reminders and follow-ups with a calendar, snooze, and completion
+    - Relationship-strength scoring based on recency and frequency of contact
+    - Groups and tags to segment contacts into family, work, and network
+    - Full-text search across contacts, notes, and interactions
+    - Birthday and important-date tracking with upcoming-date reminders
+    - CSV import and export of contacts with duplicate detection
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, createdAt, updatedAt
+    - Contact: id, ownerId, fullName, email, phone, company, howWeMet, birthday, cadenceDays, lastContactedAt, createdAt, updatedAt
+    - Interaction: id, contactId, ownerId, type, note, occurredAt, createdAt, updatedAt
+    - Reminder: id, contactId, ownerId, dueDate, message, status, createdAt, updatedAt
+    - Group: id, ownerId, name, color, createdAt, updatedAt
+    - ContactGroup: id, contactId, groupId, createdAt, updatedAt
+    - ImportantDate: id, contactId, ownerId, label, date, recurring, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Compute the daily 'who to reach out to' queue from each contact's cadence and lastContactedAt
+    - Log an interaction, then update the contact's lastContactedAt and recompute its relationship-strength score
+    - Generate a keep-in-touch reminder when a contact's cadence elapses without contact
+    - Calculate relationship-strength scores from interaction recency and frequency
+    - Surface upcoming birthdays and important dates within a configurable window
+    - Import contacts from a CSV file, deduplicating against existing records by email
+    - Snooze or complete a reminder and reschedule the next follow-up
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 30 contacts across 5 groups, ~80 logged interactions, sample reminders and important dates, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '202'
+  title: Daily Journal & Mood Tracker
+  slug: journal-mood-tracker-app
+  category: Productivity & Personal
+  domain: Journaling & Wellbeing
+  app_name: MoodLeaf Daily Journal & Mood Tracker
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a private journaling and mood-tracking app for individuals focused on self-reflection and emotional wellbeing; distinct from clinical therapy tools, team wellness platforms, or generic note apps.
+  target_user: Indie developers; people building a daily reflection and wellbeing habit
+  target_users: individuals who want to write daily journal entries, log their mood and energy, and reflect on emotional patterns over time, plus an admin who manages the workspace
+  role_line: You are a senior full-stack engineer who builds journaling and wellbeing apps
+  business_goal: Help people build a daily reflection habit by writing journal entries, logging mood and energy, and surfacing emotional patterns and streaks over time
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: calm, reflective, gentle. Colors: soft sage, warm cream, dusty lavender. A distraction-free writing canvas paired with a mood-color calendar and weekly insight cards.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Today / new entry composer with a mood and energy check-in
+  - Journal timeline of past entries
+  - Entry detail and edit view
+  - Mood calendar color-coded by daily mood
+  - Insights and trends dashboard (mood and energy over time)
+  - Reflection prompts library
+  - Habits and gratitude tracker
+  - Settings (profile, reminders, and privacy lock)
+  - Admin console (users and prompt management)
+  - Auth (sign in / register)
+  required_features:
+  - Rich daily journal entries with title, body, and optional photo attachments
+  - Mood and energy check-ins on a defined scale with optional emotion tags
+  - Color-coded mood calendar that shows each day at a glance
+  - Insights dashboard charting mood and energy trends across weeks and months
+  - Guided reflection prompts to overcome blank-page anxiety
+  - Daily gratitude list and habit check-ins tied to each entry
+  - Writing streaks and daily reminders to journal
+  - Full-text search and filtering of entries by mood, emotion tag, or date
+  - Optional privacy lock with a PIN to protect journal contents
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: JournalEntry
+    fields:
+    - id
+    - ownerId
+    - entryDate
+    - title
+    - body
+    - moodScore
+    - energyScore
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: EmotionTag
+    fields:
+    - id
+    - ownerId
+    - name
+    - color
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: EntryEmotion
+    fields:
+    - id
+    - entryId
+    - emotionTagId
+    - createdAt
+    - updatedAt
+    relationships:
+    - entryId -> references the related record
+    - emotionTagId -> references the related record
+  - name: GratitudeItem
+    fields:
+    - id
+    - entryId
+    - ownerId
+    - text
+    - createdAt
+    - updatedAt
+    relationships:
+    - entryId -> references the related record
+    - ownerId -> references the related record
+  - name: HabitCheck
+    fields:
+    - id
+    - ownerId
+    - entryId
+    - habitName
+    - completed
+    - checkDate
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - entryId -> references the related record
+  - name: Prompt
+    fields:
+    - id
+    - category
+    - text
+    - isActive
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  backend_logic:
+  - Create or open the journal entry for a given date and attach the day's mood and energy check-in
+  - Aggregate mood and energy scores into weekly and monthly trend series for the insights dashboard
+  - Compute the current and longest writing streak from entry dates
+  - Serve a randomized or category-filtered reflection prompt for the day
+  - Run full-text search across entry titles and bodies filtered by mood, emotion tag, and date range
+  - Correlate logged emotions and habit checks with mood scores to surface simple patterns
+  - Verify a privacy PIN before unlocking and returning journal contents
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - User — write journal entries, log moods, and view their own insights and streaks
+  - Admin — manage users, review aggregate usage, and curate the reflection-prompt library
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: ~60 journal entries across recent dates with mood and energy logs, emotion tags, gratitude items, a reflection-prompt library, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Creating a second entry for a date that already has one opens the existing entry instead of creating a duplicate
+  - The mood calendar colors each day by that day's logged mood and the insights chart reflects the same underlying data
+  - The writing-streak counter increases on consecutive days with entries and resets after a missed day
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds journaling and wellbeing apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: MoodLeaf Daily Journal & Mood Tracker
+    Type: Daily Journal & Mood Tracker (Journaling & Wellbeing)
+    Target users: individuals who want to write daily journal entries, log their mood and energy, and reflect on emotional patterns over time, plus an admin who manages the workspace.
+    Business goal: Help people build a daily reflection habit by writing journal entries, logging mood and energy, and surfacing emotional patterns and streaks over time.
+
+    BRAND & DESIGN
+    Brand style: calm, reflective, gentle. Colors: soft sage, warm cream, dusty lavender. A distraction-free writing canvas paired with a mood-color calendar and weekly insight cards. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Today / new entry composer with a mood and energy check-in
+    2. Journal timeline of past entries
+    3. Entry detail and edit view
+    4. Mood calendar color-coded by daily mood
+    5. Insights and trends dashboard (mood and energy over time)
+    6. Reflection prompts library
+    7. Habits and gratitude tracker
+    8. Settings (profile, reminders, and privacy lock)
+    9. Admin console (users and prompt management)
+    10. Auth (sign in / register)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - User — write journal entries, log moods, and view their own insights and streaks
+    - Admin — manage users, review aggregate usage, and curate the reflection-prompt library
+
+    CORE FEATURES
+    - Rich daily journal entries with title, body, and optional photo attachments
+    - Mood and energy check-ins on a defined scale with optional emotion tags
+    - Color-coded mood calendar that shows each day at a glance
+    - Insights dashboard charting mood and energy trends across weeks and months
+    - Guided reflection prompts to overcome blank-page anxiety
+    - Daily gratitude list and habit check-ins tied to each entry
+    - Writing streaks and daily reminders to journal
+    - Full-text search and filtering of entries by mood, emotion tag, or date
+    - Optional privacy lock with a PIN to protect journal contents
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, createdAt, updatedAt
+    - JournalEntry: id, ownerId, entryDate, title, body, moodScore, energyScore, createdAt, updatedAt
+    - EmotionTag: id, ownerId, name, color, createdAt, updatedAt
+    - EntryEmotion: id, entryId, emotionTagId, createdAt, updatedAt
+    - GratitudeItem: id, entryId, ownerId, text, createdAt, updatedAt
+    - HabitCheck: id, ownerId, entryId, habitName, completed, checkDate, createdAt, updatedAt
+    - Prompt: id, category, text, isActive, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Create or open the journal entry for a given date and attach the day's mood and energy check-in
+    - Aggregate mood and energy scores into weekly and monthly trend series for the insights dashboard
+    - Compute the current and longest writing streak from entry dates
+    - Serve a randomized or category-filtered reflection prompt for the day
+    - Run full-text search across entry titles and bodies filtered by mood, emotion tag, and date range
+    - Correlate logged emotions and habit checks with mood scores to surface simple patterns
+    - Verify a privacy PIN before unlocking and returning journal contents
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: ~60 journal entries across recent dates with mood and energy logs, emotion tags, gratitude items, a reflection-prompt library, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '203'
+  title: Pomodoro Focus & Time Tracker
+  slug: focus-time-tracker-app
+  category: Productivity & Personal
+  domain: Focus & Time Tracking
+  app_name: FocusFlow Pomodoro Focus & Time Tracker
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a focus timer and personal time-tracking app for individuals who use the Pomodoro technique for deep work; distinct from team time-billing tools, project management suites, or plain stopwatch apps.
+  target_user: Indie developers; students, remote workers, and freelancers who want to focus
+  target_users: individuals such as students, remote workers, and freelancers who run focus sessions with the Pomodoro technique and track time against their tasks and projects, plus an admin who manages the workspace
+  role_line: You are a senior full-stack engineer who builds focus and time-tracking apps
+  business_goal: Help people do focused work by running customizable Pomodoro sessions, tracking time against tasks and projects, and reviewing where their focused hours went
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: focused, energetic, minimal. Colors: charcoal, tomato red, mint accent. A large central countdown timer with a task picker above it and a daily focus-stats strip below.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Focus timer with the active Pomodoro session and a task picker
+  - Dashboard / today's focus overview with goal progress
+  - Tasks list with pomodoro estimates and completed counts
+  - Projects list and project detail with rolled-up time
+  - Session history timeline
+  - Reports and analytics (focus time by day, project, and task)
+  - Timer presets manager
+  - Settings (profile and notification preferences)
+  - Admin console (users and timer defaults)
+  - Auth (sign in / register)
+  required_features:
+  - Customizable Pomodoro timer with work, short-break, and long-break intervals
+  - Task list with pomodoro estimates and an automatic count of completed sessions
+  - Projects that group tasks and roll up total focused time
+  - Automatic logging of each completed focus session against its task
+  - Daily and weekly focus reports with charts by project and task
+  - Daily focus-time goals with a focus streak
+  - Distraction log to capture interruptions during a session
+  - Configurable timer presets with auto-start of breaks and sessions
+  - Browser notifications and sounds at each interval transition
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - dailyFocusGoalMinutes
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Project
+    fields:
+    - id
+    - ownerId
+    - name
+    - color
+    - isArchived
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: Task
+    fields:
+    - id
+    - ownerId
+    - projectId
+    - title
+    - estimatePomodoros
+    - completedPomodoros
+    - status
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - projectId -> references the related record
+  - name: FocusSession
+    fields:
+    - id
+    - ownerId
+    - taskId
+    - type
+    - startedAt
+    - endedAt
+    - durationMinutes
+    - completed
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - taskId -> references the related record
+  - name: TimerPreset
+    fields:
+    - id
+    - ownerId
+    - name
+    - workMinutes
+    - shortBreakMinutes
+    - longBreakMinutes
+    - longBreakInterval
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: Distraction
+    fields:
+    - id
+    - sessionId
+    - ownerId
+    - note
+    - loggedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - sessionId -> references the related record
+    - ownerId -> references the related record
+  backend_logic:
+  - Start, pause, and complete a focus session and persist its duration against the selected task
+  - Increment a task's completedPomodoros count when a work session finishes
+  - Roll up focused minutes by task, project, and day for the reports dashboard
+  - Track daily focus-time goals and compute the current focus streak from session dates
+  - Apply a timer preset's work and break intervals and decide when a long break is due
+  - Record distractions logged during an active session and attach them to it
+  - Aggregate session history into a chronological timeline scoped to the current user
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - User — run focus sessions, manage tasks and projects, and view their own time reports
+  - Admin — manage users, review workspace usage, and configure default timer settings
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 3 projects, ~20 tasks, ~120 focus sessions across recent days, timer presets and sample distractions, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Completing a work session logs its duration against the selected task and increments that task's completedPomodoros count
+  - After the preset's configured number of work sessions the timer offers a long break instead of a short break
+  - The reports dashboard totals focused minutes per project and matches the sum of that project's logged sessions
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds focus and time-tracking apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: FocusFlow Pomodoro Focus & Time Tracker
+    Type: Pomodoro Focus & Time Tracker (Focus & Time Tracking)
+    Target users: individuals such as students, remote workers, and freelancers who run focus sessions with the Pomodoro technique and track time against their tasks and projects, plus an admin who manages the workspace.
+    Business goal: Help people do focused work by running customizable Pomodoro sessions, tracking time against tasks and projects, and reviewing where their focused hours went.
+
+    BRAND & DESIGN
+    Brand style: focused, energetic, minimal. Colors: charcoal, tomato red, mint accent. A large central countdown timer with a task picker above it and a daily focus-stats strip below. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Focus timer with the active Pomodoro session and a task picker
+    2. Dashboard / today's focus overview with goal progress
+    3. Tasks list with pomodoro estimates and completed counts
+    4. Projects list and project detail with rolled-up time
+    5. Session history timeline
+    6. Reports and analytics (focus time by day, project, and task)
+    7. Timer presets manager
+    8. Settings (profile and notification preferences)
+    9. Admin console (users and timer defaults)
+    10. Auth (sign in / register)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - User — run focus sessions, manage tasks and projects, and view their own time reports
+    - Admin — manage users, review workspace usage, and configure default timer settings
+
+    CORE FEATURES
+    - Customizable Pomodoro timer with work, short-break, and long-break intervals
+    - Task list with pomodoro estimates and an automatic count of completed sessions
+    - Projects that group tasks and roll up total focused time
+    - Automatic logging of each completed focus session against its task
+    - Daily and weekly focus reports with charts by project and task
+    - Daily focus-time goals with a focus streak
+    - Distraction log to capture interruptions during a session
+    - Configurable timer presets with auto-start of breaks and sessions
+    - Browser notifications and sounds at each interval transition
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, dailyFocusGoalMinutes, createdAt, updatedAt
+    - Project: id, ownerId, name, color, isArchived, createdAt, updatedAt
+    - Task: id, ownerId, projectId, title, estimatePomodoros, completedPomodoros, status, createdAt, updatedAt
+    - FocusSession: id, ownerId, taskId, type, startedAt, endedAt, durationMinutes, completed, createdAt, updatedAt
+    - TimerPreset: id, ownerId, name, workMinutes, shortBreakMinutes, longBreakMinutes, longBreakInterval, createdAt, updatedAt
+    - Distraction: id, sessionId, ownerId, note, loggedAt, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Start, pause, and complete a focus session and persist its duration against the selected task
+    - Increment a task's completedPomodoros count when a work session finishes
+    - Roll up focused minutes by task, project, and day for the reports dashboard
+    - Track daily focus-time goals and compute the current focus streak from session dates
+    - Apply a timer preset's work and break intervals and decide when a long break is due
+    - Record distractions logged during an active session and attach them to it
+    - Aggregate session history into a chronological timeline scoped to the current user
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 3 projects, ~20 tasks, ~120 focus sessions across recent days, timer presets and sample distractions, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '204'
+  title: Reading List & Bookmark Manager
+  slug: reading-list-bookmark-app
+  category: Productivity & Personal
+  domain: Reading & Bookmarks
+  app_name: ReadStack Reading List & Bookmark Manager
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a personal read-it-later and bookmark organizer for individuals who save articles, videos, and links; distinct from team knowledge bases, social bookmarking networks, or the browser bookmark bar.
+  target_user: Indie developers; readers and researchers who save articles and links
+  target_users: individuals who save articles, videos, and links to read later, organize them with folders and tags, and track what they have read, plus an admin who manages the workspace
+  role_line: You are a senior full-stack engineer who builds personal-productivity apps
+  business_goal: Help people capture links to read later, organize them into folders and tags, and actually finish their reading by tracking progress, highlights, and reading time
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: clean, literary, focused. Colors: paper white, ink navy, amber highlight. A card-and-list library with a folder sidebar, status filters, and a distraction-free reader view.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Library of all saved items with status and type filters
+  - Add bookmark by URL with auto-fetched metadata preview
+  - Reader view (distraction-free article with highlights and notes)
+  - Folders and collections browser
+  - Tags browser
+  - Reading queue (prioritized 'to read' list)
+  - Highlights and notes collection
+  - Stats and reading-habits dashboard
+  - Settings (profile, import/export, and admin user management)
+  - Auth (sign in / register)
+  required_features:
+  - Save bookmarks by URL with automatically fetched title, description, favicon, and cover image
+  - Reading-status workflow (unread, reading, archived) with a prioritized reading queue
+  - Folders and collections plus tags to organize saved items
+  - Distraction-free reader view that extracts the article's main content
+  - Highlights and inline notes on saved articles
+  - Full-text search across titles, descriptions, tags, and notes
+  - 'Reading stats: items saved versus read, reading streaks, and time estimates'
+  - Estimated reading time computed from article length
+  - Import and export of bookmarks via HTML/CSV plus a save-this-link bookmarklet
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Bookmark
+    fields:
+    - id
+    - ownerId
+    - folderId
+    - url
+    - title
+    - description
+    - coverImageUrl
+    - faviconUrl
+    - status
+    - estimatedMinutes
+    - readAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - folderId -> references the related record
+  - name: Folder
+    fields:
+    - id
+    - ownerId
+    - parentId
+    - name
+    - color
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - parentId -> references the related record
+  - name: Tag
+    fields:
+    - id
+    - ownerId
+    - name
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: BookmarkTag
+    fields:
+    - id
+    - bookmarkId
+    - tagId
+    - createdAt
+    - updatedAt
+    relationships:
+    - bookmarkId -> references the related record
+    - tagId -> references the related record
+  - name: Highlight
+    fields:
+    - id
+    - bookmarkId
+    - ownerId
+    - quotedText
+    - note
+    - createdAt
+    - updatedAt
+    relationships:
+    - bookmarkId -> references the related record
+    - ownerId -> references the related record
+  - name: ReadingProgress
+    fields:
+    - id
+    - bookmarkId
+    - ownerId
+    - percentRead
+    - lastReadAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - bookmarkId -> references the related record
+    - ownerId -> references the related record
+  backend_logic:
+  - Fetch and parse Open Graph metadata from a submitted URL to populate title, description, favicon, and cover image
+  - Extract the article's main content for the distraction-free reader view
+  - Compute estimated reading time from the extracted article word count
+  - Transition a bookmark's reading status and record readAt when it is archived
+  - Build the prioritized reading queue from status, date saved, and estimated time
+  - Run full-text search across titles, descriptions, tags, and highlight notes
+  - Import bookmarks from an HTML/CSV file and export the library, deduplicating by URL
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - User — save and organize bookmarks, track reading status, and add highlights and notes
+  - Admin — manage users, review workspace activity, and configure default folders and tags
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: ~50 bookmarks across 6 folders and assorted tags, sample highlights and reading progress, mixed unread/reading/archived statuses, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Saving a URL auto-fetches its title, description, and cover image and files it into the reading queue as unread
+  - Marking a bookmark as read sets its readAt timestamp and moves it out of the reading queue into the archive
+  - Estimated reading time is calculated from the extracted article length and shown on each card
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds personal-productivity apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: ReadStack Reading List & Bookmark Manager
+    Type: Reading List & Bookmark Manager (Reading & Bookmarks)
+    Target users: individuals who save articles, videos, and links to read later, organize them with folders and tags, and track what they have read, plus an admin who manages the workspace.
+    Business goal: Help people capture links to read later, organize them into folders and tags, and actually finish their reading by tracking progress, highlights, and reading time.
+
+    BRAND & DESIGN
+    Brand style: clean, literary, focused. Colors: paper white, ink navy, amber highlight. A card-and-list library with a folder sidebar, status filters, and a distraction-free reader view. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Library of all saved items with status and type filters
+    2. Add bookmark by URL with auto-fetched metadata preview
+    3. Reader view (distraction-free article with highlights and notes)
+    4. Folders and collections browser
+    5. Tags browser
+    6. Reading queue (prioritized 'to read' list)
+    7. Highlights and notes collection
+    8. Stats and reading-habits dashboard
+    9. Settings (profile, import/export, and admin user management)
+    10. Auth (sign in / register)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - User — save and organize bookmarks, track reading status, and add highlights and notes
+    - Admin — manage users, review workspace activity, and configure default folders and tags
+
+    CORE FEATURES
+    - Save bookmarks by URL with automatically fetched title, description, favicon, and cover image
+    - Reading-status workflow (unread, reading, archived) with a prioritized reading queue
+    - Folders and collections plus tags to organize saved items
+    - Distraction-free reader view that extracts the article's main content
+    - Highlights and inline notes on saved articles
+    - Full-text search across titles, descriptions, tags, and notes
+    - Reading stats: items saved versus read, reading streaks, and time estimates
+    - Estimated reading time computed from article length
+    - Import and export of bookmarks via HTML/CSV plus a save-this-link bookmarklet
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, createdAt, updatedAt
+    - Bookmark: id, ownerId, folderId, url, title, description, coverImageUrl, faviconUrl, status, estimatedMinutes, readAt, createdAt, updatedAt
+    - Folder: id, ownerId, parentId, name, color, createdAt, updatedAt
+    - Tag: id, ownerId, name, createdAt, updatedAt
+    - BookmarkTag: id, bookmarkId, tagId, createdAt, updatedAt
+    - Highlight: id, bookmarkId, ownerId, quotedText, note, createdAt, updatedAt
+    - ReadingProgress: id, bookmarkId, ownerId, percentRead, lastReadAt, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Fetch and parse Open Graph metadata from a submitted URL to populate title, description, favicon, and cover image
+    - Extract the article's main content for the distraction-free reader view
+    - Compute estimated reading time from the extracted article word count
+    - Transition a bookmark's reading status and record readAt when it is archived
+    - Build the prioritized reading queue from status, date saved, and estimated time
+    - Run full-text search across titles, descriptions, tags, and highlight notes
+    - Import bookmarks from an HTML/CSV file and export the library, deduplicating by URL
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: ~50 bookmarks across 6 folders and assorted tags, sample highlights and reading progress, mixed unread/reading/archived statuses, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '205'
+  title: Meal Planner & Recipe Organizer
+  slug: meal-planner-recipe-app
+  category: Productivity & Personal
+  domain: Meal Planning & Recipes
+  app_name: PlatePlan Meal Planner & Recipe Organizer
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building meal-planning or recipe-organizer tools for home cooks and households; distinct from grocery-delivery, restaurant POS, or nutrition-coaching apps.
+  target_user: Indie developers; home cooks and meal-prep planners
+  target_users: home cooks and meal-prep planners who save recipes, schedule weekly menus, and build shopping lists, plus household members they invite to shared plans as editors or viewers
+  role_line: You are a senior full-stack engineer who builds meal planning and recipe organization products
+  business_goal: Let users save recipes, plan weekly meals on a calendar, auto-generate consolidated shopping lists, and share plans with household members as editors or viewers
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: fresh, appetizing, organized. Colors: basil green, warm cream, tomato red. A weekly calendar grid of meal cards beside a recipe library and an auto-built shopping list panel.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Dashboard / this week's meal plan with upcoming meals and quick recipe access
+  - Recipe library (browse, search, and filter recipes)
+  - Recipe detail / cook mode with scaled ingredients and ordered steps
+  - Recipe editor (create or edit ingredients, steps, servings, times, and tags)
+  - Weekly meal planner calendar (assign recipes to breakfast, lunch, and dinner slots)
+  - Shopping list (auto-consolidated and grouped by grocery aisle)
+  - Household sharing and member management
+  - Auth (sign in / register)
+  - Settings and account admin (profile, dietary preferences, and preferred units)
+  required_features:
+  - Recipe editor capturing ingredients with quantities and units, ordered steps, servings, prep and cook time, and tags
+  - Recipe detail with a cook mode and on-the-fly scaling to a target serving count
+  - Weekly meal planner calendar that assigns recipes to breakfast, lunch, and dinner slots per day
+  - Auto-generated shopping list that aggregates ingredients across the planned week and merges duplicates by name and unit
+  - Shopping list grouped by grocery aisle with persisted check-off state
+  - Full-text recipe search and filtering by ingredient, cuisine, tag, or total time
+  - Meal plan sharing with household members as editor or viewer
+  - Recipe import that parses pasted recipe text into structured ingredients and ordered steps
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - dietaryPreferences
+    - preferredUnits
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Recipe
+    fields:
+    - id
+    - ownerId
+    - title
+    - description
+    - servings
+    - prepMinutes
+    - cookMinutes
+    - cuisine
+    - instructions
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: Ingredient
+    fields:
+    - id
+    - recipeId
+    - name
+    - quantity
+    - unit
+    - aisle
+    - createdAt
+    - updatedAt
+    relationships:
+    - recipeId -> references the related record
+  - name: MealPlan
+    fields:
+    - id
+    - ownerId
+    - title
+    - weekStartDate
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: PlannedMeal
+    fields:
+    - id
+    - mealPlanId
+    - recipeId
+    - mealDate
+    - mealSlot
+    - servings
+    - createdAt
+    - updatedAt
+    relationships:
+    - mealPlanId -> references the related record
+    - recipeId -> references the related record
+  - name: ShoppingListItem
+    fields:
+    - id
+    - mealPlanId
+    - name
+    - quantity
+    - unit
+    - aisle
+    - isChecked
+    - createdAt
+    - updatedAt
+    relationships:
+    - mealPlanId -> references the related record
+  - name: MealPlanShare
+    fields:
+    - id
+    - mealPlanId
+    - userId
+    - role
+    - invitedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - mealPlanId -> references the related record
+    - userId -> references the related record
+  backend_logic:
+  - Parse pasted recipe text into structured ingredient rows and ordered instruction steps
+  - Scale a recipe's ingredient quantities from its base servings to a requested serving count
+  - Generate a shopping list by aggregating ingredients across all planned meals in a meal plan and merging duplicates by name and unit
+  - Group shopping list items by grocery aisle and recompute the list when planned meals or servings change
+  - Assign recipes to date and meal-slot positions on the weekly planner and move them between days
+  - Invite household members to a meal plan as editor or viewer and enforce that role on plan and recipe edits
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - Owner — create recipes and meal plans, manage the household, and invite members
+  - Editor — edit shared meal plans and the recipes within them
+  - Viewer — view shared meal plans, recipes, and shopping lists
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 5 weekly meal plans, ~40 recipes with ingredients, an auto-generated shopping list grouped by aisle, a plan shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Assigning a recipe to a day on the planner and changing its serving count updates the consolidated shopping list quantities accordingly
+  - A meal plan shared as viewer is read-only for that collaborator while an editor can add or remove planned meals
+  - Importing pasted recipe text produces structured ingredient rows and ordered steps that match the source
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds meal planning and recipe organization products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: PlatePlan Meal Planner & Recipe Organizer
+    Type: Meal Planner & Recipe Organizer (Meal Planning & Recipes)
+    Target users: home cooks and meal-prep planners who save recipes, schedule weekly menus, and build shopping lists, plus household members they invite to shared plans as editors or viewers.
+    Business goal: Let users save recipes, plan weekly meals on a calendar, auto-generate consolidated shopping lists, and share plans with household members as editors or viewers.
+
+    BRAND & DESIGN
+    Brand style: fresh, appetizing, organized. Colors: basil green, warm cream, tomato red. A weekly calendar grid of meal cards beside a recipe library and an auto-built shopping list panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Dashboard / this week's meal plan with upcoming meals and quick recipe access
+    2. Recipe library (browse, search, and filter recipes)
+    3. Recipe detail / cook mode with scaled ingredients and ordered steps
+    4. Recipe editor (create or edit ingredients, steps, servings, times, and tags)
+    5. Weekly meal planner calendar (assign recipes to breakfast, lunch, and dinner slots)
+    6. Shopping list (auto-consolidated and grouped by grocery aisle)
+    7. Household sharing and member management
+    8. Auth (sign in / register)
+    9. Settings and account admin (profile, dietary preferences, and preferred units)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - Owner — create recipes and meal plans, manage the household, and invite members
+    - Editor — edit shared meal plans and the recipes within them
+    - Viewer — view shared meal plans, recipes, and shopping lists
+
+    CORE FEATURES
+    - Recipe editor capturing ingredients with quantities and units, ordered steps, servings, prep and cook time, and tags
+    - Recipe detail with a cook mode and on-the-fly scaling to a target serving count
+    - Weekly meal planner calendar that assigns recipes to breakfast, lunch, and dinner slots per day
+    - Auto-generated shopping list that aggregates ingredients across the planned week and merges duplicates by name and unit
+    - Shopping list grouped by grocery aisle with persisted check-off state
+    - Full-text recipe search and filtering by ingredient, cuisine, tag, or total time
+    - Meal plan sharing with household members as editor or viewer
+    - Recipe import that parses pasted recipe text into structured ingredients and ordered steps
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, dietaryPreferences, preferredUnits, createdAt, updatedAt
+    - Recipe: id, ownerId, title, description, servings, prepMinutes, cookMinutes, cuisine, instructions, createdAt, updatedAt
+    - Ingredient: id, recipeId, name, quantity, unit, aisle, createdAt, updatedAt
+    - MealPlan: id, ownerId, title, weekStartDate, createdAt, updatedAt
+    - PlannedMeal: id, mealPlanId, recipeId, mealDate, mealSlot, servings, createdAt, updatedAt
+    - ShoppingListItem: id, mealPlanId, name, quantity, unit, aisle, isChecked, createdAt, updatedAt
+    - MealPlanShare: id, mealPlanId, userId, role, invitedAt, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Parse pasted recipe text into structured ingredient rows and ordered instruction steps
+    - Scale a recipe's ingredient quantities from its base servings to a requested serving count
+    - Generate a shopping list by aggregating ingredients across all planned meals in a meal plan and merging duplicates by name and unit
+    - Group shopping list items by grocery aisle and recompute the list when planned meals or servings change
+    - Assign recipes to date and meal-slot positions on the weekly planner and move them between days
+    - Invite household members to a meal plan as editor or viewer and enforce that role on plan and recipe edits
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 5 weekly meal plans, ~40 recipes with ingredients, an auto-generated shopping list grouped by aisle, a plan shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '206'
+  title: Bill Splitting & Shared Expenses App
+  slug: bill-splitting-app
+  category: Productivity & Personal
+  domain: Shared Expenses & Settle-Up
+  app_name: SplitMate Bill Splitting & Shared Expenses App
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building shared-expense and settle-up tools for roommates, trips, and friend groups; distinct from personal budgeting, subscription tracking, or business invoicing apps.
+  target_user: Indie developers; roommates, travel groups, and friends sharing costs
+  target_users: roommates, travel groups, and friends who share expenses in groups, track who owes whom, and settle up, plus members they invite to those groups
+  role_line: You are a senior full-stack engineer who builds shared-expense and settle-up products
+  business_goal: Let users create groups, log shared expenses with flexible splits, see real-time balances of who owes whom, and record settle-up payments
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: friendly, fair, transparent. Colors: trust teal, slate gray, soft amber. A group ledger of expense rows beside a balances panel showing who owes whom and simplified settle-up suggestions.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Dashboard (net balance across all groups and recent activity)
+  - Groups list (every group the user belongs to)
+  - Group detail (shared expense ledger)
+  - Add / edit expense (payer, participants, and split method)
+  - Balances and settle-up suggestions (per group)
+  - Record settle-up payment
+  - Group members and invitations management
+  - Auth (sign in / register)
+  - Settings and account admin (profile and default currency)
+  required_features:
+  - Group creation with invited members and a shared expense ledger
+  - Expense entry with a single payer and multiple participants using equal, exact-amount, or percentage split methods
+  - Real-time per-member balance calculation of who owes whom within each group
+  - Simplified settle-up suggestions that minimize the number of payments needed to clear balances
+  - Settle-up payment recording that logs a transfer between two members and updates balances
+  - Multi-currency expenses with a configurable per-group default currency
+  - Per-group activity feed of added expenses, edits, and recorded settlements
+  - Cross-group dashboard summarizing the user's total amount owed and owed to them
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - defaultCurrency
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Group
+    fields:
+    - id
+    - ownerId
+    - name
+    - description
+    - defaultCurrency
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: GroupMember
+    fields:
+    - id
+    - groupId
+    - userId
+    - role
+    - joinedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - groupId -> references the related record
+    - userId -> references the related record
+  - name: Expense
+    fields:
+    - id
+    - groupId
+    - payerId
+    - description
+    - amount
+    - currency
+    - splitMethod
+    - expenseDate
+    - createdAt
+    - updatedAt
+    relationships:
+    - groupId -> references the related record
+    - payerId -> references the related record
+  - name: ExpenseShare
+    fields:
+    - id
+    - expenseId
+    - userId
+    - shareAmount
+    - createdAt
+    - updatedAt
+    relationships:
+    - expenseId -> references the related record
+    - userId -> references the related record
+  - name: Settlement
+    fields:
+    - id
+    - groupId
+    - fromUserId
+    - toUserId
+    - amount
+    - currency
+    - settledAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - groupId -> references the related record
+    - fromUserId -> references the related record
+    - toUserId -> references the related record
+  - name: ActivityEntry
+    fields:
+    - id
+    - groupId
+    - actorId
+    - type
+    - summary
+    - createdAt
+    - updatedAt
+    relationships:
+    - groupId -> references the related record
+    - actorId -> references the related record
+  backend_logic:
+  - Split an expense across its participants by the chosen method (equal, exact amounts, or percentages) and persist each participant's share
+  - Compute each member's net balance within a group by summing what they paid minus their share of all expenses and applying recorded settlements
+  - Generate simplified settle-up suggestions that minimize the number of transactions needed to bring all group balances to zero
+  - Record a settle-up payment between two members and update their balances without any real payment gateway
+  - Aggregate a user's balances across all their groups into a single net owed and owed-to figure for the dashboard
+  - Append an activity entry whenever an expense is added or edited or a settlement is recorded
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - Group Admin — create groups, invite members, edit group settings, and manage any expense
+  - Member — add and edit their own expenses, view balances, and record settle-ups
+  - Viewer — read-only access to a group's expenses and balances
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 4 groups, ~30 shared expenses with mixed split methods, recorded settlements, computed per-member balances, 1 admin and 3 members. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Adding an expense paid by one member and split equally among three updates each member's net balance correctly
+  - Settle-up suggestions reduce all group balances to zero in the minimum number of payments
+  - Recording a settlement between two members adjusts both balances and appears in the group activity feed
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds shared-expense and settle-up products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: SplitMate Bill Splitting & Shared Expenses App
+    Type: Bill Splitting & Shared Expenses App (Shared Expenses & Settle-Up)
+    Target users: roommates, travel groups, and friends who share expenses in groups, track who owes whom, and settle up, plus members they invite to those groups.
+    Business goal: Let users create groups, log shared expenses with flexible splits, see real-time balances of who owes whom, and record settle-up payments.
+
+    BRAND & DESIGN
+    Brand style: friendly, fair, transparent. Colors: trust teal, slate gray, soft amber. A group ledger of expense rows beside a balances panel showing who owes whom and simplified settle-up suggestions. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Dashboard (net balance across all groups and recent activity)
+    2. Groups list (every group the user belongs to)
+    3. Group detail (shared expense ledger)
+    4. Add / edit expense (payer, participants, and split method)
+    5. Balances and settle-up suggestions (per group)
+    6. Record settle-up payment
+    7. Group members and invitations management
+    8. Auth (sign in / register)
+    9. Settings and account admin (profile and default currency)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - Group Admin — create groups, invite members, edit group settings, and manage any expense
+    - Member — add and edit their own expenses, view balances, and record settle-ups
+    - Viewer — read-only access to a group's expenses and balances
+
+    CORE FEATURES
+    - Group creation with invited members and a shared expense ledger
+    - Expense entry with a single payer and multiple participants using equal, exact-amount, or percentage split methods
+    - Real-time per-member balance calculation of who owes whom within each group
+    - Simplified settle-up suggestions that minimize the number of payments needed to clear balances
+    - Settle-up payment recording that logs a transfer between two members and updates balances
+    - Multi-currency expenses with a configurable per-group default currency
+    - Per-group activity feed of added expenses, edits, and recorded settlements
+    - Cross-group dashboard summarizing the user's total amount owed and owed to them
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, defaultCurrency, createdAt, updatedAt
+    - Group: id, ownerId, name, description, defaultCurrency, createdAt, updatedAt
+    - GroupMember: id, groupId, userId, role, joinedAt, createdAt, updatedAt
+    - Expense: id, groupId, payerId, description, amount, currency, splitMethod, expenseDate, createdAt, updatedAt
+    - ExpenseShare: id, expenseId, userId, shareAmount, createdAt, updatedAt
+    - Settlement: id, groupId, fromUserId, toUserId, amount, currency, settledAt, createdAt, updatedAt
+    - ActivityEntry: id, groupId, actorId, type, summary, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Split an expense across its participants by the chosen method (equal, exact amounts, or percentages) and persist each participant's share
+    - Compute each member's net balance within a group by summing what they paid minus their share of all expenses and applying recorded settlements
+    - Generate simplified settle-up suggestions that minimize the number of transactions needed to bring all group balances to zero
+    - Record a settle-up payment between two members and update their balances without any real payment gateway
+    - Aggregate a user's balances across all their groups into a single net owed and owed-to figure for the dashboard
+    - Append an activity entry whenever an expense is added or edited or a settlement is recorded
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 4 groups, ~30 shared expenses with mixed split methods, recorded settlements, computed per-member balances, 1 admin and 3 members. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '207'
+  title: Home Inventory & Warranty Tracker
+  slug: home-inventory-tracker-app
+  category: Productivity & Personal
+  domain: Home Inventory & Warranties
+  app_name: HomeKeep Home Inventory & Warranty Tracker
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building home inventory, warranty, and belongings-tracking tools for homeowners and renters; distinct from business asset management, insurance-claims platforms, or maintenance-ticketing apps.
+  target_user: Indie developers; homeowners and renters cataloging belongings
+  target_users: homeowners and renters who catalog belongings, track warranties and receipts, and organize items by room, plus household members they invite to view or edit the inventory
+  role_line: You are a senior full-stack engineer who builds home inventory and warranty-tracking products
+  business_goal: Let users catalog household items with photos and receipts, organize them by room and category, track warranty and maintenance dates, and get reminders before warranties expire
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: tidy, reassuring, practical. Colors: deep navy, warm sand, signal orange. A room-by-room item grid of photo cards beside a warranty timeline and an expiring-soon reminders panel.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Dashboard (total value, expiring warranties, and recent additions)
+  - Inventory list / item grid (filter by room, category, or value)
+  - Item detail (photos, receipt, warranty, and purchase info)
+  - Item editor (add or edit an item with photo and document upload)
+  - Rooms and categories management
+  - Warranty and maintenance timeline (expiring soon and upcoming service)
+  - Household sharing and member management
+  - Auth (sign in / register)
+  - Settings and account admin (profile, currency, and reminder lead time)
+  required_features:
+  - Item catalog with photos, purchase date, price, brand, serial number, and category
+  - Room and category organization with filtering and search across the inventory
+  - Warranty tracking with provider, coverage length, and computed expiration dates
+  - Receipt and document uploads attached to each item
+  - Expiring-warranty reminders with a configurable lead time and a mock notification log
+  - Recurring maintenance scheduling with next-due dates per item
+  - Total inventory value and per-room value summaries for insurance purposes
+  - Inventory sharing with household members as editor or viewer
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - currency
+    - reminderLeadDays
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Room
+    fields:
+    - id
+    - ownerId
+    - name
+    - description
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: Item
+    fields:
+    - id
+    - ownerId
+    - roomId
+    - name
+    - category
+    - brand
+    - serialNumber
+    - purchaseDate
+    - purchasePrice
+    - photoUrl
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - roomId -> references the related record
+  - name: Warranty
+    fields:
+    - id
+    - itemId
+    - provider
+    - coverageMonths
+    - startDate
+    - expiresAt
+    - notes
+    - createdAt
+    - updatedAt
+    relationships:
+    - itemId -> references the related record
+  - name: Document
+    fields:
+    - id
+    - itemId
+    - label
+    - fileUrl
+    - fileType
+    - createdAt
+    - updatedAt
+    relationships:
+    - itemId -> references the related record
+  - name: MaintenanceTask
+    fields:
+    - id
+    - itemId
+    - title
+    - dueDate
+    - recurrenceMonths
+    - isComplete
+    - createdAt
+    - updatedAt
+    relationships:
+    - itemId -> references the related record
+  - name: InventoryShare
+    fields:
+    - id
+    - ownerId
+    - userId
+    - role
+    - invitedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+    - userId -> references the related record
+  backend_logic:
+  - Compute total inventory value and per-room value summaries from item purchase prices
+  - Calculate each warranty's expiration date from its start date and coverage length in months
+  - Surface warranties expiring within the user's configured lead time and queue mock expiry reminders
+  - Generate the next maintenance due date for a recurring task when the current one is marked complete
+  - Filter and search items across rooms and categories
+  - Invite household members to an inventory as editor or viewer and enforce that role on item and document edits
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - Owner — catalog items, manage rooms and the household, and invite members
+  - Editor — add and edit items, warranties, and documents in shared inventories
+  - Viewer — view items, warranties, and total value without editing
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 6 rooms, ~50 catalogued items with photos and receipts, tracked warranties with computed expiry dates, scheduled maintenance tasks, an inventory shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Adding an item with a 24-month warranty computes the correct expiration date and lists it under expiring-soon when within the reminder lead time
+  - Marking a recurring maintenance task complete generates the next due date at the configured interval
+  - An inventory shared as viewer is read-only while an editor can add items and upload documents
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds home inventory and warranty-tracking products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: HomeKeep Home Inventory & Warranty Tracker
+    Type: Home Inventory & Warranty Tracker (Home Inventory & Warranties)
+    Target users: homeowners and renters who catalog belongings, track warranties and receipts, and organize items by room, plus household members they invite to view or edit the inventory.
+    Business goal: Let users catalog household items with photos and receipts, organize them by room and category, track warranty and maintenance dates, and get reminders before warranties expire.
+
+    BRAND & DESIGN
+    Brand style: tidy, reassuring, practical. Colors: deep navy, warm sand, signal orange. A room-by-room item grid of photo cards beside a warranty timeline and an expiring-soon reminders panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Dashboard (total value, expiring warranties, and recent additions)
+    2. Inventory list / item grid (filter by room, category, or value)
+    3. Item detail (photos, receipt, warranty, and purchase info)
+    4. Item editor (add or edit an item with photo and document upload)
+    5. Rooms and categories management
+    6. Warranty and maintenance timeline (expiring soon and upcoming service)
+    7. Household sharing and member management
+    8. Auth (sign in / register)
+    9. Settings and account admin (profile, currency, and reminder lead time)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - Owner — catalog items, manage rooms and the household, and invite members
+    - Editor — add and edit items, warranties, and documents in shared inventories
+    - Viewer — view items, warranties, and total value without editing
+
+    CORE FEATURES
+    - Item catalog with photos, purchase date, price, brand, serial number, and category
+    - Room and category organization with filtering and search across the inventory
+    - Warranty tracking with provider, coverage length, and computed expiration dates
+    - Receipt and document uploads attached to each item
+    - Expiring-warranty reminders with a configurable lead time and a mock notification log
+    - Recurring maintenance scheduling with next-due dates per item
+    - Total inventory value and per-room value summaries for insurance purposes
+    - Inventory sharing with household members as editor or viewer
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, currency, reminderLeadDays, createdAt, updatedAt
+    - Room: id, ownerId, name, description, createdAt, updatedAt
+    - Item: id, ownerId, roomId, name, category, brand, serialNumber, purchaseDate, purchasePrice, photoUrl, createdAt, updatedAt
+    - Warranty: id, itemId, provider, coverageMonths, startDate, expiresAt, notes, createdAt, updatedAt
+    - Document: id, itemId, label, fileUrl, fileType, createdAt, updatedAt
+    - MaintenanceTask: id, itemId, title, dueDate, recurrenceMonths, isComplete, createdAt, updatedAt
+    - InventoryShare: id, ownerId, userId, role, invitedAt, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Compute total inventory value and per-room value summaries from item purchase prices
+    - Calculate each warranty's expiration date from its start date and coverage length in months
+    - Surface warranties expiring within the user's configured lead time and queue mock expiry reminders
+    - Generate the next maintenance due date for a recurring task when the current one is marked complete
+    - Filter and search items across rooms and categories
+    - Invite household members to an inventory as editor or viewer and enforce that role on item and document edits
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 6 rooms, ~50 catalogued items with photos and receipts, tracked warranties with computed expiry dates, scheduled maintenance tasks, an inventory shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
+- prompt_id: '208'
+  title: Personal Travel Itinerary Planner
+  slug: travel-itinerary-planner-app
+  category: Productivity & Personal
+  domain: Travel Planning
+  app_name: TripWeave Personal Travel Itinerary Planner
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building multi-day trip and itinerary planning tools for independent travelers; distinct from flight-booking engines, hotel OTAs, or corporate expense-reimbursement apps.
+  target_user: Indie developers; independent travelers and trip organizers
+  target_users: independent travelers and trip organizers who plan multi-day itineraries with day-by-day activities, bookings, and budgets, plus companions they invite to collaborate or view
+  role_line: You are a senior full-stack engineer who builds travel itinerary planning products
+  business_goal: Let users plan multi-day trips with day-by-day itineraries, store flight and lodging bookings, map destinations, track a trip budget, and share trips with companions as editors or viewers
+  production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+  brand_design: 'Brand style: wanderlust, airy, organized. Colors: horizon blue, sand beige, sunset coral. A day-by-day itinerary timeline beside an interactive destination map and a running trip-budget panel.'
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+  tech_stack:
+    auth:
+    - Auth.js or secure email/password authentication
+    backend:
+    - Next.js Server Actions or API Routes
+    - Prisma ORM
+    - PostgreSQL for production
+    - SQLite for local development
+    deployment:
+    - Vercel-ready
+    - Docker-ready
+    frontend:
+    - Next.js App Router
+    - TypeScript
+    - Tailwind CSS
+    - shadcn/ui
+    local_mode:
+      enabled: true
+      notes:
+      - App must run locally without paid API keys
+      - Use mock notification log when email/SMS is needed
+    production_mode:
+      enabled: true
+      notes:
+      - .env.example included
+      - Production database setup (PostgreSQL)
+      - Deployment guide included
+      - Real provider integration readiness
+      - Production security checklist
+    validation:
+    - Zod
+    - React Hook Form
+  files_to_generate:
+  - Complete Next.js App Router structure
+  - Prisma schema and migrations
+  - Seed script with demo data
+  - .env.example
+  - README.md with setup and run commands
+  - Dockerfile
+  - docker-compose.yml when useful
+  - Unit and integration test examples
+  required_pages:
+  - Dashboard (upcoming and past trips)
+  - Trip overview (dates, destinations, and budget summary)
+  - Day-by-day itinerary builder (per-day activity timeline)
+  - Activity editor (time, location, category, notes, and estimated cost)
+  - Bookings (flights, lodging, and transport with confirmation details)
+  - Map view of destinations and activity locations
+  - Trip budget and expense breakdown
+  - Trip sharing and companion management
+  - Auth (sign in / register)
+  - Settings and account admin (profile, home currency, and distance unit)
+  required_features:
+  - Multi-day trip creation with start and end dates and one or more destinations
+  - Day-by-day itinerary builder that orders activities on a per-day timeline with times
+  - Activity entries with location, category, notes, duration, and estimated cost
+  - Booking records for flights, lodging, and transport with confirmation numbers and times
+  - Interactive map plotting trip destinations and geocoded activity locations
+  - Trip budget tracking that totals planned and actual costs by category against a budget
+  - Automatic conflict detection for overlapping activity times on the same day
+  - Activity rescheduling that moves an item to another day or time and reorders the timeline
+  - Trip sharing with companions as editor or viewer
+  database_models:
+  - name: User
+    fields:
+    - id
+    - email
+    - passwordHash
+    - name
+    - role
+    - homeCurrency
+    - distanceUnit
+    - createdAt
+    - updatedAt
+    relationships:
+    - Standalone model (no outbound foreign keys)
+  - name: Trip
+    fields:
+    - id
+    - ownerId
+    - title
+    - destination
+    - startDate
+    - endDate
+    - budgetAmount
+    - currency
+    - createdAt
+    - updatedAt
+    relationships:
+    - ownerId -> references the related record
+  - name: TripDay
+    fields:
+    - id
+    - tripId
+    - dayDate
+    - dayNumber
+    - notes
+    - createdAt
+    - updatedAt
+    relationships:
+    - tripId -> references the related record
+  - name: Activity
+    fields:
+    - id
+    - tripDayId
+    - title
+    - category
+    - location
+    - latitude
+    - longitude
+    - startTime
+    - endTime
+    - estimatedCost
+    - notes
+    - createdAt
+    - updatedAt
+    relationships:
+    - tripDayId -> references the related record
+  - name: Booking
+    fields:
+    - id
+    - tripId
+    - type
+    - provider
+    - confirmationNumber
+    - startDateTime
+    - endDateTime
+    - cost
+    - createdAt
+    - updatedAt
+    relationships:
+    - tripId -> references the related record
+  - name: BudgetEntry
+    fields:
+    - id
+    - tripId
+    - category
+    - label
+    - plannedAmount
+    - actualAmount
+    - createdAt
+    - updatedAt
+    relationships:
+    - tripId -> references the related record
+  - name: TripShare
+    fields:
+    - id
+    - tripId
+    - userId
+    - role
+    - invitedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - tripId -> references the related record
+    - userId -> references the related record
+  backend_logic:
+  - Generate trip-day records spanning the trip's start and end dates and renumber them when the dates change
+  - Order activities within each day by start time and flag conflicts when two activities overlap
+  - Reschedule an activity to a different day or time and reorder the affected day timelines
+  - Geocode activity and destination locations into coordinates for the map view using a mock geocoder locally
+  - Aggregate planned and actual costs across activities, bookings, and budget entries into category totals and a remaining-budget figure
+  - Compile a chronological trip overview merging activities and bookings across all days
+  - Invite companions to a trip as editor or viewer and enforce that role on itinerary and booking edits
+  - Server-side validation on every mutation with Zod
+  - Role-based authorization and protected routes for private pages
+  - Scope every query to the current user/tenant (no cross-user data access)
+  user_roles:
+  - Owner — create trips, build itineraries, manage the budget, and invite companions
+  - Editor — add and edit days, activities, and bookings on shared trips
+  - Viewer — view the itinerary, map, and bookings without editing
+  env_payments: false
+  env_ai: false
+  seed_data: '- Seed realistic demo data: 3 trips, a 7-day itinerary with ~30 activities, flight and lodging bookings, a categorized trip budget, a trip shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+  security_requirements:
+  - No hardcoded secrets — all secrets via environment variables
+  - Server-side validation on every mutation
+  - Role-based access control where roles exist
+  - Protected routes for all private pages
+  - Safe file-upload handling where uploads exist
+  - Rate-limiting guidance for public endpoints
+  - Audit logs for sensitive actions where relevant
+  testing_requirements:
+  - Unit test examples for key business logic
+  - Integration test examples for important flows where practical
+  - Manual QA checklist
+  - Production smoke-test checklist
+  deployment_requirements:
+  - Local development commands
+  - Production build command
+  - Database migration command
+  - Seed command
+  - Vercel deployment notes
+  - Docker deployment notes
+  - Post-deployment smoke test
+  acceptance_checklist:
+  - App installs successfully
+  - App runs locally with seed data
+  - App builds successfully
+  - Database migrates successfully
+  - Seed data loads successfully
+  - All navigation works
+  - Forms validate on client and server
+  - Protected routes are protected
+  - Role permissions work
+  - Admin pages work where included
+  - Mock mode works without paid keys
+  - Real provider setup is documented
+  - No unresolved template tokens or dummy filler remains
+  - No dead buttons or dead links remain
+  - Responsive layout works
+  - README setup steps are complete
+  - Production deployment steps are documented
+  - Changing a trip's start or end date regenerates and renumbers its day records without losing activities on the remaining days
+  - Two activities scheduled at overlapping times on the same day are flagged as a conflict
+  - A trip shared as viewer is read-only while an editor can add activities and bookings, and the budget panel totals planned versus actual costs correctly
+  ready_to_use_prompt: |-
+    You are a senior full-stack engineer who builds travel itinerary planning products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+    STANDARD
+    Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+    APP
+    Name: TripWeave Personal Travel Itinerary Planner
+    Type: Personal Travel Itinerary Planner (Travel Planning)
+    Target users: independent travelers and trip organizers who plan multi-day itineraries with day-by-day activities, bookings, and budgets, plus companions they invite to collaborate or view.
+    Business goal: Let users plan multi-day trips with day-by-day itineraries, store flight and lodging bookings, map destinations, track a trip budget, and share trips with companions as editors or viewers.
+
+    BRAND & DESIGN
+    Brand style: wanderlust, airy, organized. Colors: horizon blue, sand beige, sunset coral. A day-by-day itinerary timeline beside an interactive destination map and a running trip-budget panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+    TECH STACK
+    - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+    - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+    - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+    - Zod and React Hook Form for both client-side and server-side validation
+    - Vercel-ready and Docker-ready
+
+    PAGES / SCREENS
+    1. Dashboard (upcoming and past trips)
+    2. Trip overview (dates, destinations, and budget summary)
+    3. Day-by-day itinerary builder (per-day activity timeline)
+    4. Activity editor (time, location, category, notes, and estimated cost)
+    5. Bookings (flights, lodging, and transport with confirmation details)
+    6. Map view of destinations and activity locations
+    7. Trip budget and expense breakdown
+    8. Trip sharing and companion management
+    9. Auth (sign in / register)
+    10. Settings and account admin (profile, home currency, and distance unit)
+
+    NAVIGATION
+    - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+    USER ROLES
+    - Owner — create trips, build itineraries, manage the budget, and invite companions
+    - Editor — add and edit days, activities, and bookings on shared trips
+    - Viewer — view the itinerary, map, and bookings without editing
+
+    CORE FEATURES
+    - Multi-day trip creation with start and end dates and one or more destinations
+    - Day-by-day itinerary builder that orders activities on a per-day timeline with times
+    - Activity entries with location, category, notes, duration, and estimated cost
+    - Booking records for flights, lodging, and transport with confirmation numbers and times
+    - Interactive map plotting trip destinations and geocoded activity locations
+    - Trip budget tracking that totals planned and actual costs by category against a budget
+    - Automatic conflict detection for overlapping activity times on the same day
+    - Activity rescheduling that moves an item to another day or time and reorders the timeline
+    - Trip sharing with companions as editor or viewer
+
+    DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+    - User: id, email, passwordHash, name, role, homeCurrency, distanceUnit, createdAt, updatedAt
+    - Trip: id, ownerId, title, destination, startDate, endDate, budgetAmount, currency, createdAt, updatedAt
+    - TripDay: id, tripId, dayDate, dayNumber, notes, createdAt, updatedAt
+    - Activity: id, tripDayId, title, category, location, latitude, longitude, startTime, endTime, estimatedCost, notes, createdAt, updatedAt
+    - Booking: id, tripId, type, provider, confirmationNumber, startDateTime, endDateTime, cost, createdAt, updatedAt
+    - BudgetEntry: id, tripId, category, label, plannedAmount, actualAmount, createdAt, updatedAt
+    - TripShare: id, tripId, userId, role, invitedAt, createdAt, updatedAt
+    - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+    BACKEND / API LOGIC
+    - Generate trip-day records spanning the trip's start and end dates and renumber them when the dates change
+    - Order activities within each day by start time and flag conflicts when two activities overlap
+    - Reschedule an activity to a different day or time and reorder the affected day timelines
+    - Geocode activity and destination locations into coordinates for the map view using a mock geocoder locally
+    - Aggregate planned and actual costs across activities, bookings, and budget entries into category totals and a remaining-budget figure
+    - Compile a chronological trip overview merging activities and bookings across all days
+    - Invite companions to a trip as editor or viewer and enforce that role on itinerary and booking edits
+    - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+    ENVIRONMENT & MODES
+    - Provide a complete .env.example documenting every variable.
+    - Local mode runs fully on seed data with mock modes and no paid keys.
+    - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+    SEED DATA
+    - Seed realistic demo data: 3 trips, a 7-day itinerary with ~30 activities, flight and lodging bookings, a categorized trip budget, a trip shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+    UX REQUIREMENTS
+    - Every data view has loading, empty, error, and success states.
+    - All forms validate on client and server with inline messages and clear success/error feedback.
+    - Realistic, human copywriting throughout — no dummy filler text.
+
+    SECURITY
+    - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+    TESTING
+    - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+    DEPLOYMENT
+    - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+    DELIVERABLES
+    - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+    - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+    ACCEPTANCE CHECKLIST — the app must pass all of these
+    - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+    - Builds successfully and migrates the database successfully.
+    - Every page renders and is reachable from the navigation.
+    - Forms validate on client and server; protected routes are protected; role permissions work.
+    - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+    - Loading, empty, error, and success states are present; responsive layout works.
+    - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+    - README setup steps and production deployment steps are complete.
 - prompt_id: '21'
   title: Inventory Management System
   slug: inventory-management-system

@@ -1,6 +1,6 @@
 # Prompt Catalog (Markdown)
 
-Human-readable Markdown versions of all 200 app prompts. Each file mirrors its `prompts/*.yaml` source and ends with a copy-paste `Ready-to-use prompt` block. These files are generated — edit the YAML and run `python3 scripts/build_prompts.py`.
+Human-readable Markdown versions of all 208 app prompts. Each file mirrors its `prompts/*.yaml` source and ends with a copy-paste `Ready-to-use prompt` block. These files are generated — edit the YAML and run `python3 scripts/build_prompts.py`.
 
 Looking for the structured source? See [`../prompts/`](../prompts/) and [`../PROMPT_INDEX.yaml`](../PROMPT_INDEX.yaml).
 
@@ -255,12 +255,20 @@ Looking for the structured source? See [`../prompts/`](../prompts/) and [`../PRO
 | 80 | [Logistics Fleet Maintenance System](80-logistics-fleet-maintenance-system.md) | Fleet & Maintenance | Advanced | Developers building fleet maintenance tools for logistics and transport operators (distinct from delivery tracking). |
 | 93 | [Parking Lot Management System](93-parking-lot-management-system.md) | Parking & Mobility | Advanced | Developers building parking operations and reservation systems for lots and garages. |
 
-### Productivity & Personal (6)
+### Productivity & Personal (14)
 
 | # | App | Domain | Difficulty | Best for |
 |---|---|---|---|---|
 | 189 | [Personal Knowledge Base App](189-personal-knowledge-base-app.md) | Personal Knowledge Management | Advanced | Developers building note-taking or 'second brain' tools for knowledge workers, students, and researchers; distinct from team document management or SOP portals. |
 | 190 | [Subscription & Bill Tracker App](190-subscription-bill-tracker-app.md) | Subscription & Bill Tracking | Intermediate | Developers building a focused personal-finance utility for recurring spend, distinct from a general budgeting app or a business subscription-box back end. |
+| 201 | [Personal CRM & Relationship Manager](201-personal-crm-app.md) | Personal Relationship Management | Intermediate | Developers building a private relationship manager for individuals who want to nurture personal and professional contacts; distinct from sales CRMs, plain address books, or team pipeline tools. |
+| 202 | [Daily Journal & Mood Tracker](202-journal-mood-tracker-app.md) | Journaling & Wellbeing | Intermediate | Developers building a private journaling and mood-tracking app for individuals focused on self-reflection and emotional wellbeing; distinct from clinical therapy tools, team wellness platforms, or generic note apps. |
+| 203 | [Pomodoro Focus & Time Tracker](203-focus-time-tracker-app.md) | Focus & Time Tracking | Intermediate | Developers building a focus timer and personal time-tracking app for individuals who use the Pomodoro technique for deep work; distinct from team time-billing tools, project management suites, or plain stopwatch apps. |
+| 204 | [Reading List & Bookmark Manager](204-reading-list-bookmark-app.md) | Reading & Bookmarks | Intermediate | Developers building a personal read-it-later and bookmark organizer for individuals who save articles, videos, and links; distinct from team knowledge bases, social bookmarking networks, or the browser bookmark bar. |
+| 205 | [Meal Planner & Recipe Organizer](205-meal-planner-recipe-app.md) | Meal Planning & Recipes | Intermediate | Developers building meal-planning or recipe-organizer tools for home cooks and households; distinct from grocery-delivery, restaurant POS, or nutrition-coaching apps. |
+| 206 | [Bill Splitting & Shared Expenses App](206-bill-splitting-app.md) | Shared Expenses & Settle-Up | Intermediate | Developers building shared-expense and settle-up tools for roommates, trips, and friend groups; distinct from personal budgeting, subscription tracking, or business invoicing apps. |
+| 207 | [Home Inventory & Warranty Tracker](207-home-inventory-tracker-app.md) | Home Inventory & Warranties | Intermediate | Developers building home inventory, warranty, and belongings-tracking tools for homeowners and renters; distinct from business asset management, insurance-claims platforms, or maintenance-ticketing apps. |
+| 208 | [Personal Travel Itinerary Planner](208-travel-itinerary-planner-app.md) | Travel Planning | Advanced | Developers building multi-day trip and itinerary planning tools for independent travelers; distinct from flight-booking engines, hotel OTAs, or corporate expense-reimbursement apps. |
 | 43 | [Fitness Tracker App](43-fitness-tracker-app.md) | Productivity & Personal | Intermediate | Developers building workout trackers for individuals or coaching clients. |
 | 44 | [Habit Tracker App](44-habit-tracker-app.md) | Productivity & Personal | Beginner | Developers building simple, polished habit or routine trackers. |
 | 45 | [Personal Budgeting App](45-personal-budgeting-app.md) | Productivity & Personal | Intermediate | Developers building personal-finance trackers and budgeting tools. |
@@ -391,6 +399,14 @@ Looking for the structured source? See [`../prompts/`](../prompts/) and [`../PRO
 | 199 | [AI Customer Feedback & Review Analysis Platform](199-ai-customer-feedback-analysis-platform.md) | AI Apps | Advanced |
 | 20 | [Project Management App](20-project-management-app.md) | Business Operations | Advanced |
 | 200 | [AI Content Repurposing & Media Studio](200-ai-media-repurposing-studio-platform.md) | AI Apps | Advanced |
+| 201 | [Personal CRM & Relationship Manager](201-personal-crm-app.md) | Productivity & Personal | Intermediate |
+| 202 | [Daily Journal & Mood Tracker](202-journal-mood-tracker-app.md) | Productivity & Personal | Intermediate |
+| 203 | [Pomodoro Focus & Time Tracker](203-focus-time-tracker-app.md) | Productivity & Personal | Intermediate |
+| 204 | [Reading List & Bookmark Manager](204-reading-list-bookmark-app.md) | Productivity & Personal | Intermediate |
+| 205 | [Meal Planner & Recipe Organizer](205-meal-planner-recipe-app.md) | Productivity & Personal | Intermediate |
+| 206 | [Bill Splitting & Shared Expenses App](206-bill-splitting-app.md) | Productivity & Personal | Intermediate |
+| 207 | [Home Inventory & Warranty Tracker](207-home-inventory-tracker-app.md) | Productivity & Personal | Intermediate |
+| 208 | [Personal Travel Itinerary Planner](208-travel-itinerary-planner-app.md) | Productivity & Personal | Advanced |
 | 21 | [Inventory Management System](21-inventory-management-system.md) | Business Operations | Advanced |
 | 22 | [Finance Dashboard App](22-finance-dashboard-app.md) | Analytics & Dashboards | Intermediate |
 | 23 | [Invoice Generator App](23-invoice-generator-app.md) | Business Operations | Intermediate |

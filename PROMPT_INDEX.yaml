@@ -1814,6 +1814,126 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '201'
+  title: Personal CRM & Relationship Manager
+  filename: prompts/201-personal-crm-app.yaml
+  category: Productivity & Personal
+  domain: Personal Relationship Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a private relationship manager for individuals who want to nurture personal and professional contacts; distinct from sales CRMs, plain address books, or team pipeline tools.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '202'
+  title: Daily Journal & Mood Tracker
+  filename: prompts/202-journal-mood-tracker-app.yaml
+  category: Productivity & Personal
+  domain: Journaling & Wellbeing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a private journaling and mood-tracking app for individuals focused on self-reflection and emotional wellbeing; distinct from clinical therapy tools, team wellness platforms, or generic note apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '203'
+  title: Pomodoro Focus & Time Tracker
+  filename: prompts/203-focus-time-tracker-app.yaml
+  category: Productivity & Personal
+  domain: Focus & Time Tracking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a focus timer and personal time-tracking app for individuals who use the Pomodoro technique for deep work; distinct from team time-billing tools, project management suites, or plain stopwatch apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '204'
+  title: Reading List & Bookmark Manager
+  filename: prompts/204-reading-list-bookmark-app.yaml
+  category: Productivity & Personal
+  domain: Reading & Bookmarks
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a personal read-it-later and bookmark organizer for individuals who save articles, videos, and links; distinct from team knowledge bases, social bookmarking networks, or the browser bookmark bar.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '205'
+  title: Meal Planner & Recipe Organizer
+  filename: prompts/205-meal-planner-recipe-app.yaml
+  category: Productivity & Personal
+  domain: Meal Planning & Recipes
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building meal-planning or recipe-organizer tools for home cooks and households; distinct from grocery-delivery, restaurant POS, or nutrition-coaching apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '206'
+  title: Bill Splitting & Shared Expenses App
+  filename: prompts/206-bill-splitting-app.yaml
+  category: Productivity & Personal
+  domain: Shared Expenses & Settle-Up
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building shared-expense and settle-up tools for roommates, trips, and friend groups; distinct from personal budgeting, subscription tracking, or business invoicing apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '207'
+  title: Home Inventory & Warranty Tracker
+  filename: prompts/207-home-inventory-tracker-app.yaml
+  category: Productivity & Personal
+  domain: Home Inventory & Warranties
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building home inventory, warranty, and belongings-tracking tools for homeowners and renters; distinct from business asset management, insurance-claims platforms, or maintenance-ticketing apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '208'
+  title: Personal Travel Itinerary Planner
+  filename: prompts/208-travel-itinerary-planner-app.yaml
+  category: Productivity & Personal
+  domain: Travel Planning
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building multi-day trip and itinerary planning tools for independent travelers; distinct from flight-booking engines, hotel OTAs, or corporate expense-reimbursement apps.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '21'
   title: Inventory Management System
   filename: prompts/21-inventory-management-system.yaml
