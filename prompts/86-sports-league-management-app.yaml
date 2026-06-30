@@ -1,14 +1,18 @@
 prompt_id: '86'
 title: Sports League Management App
 slug: sports-league-management-app
-category: Sports League Management
+category: Community, Civic & Nonprofit
+domain: Sports League Management
 app_name: LeagueHQ Sports League Management App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building league management apps for amateur and community sports.
 target_user: Organizer/Admin; Team Manager; Player/Viewer
+target_users: league organizers, team managers, and players following schedules and standings
+role_line: You are a senior full-stack engineer who builds league, schedule, and standings management apps for sports
 business_goal: Organize leagues with teams and players, schedule fixtures, record scores, and compute standings
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: energetic, bold, sporty. Colors: green, navy, white. Clean, modern, schedule grids and a standings table.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -157,6 +161,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Organizer/Admin — manage leagues, teams, and fixtures
+- Team Manager — manage roster and availability
+- Player/Viewer — view schedule and standings
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~2 leagues, ~10 teams with rosters, fixtures with some results, standings, 1 admin, 2 managers, 2 players. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

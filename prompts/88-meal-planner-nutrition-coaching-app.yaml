@@ -1,14 +1,18 @@
 prompt_id: '88'
 title: Meal Planner & Nutrition Coaching App
 slug: meal-planner-nutrition-coaching-app
-category: Nutrition & Coaching
+category: Healthcare & Wellness
+domain: Nutrition & Coaching
 app_name: NutriPlan Meal Planner & Nutrition Coaching App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building nutrition coaching tools (distinct from a recipe community or budget app).
 target_user: Coach/Admin; Client
+target_users: nutrition coaches planning for clients and clients following plans and logging meals
+role_line: You are a senior full-stack engineer who builds nutrition coaching and meal-planning apps
 business_goal: Let coaches build meal plans with targets and let clients log meals while coaches review progress
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fresh, healthy, supportive. Colors: green, orange accent, white. Clean, modern, meal plan calendar and a daily nutrition tracker.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -165,6 +169,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Coach/Admin — build plans, set targets, review logs
+- Client — follow plan, log meals, see targets
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 clients with plans and targets, a recipe library, meal logs, feedback, 1 admin/coach and 3 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

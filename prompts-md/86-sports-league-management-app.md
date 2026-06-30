@@ -7,7 +7,8 @@
 | **Prompt ID** | 86 |
 | **Title** | Sports League Management App |
 | **Slug** | sports-league-management-app |
-| **Category** | Sports League Management |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Sports League Management |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Organizer/Admin; Team Manager; Player/Viewer |

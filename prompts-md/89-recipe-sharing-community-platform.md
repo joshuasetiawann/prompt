@@ -7,7 +7,8 @@
 | **Prompt ID** | 89 |
 | **Title** | Recipe Sharing Community Platform |
 | **Slug** | recipe-sharing-community-platform |
-| **Category** | Food Community |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Food Community |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Member; Admin/Moderator |

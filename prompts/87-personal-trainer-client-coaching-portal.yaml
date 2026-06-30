@@ -1,14 +1,18 @@
 prompt_id: '87'
 title: Personal Trainer Client Coaching Portal
 slug: personal-trainer-client-coaching-portal
-category: Coaching Portals
+category: Education & Learning
+domain: Coaching Portals
 app_name: CoachLink Personal Trainer Client Coaching Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building coaching portals for personal trainers (distinct from a solo fitness tracker).
 target_user: Trainer/Admin; Client
+target_users: personal trainers coaching clients remotely and clients following assigned programs
+role_line: You are a senior full-stack engineer who builds coach-client portals for fitness professionals
 business_goal: Let trainers build and assign workout programs and let clients log check-ins while trainers track progress
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: motivating, personal, modern. Colors: lime, charcoal, white. Clean, modern, program builder and a client progress timeline.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -163,6 +167,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Trainer/Admin — manage clients, programs, and progress
+- Client — follow program, log workouts, and check in
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 clients with programs, workout logs, check-ins, messages, 1 admin/trainer and 3 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

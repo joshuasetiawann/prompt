@@ -1,14 +1,18 @@
 prompt_id: '90'
 title: Neighborhood Security Reporting App
 slug: neighborhood-security-reporting-app
-category: Civic & Safety Reporting
+category: Community, Civic & Nonprofit
+domain: Civic & Safety Reporting
 app_name: SafeStreet Neighborhood Security Reporting App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building civic safety or neighborhood incident-reporting apps.
 target_user: Resident; Moderator/Admin
+target_users: neighborhood residents reporting and following local safety incidents, with moderators managing them
+role_line: You are a senior full-stack engineer who builds civic incident-reporting and neighborhood-safety apps
 business_goal: Let residents report incidents with location and let neighbors view and follow updates and alerts
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: calm, civic, trustworthy. Colors: slate blue, amber accent, white. Clean, modern, incident feed with a map area and status badges.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -149,6 +153,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Resident — report and follow incidents
+- Moderator/Admin — verify, update, and manage incidents
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 areas, ~20 incidents across types and statuses with updates, follows, 1 admin/moderator and 3 residents. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

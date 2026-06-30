@@ -7,7 +7,8 @@
 | **Prompt ID** | 87 |
 | **Title** | Personal Trainer Client Coaching Portal |
 | **Slug** | personal-trainer-client-coaching-portal |
-| **Category** | Coaching Portals |
+| **Category** | Education & Learning |
+| **Domain** | Coaching Portals |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Trainer/Admin; Client |

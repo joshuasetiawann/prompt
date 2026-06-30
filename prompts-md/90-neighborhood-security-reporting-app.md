@@ -7,7 +7,8 @@
 | **Prompt ID** | 90 |
 | **Title** | Neighborhood Security Reporting App |
 | **Slug** | neighborhood-security-reporting-app |
-| **Category** | Civic & Safety Reporting |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Civic & Safety Reporting |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Resident; Moderator/Admin |

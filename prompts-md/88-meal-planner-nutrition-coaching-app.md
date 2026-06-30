@@ -7,7 +7,8 @@
 | **Prompt ID** | 88 |
 | **Title** | Meal Planner & Nutrition Coaching App |
 | **Slug** | meal-planner-nutrition-coaching-app |
-| **Category** | Nutrition & Coaching |
+| **Category** | Healthcare & Wellness |
+| **Domain** | Nutrition & Coaching |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Coach/Admin; Client |
