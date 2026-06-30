@@ -110,10 +110,11 @@ documented in the guides above.
 
 ## 🤝 Contributing
 
-Improve a prompt by editing its `prompts/*.yaml` and running
-`python3 scripts/build_prompts.py`, then open a pull request. Adding a website prompt?
-Append an object to `PROMPTS` in `assets/js/data.js`. New prompts, fixes, and feature
-ideas are all welcome.
+Improve or add a prompt by editing `prompts/*.yaml` and running
+`python3 scripts/build_prompts.py`, then open a pull request. That one command
+regenerates everything downstream — Markdown, indexes, and the website's
+`assets/js/data.js` (which is generated, not hand-edited). New prompts, fixes, and
+feature ideas are all welcome.
 
 ## 📄 License
 
