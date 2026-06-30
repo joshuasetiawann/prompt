@@ -1,0 +1,298 @@
+# TowPilot Roadside Assistance & Towing Dispatch System
+
+> Let stranded motorists request roadside help, dispatchers assign the nearest available driver with a live ETA, drivers update job status from the field, and the company bill each completed job
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 186 |
+| **Title** | Roadside Assistance & Towing Dispatch System |
+| **Slug** | roadside-assistance-towing-dispatch-system |
+| **Category** | Logistics & Field Service |
+| **Domain** | Roadside Assistance & Towing |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Dispatch Operator; Tow Driver; Stranded Motorist |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building real-time dispatch platforms for towing, roadside assistance, and emergency vehicle services.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Dispatch dashboard (live map, active jobs queue, available drivers)
+2. New service request intake (location, vehicle, problem type)
+3. Motorist request tracking (driver location and live ETA)
+4. Job detail (assignment, status timeline, notes, photos)
+5. Driver mobile job view (accept, en route, on scene, complete)
+6. Driver roster and live availability
+7. Billing and per-job invoices
+8. Auth (sign in / register)
+9. Admin: drivers, service types, and rate cards
+10. Reports (response times, job volume, revenue)
+
+## Required features
+
+- Customer service-request intake capturing location, vehicle, and problem type
+- Nearest-driver assignment ranking available drivers by distance to the breakdown
+- Live ETA calculation and driver location updates shown to the motorist
+- Job status lifecycle from requested through assigned, en route, on scene, and completed
+- Driver availability and on-duty status with shift tracking
+- Per-job billing from service type, distance towed, and add-on charges
+- Photo and note capture for vehicle condition and job documentation
+- Dispatch queue prioritizing safety-critical and roadside-hazard calls
+- Payment collection on completed jobs (mock gateway)
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `phone`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Driver
+**Fields:** `id`, `userId`, `vehicleType`, `plateNumber`, `status`, `currentLat`, `currentLng`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### ServiceRequest
+**Fields:** `id`, `motoristId`, `serviceType`, `problemDescription`, `pickupLat`, `pickupLng`, `pickupAddress`, `dropoffAddress`, `vehicleInfo`, `priority`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- motoristId -> references the related record
+
+### Job
+**Fields:** `id`, `requestId`, `driverId`, `assignedAt`, `etaMinutes`, `enRouteAt`, `onSceneAt`, `completedAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- requestId -> references the related record
+- driverId -> references the related record
+
+### JobEvent
+**Fields:** `id`, `jobId`, `eventType`, `note`, `photoUrl`, `lat`, `lng`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- jobId -> references the related record
+
+### RateCard
+**Fields:** `id`, `serviceType`, `baseFee`, `perMileFee`, `hookupFee`, `active`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Invoice
+**Fields:** `id`, `jobId`, `baseFee`, `distanceFee`, `addOnsFee`, `total`, `paymentStatus`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- jobId -> references the related record
+
+## Backend logic
+
+- Create service requests with geocoded pickup location, vehicle details, and problem type
+- Rank available on-duty drivers by distance to the breakdown and assign the nearest
+- Compute and refresh a live ETA from the driver's location to the pickup point
+- Advance job status through assigned, en route, on scene, and completed with timestamps
+- Record job events with location, notes, and photos along the status timeline
+- Generate a per-job invoice from the rate card, towed distance, and add-on charges
+- Track driver on-duty availability so only free drivers are eligible for assignment
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Submitting a service request assigns the nearest available on-duty driver and shows a live ETA to the motorist
+- [ ] Advancing a job through en route, on scene, and completed records timestamped events visible on the status timeline
+- [ ] A completed job generates an invoice whose total matches the rate card base fee plus towed distance and add-on charges
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds roadside assistance and towing dispatch products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: TowPilot Roadside Assistance & Towing Dispatch System
+Type: Roadside Assistance & Towing Dispatch System (Roadside Assistance & Towing)
+Target users: dispatch operators who triage service calls and assign the nearest available driver and tow drivers who accept jobs and update status from the roadside.
+Business goal: Let stranded motorists request roadside help, dispatchers assign the nearest available driver with a live ETA, drivers update job status from the field, and the company bill each completed job.
+
+BRAND & DESIGN
+Brand style: urgent, dependable, high-visibility. Colors: safety amber, asphalt charcoal, signal white. A live dispatch map with nearby driver pins beside an active job queue and a per-job status timeline. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Dispatch dashboard (live map, active jobs queue, available drivers)
+2. New service request intake (location, vehicle, problem type)
+3. Motorist request tracking (driver location and live ETA)
+4. Job detail (assignment, status timeline, notes, photos)
+5. Driver mobile job view (accept, en route, on scene, complete)
+6. Driver roster and live availability
+7. Billing and per-job invoices
+8. Auth (sign in / register)
+9. Admin: drivers, service types, and rate cards
+10. Reports (response times, job volume, revenue)
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Dispatch Operator — triage requests, assign drivers, and monitor live ETAs
+- Tow Driver — accept jobs, update status, and complete service from the field
+- Stranded Motorist — request assistance, share location, and track driver arrival
+- Admin — manage drivers, service types, and rate cards
+
+CORE FEATURES
+- Customer service-request intake capturing location, vehicle, and problem type
+- Nearest-driver assignment ranking available drivers by distance to the breakdown
+- Live ETA calculation and driver location updates shown to the motorist
+- Job status lifecycle from requested through assigned, en route, on scene, and completed
+- Driver availability and on-duty status with shift tracking
+- Per-job billing from service type, distance towed, and add-on charges
+- Photo and note capture for vehicle condition and job documentation
+- Dispatch queue prioritizing safety-critical and roadside-hazard calls
+- Payment collection on completed jobs (mock gateway)
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, phone, role, createdAt, updatedAt
+- Driver: id, userId, vehicleType, plateNumber, status, currentLat, currentLng, createdAt, updatedAt
+- ServiceRequest: id, motoristId, serviceType, problemDescription, pickupLat, pickupLng, pickupAddress, dropoffAddress, vehicleInfo, priority, status, createdAt, updatedAt
+- Job: id, requestId, driverId, assignedAt, etaMinutes, enRouteAt, onSceneAt, completedAt, status, createdAt, updatedAt
+- JobEvent: id, jobId, eventType, note, photoUrl, lat, lng, createdAt, updatedAt
+- RateCard: id, serviceType, baseFee, perMileFee, hookupFee, active, createdAt, updatedAt
+- Invoice: id, jobId, baseFee, distanceFee, addOnsFee, total, paymentStatus, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Create service requests with geocoded pickup location, vehicle details, and problem type
+- Rank available on-duty drivers by distance to the breakdown and assign the nearest
+- Compute and refresh a live ETA from the driver's location to the pickup point
+- Advance job status through assigned, en route, on scene, and completed with timestamps
+- Record job events with location, notes, and photos along the status timeline
+- Generate a per-job invoice from the rate card, towed distance, and add-on charges
+- Track driver on-duty availability so only free drivers are eligible for assignment
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Payments: implement a mock checkout/deposit that records a Payment status; structure it to swap in a real gateway (e.g., Stripe) via env vars.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: ~10 drivers with live availability and locations, several service types and a rate card, ~20 service requests across requested, assigned, en route, on scene, and completed statuses with job-event timelines and invoices, 1 admin, 2 dispatchers, 4 drivers, and 3 motorists. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```
