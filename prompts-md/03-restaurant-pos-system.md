@@ -7,7 +7,8 @@
 | **Prompt ID** | 03 |
 | **Title** | Restaurant POS System |
 | **Slug** | restaurant-pos-system |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Cashier/Server; Manager/Admin |

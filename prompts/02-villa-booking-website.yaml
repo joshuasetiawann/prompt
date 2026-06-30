@@ -1,14 +1,18 @@
 prompt_id: '02'
 title: Villa Booking Website
 slug: villa-booking-website
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: VillaNest Villa Booking Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Agencies and freelancers building rental sites for villa owners, and property managers wanting a branded booking site.
 target_user: Guest; Manager/Owner
+target_users: travelers booking private villas and villa owners or property managers listing their properties
+role_line: You are a senior full-stack engineer specializing in vacation-rental platforms
 business_goal: Showcase villas, let guests book available dates with a deposit, and let managers handle listings and bookings
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: premium, relaxed, escapist. Colors: emerald green, sand beige, crisp white. Clean, modern, large hero photos, elegant typography, and map-style location blocks.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -160,6 +164,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Guest — browse, book, manage trips
+- Manager/Owner — manage villas, pricing, availability, and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 5 villas with photos and amenities, blocked dates, 6 bookings, sample reviews, 1 admin and 2 guests. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 05 |
 | **Title** | Clinic Appointment Booking App |
 | **Slug** | clinic-appointment-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Patient; Staff/Admin |
@@ -59,6 +60,8 @@
 7. Auth
 8. Admin: manage doctors and schedules
 9. Admin: appointment calendar and management
+10. Admin: departments and services
+11. Patient: visit history and medical records
 
 ## Required features
 
@@ -69,6 +72,9 @@
 - Reminder concept (logged notifications)
 - Admin schedule management and calendar
 - Reports: appointments per doctor and per day
+- Department/service catalog mapping doctors to specialties
+- Visit records capturing diagnosis and follow-up notes per appointment
+- Mock deposit/payment capture per appointment with status tracking
 
 ## Database models
 
@@ -79,10 +85,10 @@
 - Standalone model (no outbound foreign keys)
 
 ### Doctor
-**Fields:** `id`, `name`, `specialty`, `workingHours`, `createdAt`, `updatedAt`
+**Fields:** `id`, `name`, `specialty`, `departmentId`, `workingHours`, `createdAt`, `updatedAt`
 
 **Relationships:**
-- Standalone model (no outbound foreign keys)
+- departmentId -> references the related record
 
 ### Patient
 **Fields:** `id`, `userId`, `fullName`, `phone`, `dob`, `createdAt`, `updatedAt`
@@ -103,6 +109,27 @@
 **Relationships:**
 - appointmentId -> references the related record
 
+### Department
+**Fields:** `id`, `name`, `description`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Referenced by doctors via Doctor.departmentId
+
+### MedicalRecord
+**Fields:** `id`, `appointmentId`, `patientId`, `doctorId`, `diagnosis`, `notes`, `followUpDate`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- appointmentId -> references the related record
+- patientId -> references the related record
+- doctorId -> references the related record
+
+### Payment
+**Fields:** `id`, `appointmentId`, `patientId`, `amount`, `status`, `method`, `paidAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- appointmentId -> references the related record
+- patientId -> references the related record
+
 ## Backend logic
 
 - Generate available slots from doctor working hours minus booked appointments
@@ -110,6 +137,9 @@
 - Reschedule/cancel enforcing the time window
 - Admin CRUD for doctors and schedules
 - Reporting per doctor and day
+- Record a mock Payment/deposit per appointment and update its status
+- Create and view medical records (diagnosis, notes, follow-up) for appointments
+- Admin CRUD for departments and services
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -200,6 +230,8 @@ PAGES / SCREENS
 7. Auth
 8. Admin: manage doctors and schedules
 9. Admin: appointment calendar and management
+10. Admin: departments and services
+11. Patient: visit history and medical records
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -216,13 +248,19 @@ CORE FEATURES
 - Reminder concept (logged notifications)
 - Admin schedule management and calendar
 - Reports: appointments per doctor and per day
+- Department/service catalog mapping doctors to specialties
+- Visit records capturing diagnosis and follow-up notes per appointment
+- Mock deposit/payment capture per appointment with status tracking
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
-- Doctor: id, name, specialty, workingHours, createdAt, updatedAt
+- Doctor: id, name, specialty, departmentId, workingHours, createdAt, updatedAt
 - Patient: id, userId, fullName, phone, dob, createdAt, updatedAt
 - Appointment: id, doctorId, patientId, startTime, endTime, status, reason, createdAt, updatedAt
 - Notification: id, appointmentId, type, sentAt, createdAt, updatedAt
+- Department: id, name, description, createdAt, updatedAt
+- MedicalRecord: id, appointmentId, patientId, doctorId, diagnosis, notes, followUpDate, createdAt, updatedAt
+- Payment: id, appointmentId, patientId, amount, status, method, paidAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -231,6 +269,9 @@ BACKEND / API LOGIC
 - Reschedule/cancel enforcing the time window
 - Admin CRUD for doctors and schedules
 - Reporting per doctor and day
+- Record a mock Payment/deposit per appointment and update its status
+- Create and view medical records (diagnosis, notes, follow-up) for appointments
+- Admin CRUD for departments and services
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

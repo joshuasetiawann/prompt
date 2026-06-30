@@ -1,14 +1,18 @@
 prompt_id: '05'
 title: Clinic Appointment Booking App
 slug: clinic-appointment-booking-app
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: MediSlot Clinic Appointment Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building scheduling tools for clinics and private practices, and clinics wanting simple online booking.
 target_user: Patient; Staff/Admin
+target_users: patients booking visits and clinic staff managing doctors, schedules, and appointments
+role_line: You are a senior full-stack engineer who builds healthcare scheduling apps
 business_goal: Let patients book available slots with a doctor and let staff manage schedules and appointments
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, reassuring, professional healthcare. Colors: teal, soft white, light grey. Clean, modern, calm layout, clear slot grid, and simple forms.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -189,6 +193,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Patient — book and manage own appointments
+- Staff/Admin — manage doctors, schedules, and all appointments
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 doctors with hours, sample patients, appointments across past/future, 1 admin and 2 patients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

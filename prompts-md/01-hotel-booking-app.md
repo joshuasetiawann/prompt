@@ -7,7 +7,8 @@
 | **Prompt ID** | 01 |
 | **Title** | Hotel Booking App |
 | **Slug** | hotel-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Guest; Admin/Owner |

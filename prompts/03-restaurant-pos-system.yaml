@@ -1,14 +1,18 @@
 prompt_id: '03'
 title: Restaurant POS System
 slug: restaurant-pos-system
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: ServePoint Restaurant POS System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building POS tools for cafes and restaurants, and owners who want a simple in-house ordering system.
 target_user: Cashier/Server; Manager/Admin
+target_users: restaurant cashiers, servers, and managers running daily service
+role_line: You are a senior full-stack engineer who builds point-of-sale systems for restaurants
 business_goal: Speed up taking orders, tracking tables, sending tickets to the kitchen, and closing checks
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fast, high-contrast, made for busy service. Colors: charcoal base, amber accent, white panels. Clean, modern, large tap targets, menu grid, and a clear order ticket panel.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -164,6 +168,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Cashier/Server — take orders, manage tables, take payment
+- Manager/Admin — manage menu, view reports, manage staff
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 categories, ~24 menu items, 10 tables, several open and paid orders, 1 manager and 2 server logins (PIN). Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

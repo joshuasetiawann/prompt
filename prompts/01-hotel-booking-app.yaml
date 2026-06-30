@@ -1,14 +1,18 @@
 prompt_id: '01'
 title: Hotel Booking App
 slug: hotel-booking-app
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: StayEase Hotel Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers and agencies building booking sites for boutique hotels, guesthouses, or B&Bs, and owners who want a simple reservation system.
 target_user: Guest; Admin/Owner
+target_users: travelers booking rooms and boutique or independent hotel owners managing availability
+role_line: You are a senior full-stack engineer who builds hospitality booking products
 business_goal: Let guests find available rooms for their dates and complete a booking, and let staff manage rooms and reservations
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: modern, calm, trustworthy hospitality. Colors: deep navy, warm gold accent, off-white background. Clean, modern, spacious, imagery-led layout with clear date pickers.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -158,6 +162,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Guest — search, book, and manage own bookings
+- Admin/Owner — manage rooms, availability, and all bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 2 room types, ~8 rooms, 6 bookings across past and future dates, 1 admin and 2 guest accounts. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

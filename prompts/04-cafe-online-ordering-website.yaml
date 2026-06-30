@@ -1,14 +1,18 @@
 prompt_id: '04'
 title: Cafe Online Ordering Website
 slug: cafe-online-ordering-website
-category: E-commerce
+category: E-commerce & Retail
+domain: E-commerce
 app_name: Brewline Cafe Online Ordering Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers building ordering sites for cafes and small food businesses, and owners wanting online orders without a marketplace fee.
 target_user: Customer; Staff/Admin
+target_users: cafe customers ordering ahead and cafe staff managing the menu and incoming orders
+role_line: You are a senior full-stack engineer who builds online ordering for food and drink businesses
 business_goal: Let customers order and pay (mock) for pickup or delivery, and let staff manage orders and the menu
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: warm, cozy, neighborhood cafe. Colors: warm brown, cream, soft caramel accent. Clean, modern, appetizing item cards, simple customization, and a clear cart.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -174,6 +178,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — browse, order, and track
+- Staff/Admin — manage menu and process orders
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 categories, ~20 items with options, sample orders in various statuses, 1 admin and 1 customer. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
