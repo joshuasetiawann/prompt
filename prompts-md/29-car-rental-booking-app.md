@@ -7,7 +7,8 @@
 | **Prompt ID** | 29 |
 | **Title** | Car Rental Booking App |
 | **Slug** | car-rental-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Customer; Admin/Staff |
@@ -59,6 +60,7 @@
 7. Auth
 8. Admin: fleet management
 9. Admin: bookings calendar and reports
+10. Admin: maintenance log and pickup/return locations
 
 ## Required features
 
@@ -68,6 +70,8 @@
 - Booking status lifecycle and cancellation window
 - Fleet management with status (available/maintenance)
 - Reports: utilization and revenue per vehicle
+- Customer reviews and star ratings per vehicle
+- Maintenance logging per location and post-rental damage reports
 
 ## Database models
 
@@ -96,6 +100,33 @@
 **Relationships:**
 - bookingId -> references the related record
 
+### Location
+**Fields:** `id`, `name`, `address`, `city`, `phone`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (referenced by MaintenanceLog as a pickup/return branch)
+
+### Review
+**Fields:** `id`, `vehicleId`, `customerId`, `rating`, `comment`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- vehicleId -> references the related record
+- customerId -> references the related record
+
+### MaintenanceLog
+**Fields:** `id`, `vehicleId`, `locationId`, `description`, `cost`, `scheduledFor`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- vehicleId -> references the related record
+- locationId -> references the related record
+
+### DamageReport
+**Fields:** `id`, `bookingId`, `vehicleId`, `description`, `repairCost`, `status`, `reportedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bookingId -> references the related record
+- vehicleId -> references the related record
+
 ## Backend logic
 
 - Availability per vehicle across a date range
@@ -103,6 +134,8 @@
 - Mock deposit and total-by-days calculation
 - Cancellation enforcing the policy window
 - Admin fleet and booking management
+- Aggregate vehicle ratings from customer reviews
+- Track maintenance schedules per location and log post-rental damage reports
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -193,6 +226,7 @@ PAGES / SCREENS
 7. Auth
 8. Admin: fleet management
 9. Admin: bookings calendar and reports
+10. Admin: maintenance log and pickup/return locations
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -208,12 +242,18 @@ CORE FEATURES
 - Booking status lifecycle and cancellation window
 - Fleet management with status (available/maintenance)
 - Reports: utilization and revenue per vehicle
+- Customer reviews and star ratings per vehicle
+- Maintenance logging per location and post-rental damage reports
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
 - Vehicle: id, name, type, seats, transmission, pricePerDay, photos, status, createdAt, updatedAt
 - Booking: id, vehicleId, customerId, pickupDate, returnDate, status, total, depositPaid, createdAt, updatedAt
 - Payment: id, bookingId, amount, type, status, createdAt, updatedAt
+- Location: id, name, address, city, phone, isActive, createdAt, updatedAt
+- Review: id, vehicleId, customerId, rating, comment, createdAt, updatedAt
+- MaintenanceLog: id, vehicleId, locationId, description, cost, scheduledFor, status, createdAt, updatedAt
+- DamageReport: id, bookingId, vehicleId, description, repairCost, status, reportedAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -222,6 +262,8 @@ BACKEND / API LOGIC
 - Mock deposit and total-by-days calculation
 - Cancellation enforcing the policy window
 - Admin fleet and booking management
+- Aggregate vehicle ratings from customer reviews
+- Track maintenance schedules per location and log post-rental damage reports
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

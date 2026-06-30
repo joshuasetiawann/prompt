@@ -8,6 +8,7 @@
 | **Title** | Delivery Tracking Dashboard |
 | **Slug** | delivery-tracking-dashboard |
 | **Category** | Analytics & Dashboards |
+| **Domain** | Analytics & Dashboards |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Dispatcher/Admin; Driver; Customer |
@@ -56,7 +57,9 @@
 5. Drivers list and driver workload
 6. Driver view: my deliveries with status update
 7. Public tracking page (by tracking number)
-8. Reports
+8. Customers directory
+9. Routes and stops
+10. Reports
 
 ## Required features
 
@@ -67,6 +70,9 @@
 - Public tracking page without login
 - Map area for location concept
 - Reports: on-time rate, volume by status; export concept
+- Customer directory with contact details and shipment history
+- Route planning with driver assignment and stop counts
+- Proof of delivery capture (recipient name, signature, photo) on delivery
 
 ## Database models
 
@@ -83,13 +89,33 @@
 - userId -> references the related record
 
 ### Shipment
-**Fields:** `id`, `trackingNumber`, `recipientName`, `address`, `driverId`, `status`, `createdAt`, `updatedAt`
+**Fields:** `id`, `trackingNumber`, `recipientName`, `address`, `driverId`, `customerId`, `routeId`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- driverId -> references the related record
+- customerId -> references the related record
+- routeId -> references the related record
+
+### StatusEvent
+**Fields:** `id`, `shipmentId`, `status`, `note`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- shipmentId -> references the related record
+
+### Customer
+**Fields:** `id`, `name`, `email`, `phone`, `address`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model referenced by Shipment via customerId
+
+### Route
+**Fields:** `id`, `name`, `driverId`, `status`, `stopCount`, `scheduledFor`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - driverId -> references the related record
 
-### StatusEvent
-**Fields:** `id`, `shipmentId`, `status`, `note`, `createdAt`, `updatedAt`
+### DeliveryProof
+**Fields:** `id`, `shipmentId`, `recipientName`, `signatureUrl`, `photoUrl`, `notes`, `deliveredAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - shipmentId -> references the related record
@@ -101,6 +127,9 @@
 - Driver assignment and workload aggregation
 - Public tracking lookup by tracking number
 - Reporting on status and on-time performance
+- Customer directory and per-customer shipment history
+- Route planning and driver workload by route
+- Proof-of-delivery capture when a shipment is marked delivered
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -189,7 +218,9 @@ PAGES / SCREENS
 5. Drivers list and driver workload
 6. Driver view: my deliveries with status update
 7. Public tracking page (by tracking number)
-8. Reports
+8. Customers directory
+9. Routes and stops
+10. Reports
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -207,12 +238,18 @@ CORE FEATURES
 - Public tracking page without login
 - Map area for location concept
 - Reports: on-time rate, volume by status; export concept
+- Customer directory with contact details and shipment history
+- Route planning with driver assignment and stop counts
+- Proof of delivery capture (recipient name, signature, photo) on delivery
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
 - Driver: id, userId, name, status, createdAt, updatedAt
-- Shipment: id, trackingNumber, recipientName, address, driverId, status, createdAt, updatedAt
+- Shipment: id, trackingNumber, recipientName, address, driverId, customerId, routeId, status, createdAt, updatedAt
 - StatusEvent: id, shipmentId, status, note, createdAt, updatedAt
+- Customer: id, name, email, phone, address, createdAt, updatedAt
+- Route: id, name, driverId, status, stopCount, scheduledFor, createdAt, updatedAt
+- DeliveryProof: id, shipmentId, recipientName, signatureUrl, photoUrl, notes, deliveredAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -221,6 +258,9 @@ BACKEND / API LOGIC
 - Driver assignment and workload aggregation
 - Public tracking lookup by tracking number
 - Reporting on status and on-time performance
+- Customer directory and per-customer shipment history
+- Route planning and driver workload by route
+- Proof-of-delivery capture when a shipment is marked delivered
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

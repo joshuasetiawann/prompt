@@ -1,14 +1,18 @@
 prompt_id: '30'
 title: Coworking Space Booking App
 slug: coworking-space-booking-app
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: DeskHub Coworking Space Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building booking apps for coworking spaces, studios, or shared facilities.
 target_user: Member/Visitor; Admin/Manager
+target_users: members and visitors booking workspaces and space managers handling availability
+role_line: You are a senior full-stack engineer who builds workspace and resource booking apps
 business_goal: Let users book desks/rooms for time slots and let managers manage spaces and bookings
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: modern, productive, community-minded. Colors: teal, white, warm grey. Clean, modern, resource cards, a time-slot calendar, and quick booking.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -191,6 +195,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Member/Visitor — book spaces and manage bookings
+- Admin/Manager — manage spaces, availability, and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~10 spaces (desks and rooms), sample bookings, member credits, 1 admin and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 30 |
 | **Title** | Coworking Space Booking App |
 | **Slug** | coworking-space-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Member/Visitor; Admin/Manager |
@@ -67,6 +68,9 @@
 - Membership/credits concept reducing booking cost
 - Mock payment for non-member bookings
 - Booking status and cancellation window
+- Waitlist for fully-booked slots with notify-when-freed
+- Check-in and check-out tracking for actual usage
+- Member reviews and ratings per space
 - Admin space and booking management
 - Reports: utilization and revenue per space
 
@@ -103,12 +107,36 @@
 **Relationships:**
 - bookingId -> references the related record
 
+### CheckIn
+**Fields:** `id`, `bookingId`, `userId`, `checkInAt`, `checkOutAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bookingId -> references the related record
+- userId -> references the related record
+
+### WaitlistEntry
+**Fields:** `id`, `spaceId`, `userId`, `date`, `startTime`, `endTime`, `status`, `notifiedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- spaceId -> references the related record
+- userId -> references the related record
+
+### Review
+**Fields:** `id`, `spaceId`, `userId`, `rating`, `comment`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- spaceId -> references the related record
+- userId -> references the related record
+
 ## Backend logic
 
 - Slot availability per space and day
 - Conflict-free booking creation
 - Credits/membership application to booking cost
 - Mock payment and cancellation logic
+- Waitlist enrollment and notify-when-freed on cancellation
+- Check-in/check-out capture feeding utilization reports
+- Member reviews aggregated into per-space ratings
 - Admin space and booking management
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
@@ -214,6 +242,9 @@ CORE FEATURES
 - Membership/credits concept reducing booking cost
 - Mock payment for non-member bookings
 - Booking status and cancellation window
+- Waitlist for fully-booked slots with notify-when-freed
+- Check-in and check-out tracking for actual usage
+- Member reviews and ratings per space
 - Admin space and booking management
 - Reports: utilization and revenue per space
 
@@ -223,6 +254,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Booking: id, spaceId, userId, date, startTime, endTime, status, total, createdAt, updatedAt
 - Membership: id, userId, credits, tier, createdAt, updatedAt
 - Payment: id, bookingId, amount, status, createdAt, updatedAt
+- CheckIn: id, bookingId, userId, checkInAt, checkOutAt, status, createdAt, updatedAt
+- WaitlistEntry: id, spaceId, userId, date, startTime, endTime, status, notifiedAt, createdAt, updatedAt
+- Review: id, spaceId, userId, rating, comment, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -230,6 +264,9 @@ BACKEND / API LOGIC
 - Conflict-free booking creation
 - Credits/membership application to booking cost
 - Mock payment and cancellation logic
+- Waitlist enrollment and notify-when-freed on cancellation
+- Check-in/check-out capture feeding utilization reports
+- Member reviews aggregated into per-space ratings
 - Admin space and booking management
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 

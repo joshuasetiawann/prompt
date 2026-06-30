@@ -7,7 +7,8 @@
 | **Prompt ID** | 27 |
 | **Title** | Document Management System |
 | **Slug** | document-management-system |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin; Editor; Viewer |

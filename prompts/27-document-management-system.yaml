@@ -1,14 +1,18 @@
 prompt_id: '27'
 title: Document Management System
 slug: document-management-system
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: DocVault Document Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building internal document hubs for teams that need access control and versioning.
 target_user: Admin; Editor; Viewer
+target_users: teams organizing internal documents with controlled access and version history
+role_line: You are a senior full-stack engineer who builds document management and file-organization systems
 business_goal: Store and organize documents in folders with versioning, tagging, permissions, and search
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: organized, secure, business-clean. Colors: slate, blue, white. Clean, modern, file-explorer layout with a details panel and clear permissions.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -155,6 +159,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin — manage users, permissions, and settings
+- Editor — upload, edit, and organize documents
+- Viewer — view and download permitted documents
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: nested folders, ~25 documents with versions and tags, permissions, audit entries, 1 admin, 1 editor, 1 viewer. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

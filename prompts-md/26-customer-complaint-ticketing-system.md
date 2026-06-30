@@ -7,7 +7,8 @@
 | **Prompt ID** | 26 |
 | **Title** | Customer Complaint Ticketing System |
 | **Slug** | customer-complaint-ticketing-system |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Agent; Admin/Manager |
@@ -64,7 +65,9 @@
 - Status: new, open, pending, resolved, closed
 - Assignment to agents and reassignment
 - SLA/due concept with breach flag
+- Configurable SLA policies per category and priority
 - Canned-response concept
+- File attachments on tickets and replies
 - Reports: volume, resolution time, by agent; export concept
 
 ## Database models
@@ -103,12 +106,34 @@
 - ticketId -> references the related record
 - actorId -> references the related record
 
+### CannedResponse
+**Fields:** `id`, `title`, `body`, `categoryId`, `createdById`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- categoryId -> references the related record
+- createdById -> references the related record
+
+### Attachment
+**Fields:** `id`, `ticketId`, `messageId`, `fileName`, `fileUrl`, `uploadedById`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ticketId -> references the related record
+- messageId -> references the related record
+- uploadedById -> references the related record
+
+### SlaPolicy
+**Fields:** `id`, `name`, `categoryId`, `priority`, `responseMinutes`, `resolutionMinutes`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- categoryId -> references the related record
+
 ## Backend logic
 
 - Ticket creation and status transitions
 - Threaded messaging between customer and agent
 - Assignment and priority updates
-- SLA due calculation and breach flagging
+- SLA due calculation and breach flagging from configurable SLA policies
+- File attachment handling linked to tickets and messages
 - Reporting on volume and resolution time
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
@@ -213,7 +238,9 @@ CORE FEATURES
 - Status: new, open, pending, resolved, closed
 - Assignment to agents and reassignment
 - SLA/due concept with breach flag
+- Configurable SLA policies per category and priority
 - Canned-response concept
+- File attachments on tickets and replies
 - Reports: volume, resolution time, by agent; export concept
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -222,13 +249,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Ticket: id, customerId, categoryId, subject, priority, status, assigneeId, createdAt, dueAt, updatedAt
 - Message: id, ticketId, authorId, body, createdAt, updatedAt
 - AuditLog: id, ticketId, action, actorId, createdAt, updatedAt
+- CannedResponse: id, title, body, categoryId, createdById, isActive, createdAt, updatedAt
+- Attachment: id, ticketId, messageId, fileName, fileUrl, uploadedById, createdAt, updatedAt
+- SlaPolicy: id, name, categoryId, priority, responseMinutes, resolutionMinutes, isActive, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Ticket creation and status transitions
 - Threaded messaging between customer and agent
 - Assignment and priority updates
-- SLA due calculation and breach flagging
+- SLA due calculation and breach flagging from configurable SLA policies
+- File attachment handling linked to tickets and messages
 - Reporting on volume and resolution time
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 

@@ -2,13 +2,17 @@ prompt_id: '28'
 title: Delivery Tracking Dashboard
 slug: delivery-tracking-dashboard
 category: Analytics & Dashboards
+domain: Analytics & Dashboards
 app_name: TrackR Delivery Tracking Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building delivery and courier dashboards for small logistics operations.
 target_user: Dispatcher/Admin; Driver; Customer
+target_users: dispatchers and drivers managing deliveries and customers tracking their parcels
+role_line: You are a senior full-stack engineer who builds logistics and delivery-tracking dashboards
 business_goal: Manage shipments through statuses, assign drivers, and provide a public tracking page
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: operational, clear, logistics-grade. Colors: orange, slate, white. Clean, modern, dispatch table, status timeline, and a clean public tracking view.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -175,6 +179,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Dispatcher/Admin — create, assign, and oversee shipments
+- Driver — update status of assigned deliveries
+- Customer — track via tracking number (public)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~20 shipments across statuses, 3 drivers with assignments, status timelines, 1 admin, 1 driver. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
@@ -247,9 +258,9 @@ ready_to_use_prompt: |-
   5. Drivers list and driver workload
   6. Driver view: my deliveries with status update
   7. Public tracking page (by tracking number)
-  8. Reports
-  9. Customers directory
-  10. Routes and stops
+  8. Customers directory
+  9. Routes and stops
+  10. Reports
 
   NAVIGATION
   - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
