@@ -1,14 +1,18 @@
 prompt_id: '92'
 title: Lost & Found Management Platform
 slug: lost-found-management-platform
-category: Operations & Tracking
+category: Analytics & Dashboards
+domain: Operations & Tracking
 app_name: FoundIt Lost & Found Management Platform
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building lost-and-found systems for venues, transit, campuses, or events.
 target_user: User; Staff/Admin
+target_users: the public reporting lost items and staff logging found items and handling claims, for venues or transit
+role_line: You are a senior full-stack engineer who builds lost-and-found tracking and claim-matching platforms
 business_goal: Log lost and found items, suggest matches, and process verified claims to return items
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: helpful, organized, reassuring. Colors: blue, amber accent, white. Clean, modern, item lists with photos, matching, and claim status.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -182,6 +186,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — report lost items and claim found items
+- Staff/Admin — log found items, verify, and return
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~25 lost and found items with photos, match suggestions, claims, 1 admin/staff and 3 users. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

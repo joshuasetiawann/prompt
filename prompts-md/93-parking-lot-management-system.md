@@ -7,7 +7,8 @@
 | **Prompt ID** | 93 |
 | **Title** | Parking Lot Management System |
 | **Slug** | parking-lot-management-system |
-| **Category** | Parking & Mobility |
+| **Category** | Logistics & Field Service |
+| **Domain** | Parking & Mobility |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Driver; Attendant; Operator/Admin |

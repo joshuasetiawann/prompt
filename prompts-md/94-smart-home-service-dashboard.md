@@ -7,7 +7,8 @@
 | **Prompt ID** | 94 |
 | **Title** | Smart Home Service Dashboard |
 | **Slug** | smart-home-service-dashboard |
-| **Category** | Smart Home & Devices |
+| **Category** | Productivity & Personal |
+| **Domain** | Smart Home & Devices |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Owner/Admin; Member |

@@ -1,14 +1,18 @@
 prompt_id: '94'
 title: Smart Home Service Dashboard
 slug: smart-home-service-dashboard
-category: Smart Home & Devices
+category: Productivity & Personal
+domain: Smart Home & Devices
 app_name: HomeHub Smart Home Service Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building smart-home or device-management dashboards (with mock device data, no hardware needed).
 target_user: Owner/Admin; Member
+target_users: homeowners managing connected devices and household members controlling rooms and scenes
+role_line: You are a senior full-stack engineer who builds device-management dashboards (with mock device data) for smart homes
 business_goal: Present devices by room with status and control, scenes and schedules, and mock energy usage
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: sleek, modern, tech. Colors: indigo, near-black, cyan accent. Clean, modern, room and device cards with toggles and usage charts.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -155,6 +159,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner/Admin — manage devices, scenes, schedules, and members
+- Member — view and control permitted rooms
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 rooms, ~12 devices with status, scenes, schedules, mock energy readings, 1 admin/owner and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

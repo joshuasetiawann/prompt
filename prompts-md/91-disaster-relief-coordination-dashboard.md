@@ -7,7 +7,8 @@
 | **Prompt ID** | 91 |
 | **Title** | Disaster Relief Coordination Dashboard |
 | **Slug** | disaster-relief-coordination-dashboard |
-| **Category** | Crisis & Coordination |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Crisis & Coordination |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Coordinator/Admin; Field Volunteer; Public |

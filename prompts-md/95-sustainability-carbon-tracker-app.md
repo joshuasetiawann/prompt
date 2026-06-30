@@ -7,7 +7,8 @@
 | **Prompt ID** | 95 |
 | **Title** | Sustainability / Carbon Tracker App |
 | **Slug** | sustainability-carbon-tracker-app |
-| **Category** | Sustainability & Tracking |
+| **Category** | Analytics & Dashboards |
+| **Domain** | Sustainability & Tracking |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | User; Org Admin |

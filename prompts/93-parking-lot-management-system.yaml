@@ -1,14 +1,18 @@
 prompt_id: '93'
 title: Parking Lot Management System
 slug: parking-lot-management-system
-category: Parking & Mobility
+category: Logistics & Field Service
+domain: Parking & Mobility
 app_name: ParkPro Parking Lot Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building parking operations and reservation systems for lots and garages.
 target_user: Driver; Attendant; Operator/Admin
+target_users: drivers reserving or paying for parking and operators and attendants managing lots
+role_line: You are a senior full-stack engineer who builds parking operations and reservation systems
 business_goal: Manage lot capacity, reservations and live sessions, rate calculation, and mock payments
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: practical, modern, urban. Colors: slate, blue, yellow accent. Clean, modern, lot occupancy view and a session/reservation flow.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -165,6 +169,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Driver — reserve and pay for parking
+- Attendant — start/end sessions and check reservations
+- Operator/Admin — manage lots, spaces, and rates
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 lots with spaces and rate plans, reservations and sessions, 1 admin, 1 attendant, 2 drivers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

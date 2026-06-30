@@ -1,14 +1,18 @@
 prompt_id: '91'
 title: Disaster Relief Coordination Dashboard
 slug: disaster-relief-coordination-dashboard
-category: Crisis & Coordination
+category: Community, Civic & Nonprofit
+domain: Crisis & Coordination
 app_name: ReliefGrid Disaster Relief Coordination Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building coordination dashboards for relief organizations and emergency response.
 target_user: Coordinator/Admin; Field Volunteer; Public
+target_users: relief coordinators, field volunteers, and the public reporting needs during emergencies
+role_line: You are a senior full-stack engineer who builds coordination dashboards for relief and emergency operations
 business_goal: Track incidents and needs, match resources and shelters, and assign volunteers during relief operations
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: urgent, clear, mission-critical. Colors: red, slate, white. Clean, modern, operations dashboard with needs, resources, and assignments.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -161,6 +165,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Coordinator/Admin — manage needs, resources, and assignments
+- Field Volunteer — view assignments and update status
+- Public — report a need
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~20 needs across priorities, resources, shelters, volunteers and assignments, 1 admin/coordinator, 2 volunteers, public reports. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

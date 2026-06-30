@@ -7,7 +7,8 @@
 | **Prompt ID** | 92 |
 | **Title** | Lost & Found Management Platform |
 | **Slug** | lost-found-management-platform |
-| **Category** | Operations & Tracking |
+| **Category** | Analytics & Dashboards |
+| **Domain** | Operations & Tracking |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | User; Staff/Admin |
@@ -67,6 +68,9 @@
 - Claim status (pending, approved, returned)
 - Item status lifecycle
 - Role-scoped access
+- Ownership verification questions defined per item
+- Handover log recording recipient, ID check, and return date
+- Item category taxonomy used for matching
 - Reports: items, matches, and return rate
 
 ## Database models
@@ -103,11 +107,33 @@
 **Relationships:**
 - Standalone model (no outbound foreign keys)
 
+### VerificationQuestion
+**Fields:** `id`, `itemId`, `question`, `expectedAnswer`, `hint`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- itemId -> references the related record
+
+### Handover
+**Fields:** `id`, `itemId`, `claimId`, `staffId`, `recipientName`, `isVerified`, `notes`, `returnedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- itemId -> references the related record
+- claimId -> references the related record
+- staffId -> references the related record
+
+### Category
+**Fields:** `id`, `name`, `description`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
 ## Backend logic
 
 - Lost/found reporting with photos and location
 - Match suggestion by category and attributes
 - Claim submission and verification
+- Verification questions checked before a claim is approved
+- Handover records that confirm and close out returns
 - Status lifecycle and returns
 - Reporting on matches and returns
 - Server-side validation on every mutation with Zod
@@ -215,6 +241,9 @@ CORE FEATURES
 - Claim status (pending, approved, returned)
 - Item status lifecycle
 - Role-scoped access
+- Ownership verification questions defined per item
+- Handover log recording recipient, ID check, and return date
+- Item category taxonomy used for matching
 - Reports: items, matches, and return rate
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -223,12 +252,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - MatchSuggestion: id, lostItemId, foundItemId, score, createdAt, updatedAt
 - Claim: id, itemId, claimantId, answers, status, createdAt, updatedAt
 - Location: id, name, createdAt, updatedAt
+- VerificationQuestion: id, itemId, question, expectedAnswer, hint, createdAt, updatedAt
+- Handover: id, itemId, claimId, staffId, recipientName, isVerified, notes, returnedAt, createdAt, updatedAt
+- Category: id, name, description, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Lost/found reporting with photos and location
 - Match suggestion by category and attributes
 - Claim submission and verification
+- Verification questions checked before a claim is approved
+- Handover records that confirm and close out returns
 - Status lifecycle and returns
 - Reporting on matches and returns
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.

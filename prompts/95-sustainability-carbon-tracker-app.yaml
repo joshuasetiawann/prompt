@@ -1,14 +1,18 @@
 prompt_id: '95'
 title: Sustainability / Carbon Tracker App
 slug: sustainability-carbon-tracker-app
-category: Sustainability & Tracking
+category: Analytics & Dashboards
+domain: Sustainability & Tracking
 app_name: CarbonLedger Sustainability / Carbon Tracker App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building carbon or sustainability trackers for individuals and teams.
 target_user: User; Org Admin
+target_users: individuals and small organizations tracking and reducing their carbon footprint
+role_line: You are a senior full-stack engineer who builds emissions-tracking and sustainability dashboards
 business_goal: Log activities with emission factors, visualize footprint over time, set reduction goals, and track offsets
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, green, data-forward. Colors: green, slate, white. Clean, modern, footprint charts with category breakdowns and goals.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -158,6 +162,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — log activities and track footprint
+- Org Admin — view team footprint and goals (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~10 categories with factors, ~80 activities over months, goals, offsets, 1 user (and an optional org admin). Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
