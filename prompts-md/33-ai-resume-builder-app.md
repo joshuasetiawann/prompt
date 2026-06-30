@@ -7,7 +7,8 @@
 | **Prompt ID** | 33 |
 | **Title** | AI Resume Builder App |
 | **Slug** | ai-resume-builder-app |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | User; Admin |
@@ -55,9 +56,11 @@
 3. Resume editor (sections: profile, experience, education, skills) with live preview
 4. AI suggestions panel (improve bullet, summarize)
 5. Template picker
-6. Export (PDF concept) and preview
-7. Settings
-8. Usage view
+6. Cover letters (linked to a resume)
+7. Job application tracker
+8. Export (PDF concept) and preview
+9. Settings
+10. Usage view
 
 ## Required features
 
@@ -66,6 +69,10 @@
 - Live preview with switchable templates
 - Multiple saved resumes per user
 - Export/printable view (PDF concept)
+- Template gallery with featured and categorized layouts
+- Cover letter companion generated from a resume (mock AI)
+- Job application tracker linking resumes to roles with status
+- Export history per resume
 - Usage/limit concept for AI suggestions
 - Admin usage overview
 
@@ -96,11 +103,42 @@
 **Relationships:**
 - userId -> references the related record
 
+### ResumeTemplate
+**Fields:** `id`, `name`, `description`, `category`, `layout`, `colorScheme`, `isFeatured`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone catalog model — resumes pick a layout via Resume.templateId
+
+### CoverLetter
+**Fields:** `id`, `userId`, `resumeId`, `title`, `content`, `tone`, `isArchived`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- resumeId -> references the related record
+
+### JobApplication
+**Fields:** `id`, `userId`, `resumeId`, `company`, `jobTitle`, `status`, `appliedDate`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- resumeId -> references the related record
+
+### ResumeExport
+**Fields:** `id`, `resumeId`, `userId`, `fileType`, `status`, `fileName`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- resumeId -> references the related record
+- userId -> references the related record
+
 ## Backend logic
 
 - Mock AI suggestions for bullets and summaries
 - Resume CRUD with structured sections
 - Template switching affecting preview only
+- Template gallery CRUD (featured/categorized layouts)
+- Cover letter CRUD linked to a resume with mock AI drafting
+- Job application tracking with status updates linked to resumes
+- Export history logging per resume
 - Credit deduction for AI suggestions
 - Admin usage aggregation
 - Server-side validation on every mutation with Zod
@@ -189,9 +227,11 @@ PAGES / SCREENS
 3. Resume editor (sections: profile, experience, education, skills) with live preview
 4. AI suggestions panel (improve bullet, summarize)
 5. Template picker
-6. Export (PDF concept) and preview
-7. Settings
-8. Usage view
+6. Cover letters (linked to a resume)
+7. Job application tracker
+8. Export (PDF concept) and preview
+9. Settings
+10. Usage view
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -206,6 +246,10 @@ CORE FEATURES
 - Live preview with switchable templates
 - Multiple saved resumes per user
 - Export/printable view (PDF concept)
+- Template gallery with featured and categorized layouts
+- Cover letter companion generated from a resume (mock AI)
+- Job application tracker linking resumes to roles with status
+- Export history per resume
 - Usage/limit concept for AI suggestions
 - Admin usage overview
 
@@ -214,12 +258,20 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Resume: id, userId, title, templateId, sections, updatedAt, createdAt
 - Suggestion: id, resumeId, sectionRef, input, output, accepted, createdAt, updatedAt
 - UsageCredit: id, userId, period, used, limit, createdAt, updatedAt
+- ResumeTemplate: id, name, description, category, layout, colorScheme, isFeatured, createdAt, updatedAt
+- CoverLetter: id, userId, resumeId, title, content, tone, isArchived, createdAt, updatedAt
+- JobApplication: id, userId, resumeId, company, jobTitle, status, appliedDate, notes, createdAt, updatedAt
+- ResumeExport: id, resumeId, userId, fileType, status, fileName, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Mock AI suggestions for bullets and summaries
 - Resume CRUD with structured sections
 - Template switching affecting preview only
+- Template gallery CRUD (featured/categorized layouts)
+- Cover letter CRUD linked to a resume with mock AI drafting
+- Job application tracking with status updates linked to resumes
+- Export history logging per resume
 - Credit deduction for AI suggestions
 - Admin usage aggregation
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.

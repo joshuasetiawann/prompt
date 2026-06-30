@@ -7,7 +7,8 @@
 | **Prompt ID** | 34 |
 | **Title** | AI Document Analyzer App |
 | **Slug** | ai-document-analyzer-app |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | User; Admin |
@@ -65,6 +66,9 @@
 - AI summary, key points, and extracted items (mock)
 - Q&A grounded in the document text (mock)
 - History of analyses and projects
+- Project organization grouping documents
+- Document annotations and highlights
+- Structured entity extraction tied to each analysis
 - Usage/limit concept
 - Admin usage monitoring
 
@@ -100,12 +104,33 @@
 **Relationships:**
 - userId -> references the related record
 
+### Project
+**Fields:** `id`, `userId`, `name`, `description`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### Annotation
+**Fields:** `id`, `documentId`, `userId`, `content`, `page`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- documentId -> references the related record
+- userId -> references the related record
+
+### Entity
+**Fields:** `id`, `documentId`, `analysisId`, `name`, `type`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- documentId -> references the related record
+- analysisId -> references the related record
+
 ## Backend logic
 
 - Mock extraction turning an upload into stored text
 - Mock AI summary/key-points/entities generation
 - Mock AI Q&A referencing the stored document text
 - History and project organization
+- Project grouping, document annotations, and structured entity extraction
 - Credit deduction and admin aggregation
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
@@ -209,6 +234,9 @@ CORE FEATURES
 - AI summary, key points, and extracted items (mock)
 - Q&A grounded in the document text (mock)
 - History of analyses and projects
+- Project organization grouping documents
+- Document annotations and highlights
+- Structured entity extraction tied to each analysis
 - Usage/limit concept
 - Admin usage monitoring
 
@@ -218,6 +246,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Analysis: id, documentId, summary, keyPoints, entities, createdAt, updatedAt
 - QA: id, documentId, question, answer, createdAt, updatedAt
 - UsageCredit: id, userId, period, used, limit, createdAt, updatedAt
+- Project: id, userId, name, description, status, createdAt, updatedAt
+- Annotation: id, documentId, userId, content, page, createdAt, updatedAt
+- Entity: id, documentId, analysisId, name, type, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -225,6 +256,7 @@ BACKEND / API LOGIC
 - Mock AI summary/key-points/entities generation
 - Mock AI Q&A referencing the stored document text
 - History and project organization
+- Project grouping, document annotations, and structured entity extraction
 - Credit deduction and admin aggregation
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 

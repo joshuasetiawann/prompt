@@ -1,14 +1,18 @@
 prompt_id: '34'
 title: AI Document Analyzer App
 slug: ai-document-analyzer-app
-category: AI Tools
+category: AI Apps
+domain: AI Tools
 app_name: DocLens AI Document Analyzer App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building document-analysis or research-assistant tools.
 target_user: User; Admin
+target_users: knowledge workers analyzing documents and admins monitoring usage
+role_line: You are a senior full-stack engineer who builds AI document-analysis applications
 business_goal: Let users upload a document, get a summary and key points, and ask questions about it
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: smart, focused, professional. Colors: indigo, slate, white. Clean, modern, document view alongside a results/Q&A panel.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -176,6 +180,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — upload, analyze, and query documents
+- Admin — monitor usage and users
+env_payments: false
+env_ai: true
+seed_data: '- Seed realistic demo data: sample documents with text, analyses, Q&A pairs, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

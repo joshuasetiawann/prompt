@@ -7,7 +7,8 @@
 | **Prompt ID** | 31 |
 | **Title** | AI Customer Support Chatbot App |
 | **Slug** | ai-customer-support-chatbot-app |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Admin |

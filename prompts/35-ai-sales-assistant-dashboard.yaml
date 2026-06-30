@@ -1,14 +1,18 @@
 prompt_id: '35'
 title: AI Sales Assistant Dashboard
 slug: ai-sales-assistant-dashboard
-category: AI Tools
+category: AI Apps
+domain: AI Tools
 app_name: SalesPilot AI Sales Assistant Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building AI productivity tools for sales teams.
 target_user: Sales Rep; Manager/Admin
+target_users: sales reps drafting outreach and managers tracking pipeline and AI usage
+role_line: You are a senior full-stack engineer who builds AI-assisted sales productivity dashboards
 business_goal: Speed up sales work with AI-drafted messages and follow-up suggestions on top of a simple pipeline
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: sharp, motivating, productive. Colors: emerald, slate, white. Clean, modern, pipeline plus a side panel for AI drafts and suggested next steps.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -188,6 +192,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Sales Rep — manage leads and use AI drafting
+- Manager/Admin — view pipeline and monitor usage
+env_payments: false
+env_ai: true
+seed_data: '- Seed realistic demo data: ~20 leads across stages, AI draft examples, activities, 1 admin/manager and 2 reps. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
@@ -258,11 +268,11 @@ ready_to_use_prompt: |-
   3. Leads list and lead detail
   4. AI outreach drafter (email/message from lead context)
   5. Follow-up suggestions
-  6. Activity log
-  7. Settings
-  8. Usage view
-  9. Tasks (due dates and priorities)
-  10. Contacts per lead
+  6. Tasks (due dates and priorities)
+  7. Contacts per lead
+  8. Activity log
+  9. Settings
+  10. Usage view
 
   NAVIGATION
   - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.

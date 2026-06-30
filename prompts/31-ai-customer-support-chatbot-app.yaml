@@ -1,14 +1,18 @@
 prompt_id: '31'
 title: AI Customer Support Chatbot App
 slug: ai-customer-support-chatbot-app
-category: AI Tools
+category: AI Apps
+domain: AI Tools
 app_name: SupportGenie AI Customer Support Chatbot App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building support bots for businesses that want a self-hosted, KB-driven assistant.
 target_user: Customer; Admin
+target_users: businesses deploying a support bot and admins managing the knowledge base and conversations
+role_line: You are a senior full-stack engineer who builds AI support and chatbot applications
 business_goal: Answer customer questions from a knowledge base via chat, with history and admin management
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: helpful, modern, trustworthy AI. Colors: blue, white, soft accent. Clean, modern, clean chat widget, conversation list, and a simple knowledge-base editor.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -143,6 +147,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — chat and get answers
+- Admin — manage knowledge base, view conversations, monitor usage
+env_payments: false
+env_ai: true
+seed_data: '- Seed realistic demo data: ~20 KB articles across categories, sample conversations, usage data, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 35 |
 | **Title** | AI Sales Assistant Dashboard |
 | **Slug** | ai-sales-assistant-dashboard |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Sales Rep; Manager/Admin |
@@ -55,9 +56,11 @@
 3. Leads list and lead detail
 4. AI outreach drafter (email/message from lead context)
 5. Follow-up suggestions
-6. Activity log
-7. Settings
-8. Usage view
+6. Tasks (due dates and priorities)
+7. Contacts per lead
+8. Activity log
+9. Settings
+10. Usage view
 
 ## Required features
 
@@ -66,6 +69,8 @@
 - AI follow-up suggestions based on activity (mock)
 - Pipeline KPIs and tasks due
 - Activity logging per lead
+- Tasks with due dates, priorities, and statuses
+- Contacts per lead with role/title
 - Usage/limit concept
 - Admin/manager pipeline and usage view
 
@@ -101,11 +106,32 @@
 **Relationships:**
 - userId -> references the related record
 
+### Contact
+**Fields:** `id`, `leadId`, `name`, `email`, `phone`, `title`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- leadId -> references the related record
+
+### Task
+**Fields:** `id`, `ownerId`, `leadId`, `title`, `description`, `dueDate`, `priority`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- leadId -> references the related record
+
+### FollowUp
+**Fields:** `id`, `leadId`, `suggestion`, `reason`, `status`, `scheduledFor`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- leadId -> references the related record
+
 ## Backend logic
 
 - Mock AI outreach generation from lead context
 - Mock AI follow-up suggestions from recent activity
 - Lead and activity CRUD with pipeline stages
+- Task CRUD with due dates, priorities, and statuses
+- Contact management and persisted AI follow-up suggestions per lead
 - Credit deduction and limit enforcement
 - Manager pipeline and usage aggregation
 - Server-side validation on every mutation with Zod
@@ -194,9 +220,11 @@ PAGES / SCREENS
 3. Leads list and lead detail
 4. AI outreach drafter (email/message from lead context)
 5. Follow-up suggestions
-6. Activity log
-7. Settings
-8. Usage view
+6. Tasks (due dates and priorities)
+7. Contacts per lead
+8. Activity log
+9. Settings
+10. Usage view
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -211,6 +239,8 @@ CORE FEATURES
 - AI follow-up suggestions based on activity (mock)
 - Pipeline KPIs and tasks due
 - Activity logging per lead
+- Tasks with due dates, priorities, and statuses
+- Contacts per lead with role/title
 - Usage/limit concept
 - Admin/manager pipeline and usage view
 
@@ -220,12 +250,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Draft: id, leadId, type, input, output, createdAt, updatedAt
 - Activity: id, leadId, type, note, dueDate, done, createdAt, updatedAt
 - UsageCredit: id, userId, period, used, limit, createdAt, updatedAt
+- Contact: id, leadId, name, email, phone, title, createdAt, updatedAt
+- Task: id, ownerId, leadId, title, description, dueDate, priority, status, createdAt, updatedAt
+- FollowUp: id, leadId, suggestion, reason, status, scheduledFor, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Mock AI outreach generation from lead context
 - Mock AI follow-up suggestions from recent activity
 - Lead and activity CRUD with pipeline stages
+- Task CRUD with due dates, priorities, and statuses
+- Contact management and persisted AI follow-up suggestions per lead
 - Credit deduction and limit enforcement
 - Manager pipeline and usage aggregation
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.

@@ -7,7 +7,8 @@
 | **Prompt ID** | 32 |
 | **Title** | AI Content Generator App |
 | **Slug** | ai-content-generator-app |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | User; Admin |
@@ -67,6 +68,8 @@
 - Projects/folders to organize generations
 - Credits/usage limit per period
 - Regenerate and variations
+- Reusable brand voice profiles to keep tone consistent
+- Tag and star outputs to organize history
 - Admin usage dashboard
 
 ## Database models
@@ -103,11 +106,33 @@
 **Relationships:**
 - userId -> references the related record
 
+### BrandVoice
+**Fields:** `id`, `userId`, `name`, `tone`, `description`, `isDefault`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### Variation
+**Fields:** `id`, `userId`, `generationId`, `content`, `rating`, `isStarred`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- generationId -> references the related record
+
+### Tag
+**Fields:** `id`, `userId`, `name`, `color`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
 ## Backend logic
 
 - Mock AI generation per template returning varied, realistic copy
 - Generation persistence and history
 - Project organization and filtering
+- Brand voice applied to mock generation output for consistent tone
+- Variation generation, rating, and starring
+- Tag-based organization and filtering of outputs
 - Credit deduction and limit enforcement
 - Admin usage aggregation
 - Server-side validation on every mutation with Zod
@@ -214,6 +239,8 @@ CORE FEATURES
 - Projects/folders to organize generations
 - Credits/usage limit per period
 - Regenerate and variations
+- Reusable brand voice profiles to keep tone consistent
+- Tag and star outputs to organize history
 - Admin usage dashboard
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -222,12 +249,18 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Project: id, userId, name, createdAt, updatedAt
 - Generation: id, userId, projectId, templateId, input, output, createdAt, updatedAt
 - UsageCredit: id, userId, period, used, limit, createdAt, updatedAt
+- BrandVoice: id, userId, name, tone, description, isDefault, createdAt, updatedAt
+- Variation: id, userId, generationId, content, rating, isStarred, createdAt, updatedAt
+- Tag: id, userId, name, color, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Mock AI generation per template returning varied, realistic copy
 - Generation persistence and history
 - Project organization and filtering
+- Brand voice applied to mock generation output for consistent tone
+- Variation generation, rating, and starring
+- Tag-based organization and filtering of outputs
 - Credit deduction and limit enforcement
 - Admin usage aggregation
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
