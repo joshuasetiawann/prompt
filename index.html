@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PromptKita — pustaka prompt AI siap pakai berbahasa Indonesia. Cari, filter, dan salin prompt terbaik untuk menulis, coding, pemasaran, dan produktivitas." />
+  <meta name="theme-color" content="#6d5efc" />
+  <title>PromptKita — Pustaka Prompt AI Siap Pakai</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PromptKita — Pustaka Prompt AI Siap Pakai" />
+  <meta property="og:description" content="Koleksi prompt AI berkualitas berbahasa Indonesia. Cari, filter, dan salin dalam sekali klik." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;✨&lt;/text&gt;&lt;/svg&gt;" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#daftar-prompt">Lewati ke daftar prompt</a>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a href="#top" class="brand" aria-label="PromptKita beranda">
+        <span class="brand-mark" aria-hidden="true">✨</span>
+        <span class="brand-name">Prompt<span>Kita</span></span>
+      </a>
+
+      <nav class="header-actions" aria-label="Aksi utama">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema">
+          <span class="theme-icon theme-icon--sun" aria-hidden="true">☀️</span>
+          <span class="theme-icon theme-icon--moon" aria-hidden="true">🌙</span>
+        </button>
+        <a class="btn btn-ghost" href="#kontribusi">Kontribusi</a>
+        <a class="btn btn-primary" href="https://claude.ai" target="_blank" rel="noopener">Coba di Claude ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">Pustaka Prompt AI Berbahasa Indonesia</p>
+        <h1>Prompt yang tepat, hasil yang lebih baik.</h1>
+        <p class="hero-sub">
+          Koleksi prompt siap pakai untuk menulis, coding, pemasaran, belajar, dan
+          produktivitas. Cari, filter berdasarkan kategori, lalu salin dalam sekali klik.
+        </p>
+
+        <div class="searchbar" role="search">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            type="search"
+            id="search-input"
+            placeholder="Cari prompt… (mis. ‘email’, ‘ringkasan’, ‘React’)"
+            aria-label="Cari prompt"
+            autocomplete="off"
+          />
+          <kbd class="search-hint">/</kbd>
+        </div>
+
+        <dl class="hero-stats" aria-label="Statistik pustaka">
+          <div><dt>Prompt</dt><dd id="stat-total">0</dd></div>
+          <div><dt>Kategori</dt><dd id="stat-categories">0</dd></div>
+          <div><dt>Gratis</dt><dd>100%</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- FILTERS + GRID -->
+    <section class="container" id="daftar-prompt" aria-labelledby="daftar-judul">
+      <div class="section-head">
+        <h2 id="daftar-judul">Jelajahi Prompt</h2>
+        <div class="toolbar">
+          <label class="favorites-toggle">
+            <input type="checkbox" id="favorites-only" />
+            <span>⭐ Favorit saja</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="filters" id="category-filters" role="tablist" aria-label="Filter kategori"></div>
+
+      <p class="result-meta" id="result-meta" aria-live="polite"></p>
+
+      <div class="grid" id="prompt-grid"></div>
+
+      <div class="empty-state" id="empty-state" hidden>
+        <p class="empty-emoji" aria-hidden="true">🪄</p>
+        <h3>Tidak ada prompt yang cocok</h3>
+        <p>Coba kata kunci lain atau atur ulang filter.</p>
+        <button class="btn btn-primary" id="reset-filters" type="button">Atur ulang filter</button>
+      </div>
+    </section>
+
+    <!-- KONTRIBUSI -->
+    <section class="cta" id="kontribusi">
+      <div class="container cta-inner">
+        <h2>Punya prompt andalan?</h2>
+        <p>
+          PromptKita bersifat open-source. Tambahkan prompt favoritmu ke
+          <code>assets/js/data.js</code> dan buka pull request — siapa pun bisa ikut berkontribusi.
+        </p>
+        <a class="btn btn-primary btn-lg" href="https://github.com/joshuasetiawann/prompt" target="_blank" rel="noopener">
+          Kontribusi di GitHub ↗
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand"><span aria-hidden="true">✨</span> PromptKita</p>
+      <p class="footer-note">Dibuat untuk komunitas — gunakan, modifikasi, dan bagikan dengan bebas.</p>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Template kartu prompt -->
+  <template id="card-template">
+    <article class="card" tabindex="0">
+      <header class="card-head">
+        <span class="card-category"></span>
+        <button class="fav-btn" type="button" aria-pressed="false" aria-label="Tandai favorit" title="Tandai favorit">⭐</button>
+      </header>
+      <h3 class="card-title"></h3>
+      <p class="card-desc"></p>
+      <pre class="card-prompt"><code></code></pre>
+      <div class="card-tags"></div>
+      <footer class="card-foot">
+        <button class="btn btn-copy" type="button">
+          <span class="copy-default">📋 Salin prompt</span>
+          <span class="copy-done">✓ Tersalin!</span>
+        </button>
+      </footer>
+    </article>
+  </template>
+
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
