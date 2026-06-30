@@ -7,7 +7,8 @@
 | **Prompt ID** | 64 |
 | **Title** | Volunteer Management System |
 | **Slug** | volunteer-management-system |
-| **Category** | Volunteer & Community Ops |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Volunteer & Community Ops |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Volunteer; Coordinator/Admin |

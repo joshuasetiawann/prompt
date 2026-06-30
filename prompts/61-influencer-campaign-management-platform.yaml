@@ -1,14 +1,18 @@
 prompt_id: '61'
 title: Influencer Campaign Management Platform
 slug: influencer-campaign-management-platform
-category: Marketing & Campaigns
+category: Marketing & Lead Gen
+domain: Marketing & Campaigns
 app_name: CollabHub Influencer Campaign Management Platform
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building creator-collaboration or influencer-marketing platforms.
 target_user: Brand; Influencer; Admin
+target_users: brands running campaigns and influencers delivering content, with an admin overseeing the platform
+role_line: You are a senior full-stack engineer who builds campaign and creator-collaboration platforms
 business_goal: Let brands create campaigns, recruit influencers, track deliverables and approvals, and handle payouts
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: modern, lively, creator-focused. Colors: magenta, indigo, white. Clean, modern, campaign boards with deliverable status and creator cards.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -162,6 +166,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Brand — create campaigns and approve deliverables
+- Influencer — accept campaigns and submit deliverables
+- Admin — oversee brands, creators, and payouts
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 brands, ~10 influencers, campaigns with invites and deliverables, payouts, 1 admin, 2 brands, 2 influencers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

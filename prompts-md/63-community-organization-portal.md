@@ -7,7 +7,8 @@
 | **Prompt ID** | 63 |
 | **Title** | Community Organization Portal |
 | **Slug** | community-organization-portal |
-| **Category** | Community & Organizations |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Community & Organizations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Member; Admin/Leader |

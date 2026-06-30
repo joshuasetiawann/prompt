@@ -7,7 +7,8 @@
 | **Prompt ID** | 65 |
 | **Title** | Farm Management Dashboard |
 | **Slug** | farm-management-dashboard |
-| **Category** | Agriculture & Operations |
+| **Category** | Business Operations |
+| **Domain** | Agriculture & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Owner/Admin; Worker |

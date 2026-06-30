@@ -1,14 +1,18 @@
 prompt_id: '64'
 title: Volunteer Management System
 slug: volunteer-management-system
-category: Volunteer & Community Ops
+category: Community, Civic & Nonprofit
+domain: Volunteer & Community Ops
 app_name: HandsOn Volunteer Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building volunteer coordination tools for nonprofits and community programs.
 target_user: Volunteer; Coordinator/Admin
+target_users: volunteer coordinators managing opportunities and volunteers signing up and tracking hours
+role_line: You are a senior full-stack engineer who builds volunteer coordination and hours-tracking systems
 business_goal: Let coordinators post opportunities with shifts and let volunteers sign up, attend, and log hours
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: energetic, purposeful, friendly. Colors: orange, teal accent, white. Clean, modern, opportunity cards with shift signups and an hours log.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -145,6 +149,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Volunteer — browse, sign up, and log hours
+- Coordinator/Admin — manage opportunities, shifts, and attendance
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 opportunities with shifts, sample signups and logged hours, 1 admin/coordinator and 3 volunteers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

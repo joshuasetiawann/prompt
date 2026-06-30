@@ -1,14 +1,18 @@
 prompt_id: '63'
 title: Community Organization Portal
 slug: community-organization-portal
-category: Community & Organizations
+category: Community, Civic & Nonprofit
+domain: Community & Organizations
 app_name: Congregate Community Organization Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building portals for community organizations, congregations, clubs, and associations.
 target_user: Member; Admin/Leader
+target_users: organization admins and members coordinating events, groups, and communications
+role_line: You are a senior full-stack engineer who builds membership and engagement portals for community organizations
 business_goal: Give a community organization one place for members, events, groups, announcements, and volunteering
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: warm, welcoming, community-first. Colors: indigo, amber accent, white. Clean, modern, friendly portal with events, groups, and announcements.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -177,6 +181,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Member — RSVP, join groups, volunteer, give
+- Admin/Leader — manage members, events, groups, and announcements
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~20 members, several groups and events with RSVPs, announcements, volunteer slots, 1 admin and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

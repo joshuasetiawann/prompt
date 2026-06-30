@@ -1,14 +1,18 @@
 prompt_id: '65'
 title: Farm Management Dashboard
 slug: farm-management-dashboard
-category: Agriculture & Operations
+category: Business Operations
+domain: Agriculture & Operations
 app_name: AgriTrack Farm Management Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building farm operations dashboards for growers and small agribusinesses.
 target_user: Owner/Admin; Worker
+target_users: farm owners and workers tracking crops, livestock, tasks, and yields
+role_line: You are a senior full-stack engineer who builds operations dashboards for farms and agribusinesses
 business_goal: Track fields and crops through planting and harvest, manage livestock and inputs, and log tasks and yields
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: earthy, practical, clear. Colors: green, soil brown, cream. Clean, modern, map-free field cards with crop cycles and task lists.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -172,6 +176,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner/Admin — full access and reports
+- Worker — view and complete tasks, log activity
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 fields with crops, livestock records, tasks, inputs and usage, yields, 1 admin/owner and 1 worker. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

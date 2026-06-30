@@ -1,14 +1,18 @@
 prompt_id: '62'
 title: Donation & Nonprofit Fundraising Platform
 slug: donation-nonprofit-fundraising-platform
-category: Nonprofit & Fundraising
+category: Community, Civic & Nonprofit
+domain: Nonprofit & Fundraising
 app_name: OpenGive Donation & Nonprofit Fundraising Platform
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building fundraising platforms for nonprofits and community causes.
 target_user: Donor; Org Admin; Admin
+target_users: nonprofit admins running campaigns and donors giving one-off or recurring gifts
+role_line: You are a senior full-stack engineer who builds fundraising and donor-management platforms for nonprofits
 business_goal: Let organizations run campaigns with goals and let donors give (mock) and receive receipts
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: warm, hopeful, trustworthy. Colors: emerald, warm gold, white. Clean, modern, campaign pages with progress bars and clear donate flow.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -164,6 +168,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Donor — donate and manage recurring gifts
+- Org Admin — manage campaigns and view donations
+- Admin — oversee organizations and reports
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~5 campaigns across an org, sample one-off and recurring donations, receipts, 1 admin, 1 org admin, 2 donors. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

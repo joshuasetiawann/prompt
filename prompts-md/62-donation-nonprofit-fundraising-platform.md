@@ -7,7 +7,8 @@
 | **Prompt ID** | 62 |
 | **Title** | Donation & Nonprofit Fundraising Platform |
 | **Slug** | donation-nonprofit-fundraising-platform |
-| **Category** | Nonprofit & Fundraising |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Nonprofit & Fundraising |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Donor; Org Admin; Admin |

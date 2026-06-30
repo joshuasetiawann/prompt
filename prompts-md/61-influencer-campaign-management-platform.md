@@ -7,7 +7,8 @@
 | **Prompt ID** | 61 |
 | **Title** | Influencer Campaign Management Platform |
 | **Slug** | influencer-campaign-management-platform |
-| **Category** | Marketing & Campaigns |
+| **Category** | Marketing & Lead Gen |
+| **Domain** | Marketing & Campaigns |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Brand; Influencer; Admin |
