@@ -1,14 +1,18 @@
 prompt_id: '75'
 title: Food Catering Order Management App
 slug: food-catering-order-management-app
-category: Catering & Order Management
+category: E-commerce & Retail
+domain: Catering & Order Management
 app_name: CaterFlow Food Catering Order Management App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building catering quote-and-order tools for caterers and event kitchens.
 target_user: Customer; Admin/Caterer
+target_users: customers ordering catering for events and a caterer managing menus, quotes, and orders
+role_line: You are a senior full-stack engineer who builds catering quote and order management software
 business_goal: Let customers request catering by event and headcount and let the caterer quote, confirm, and schedule
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: appetizing, professional, warm. Colors: terracotta, cream, olive accent. Clean, modern, menu-package selection and an order/quote workflow.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -164,6 +168,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — request quotes and place orders
+- Admin/Caterer — manage menus, quote, and fulfill
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 packages, ~20 menu items, sample quote requests and orders, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

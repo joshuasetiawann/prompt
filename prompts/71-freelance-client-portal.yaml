@@ -1,14 +1,18 @@
 prompt_id: '71'
 title: Freelance Client Portal
 slug: freelance-client-portal
-category: Client Portal & Freelance Ops
+category: Business Operations
+domain: Client Portal & Freelance Ops
 app_name: SoloDesk Freelance Client Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building client portals for freelancers, consultants, and solo agencies.
 target_user: Freelancer/Admin; Client
+target_users: freelancers managing client work and clients tracking progress and paying invoices
+role_line: You are a senior full-stack engineer who builds client-facing portals for freelancers and solo operators
 business_goal: Give freelancers and clients a shared space for projects, tasks, time tracking, files, and invoices
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, independent, professional. Colors: slate, emerald accent, white. Clean, modern, focused client workspace with project and invoice views.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -171,6 +175,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Freelancer/Admin — manage clients, projects, time, and invoices
+- Client — view their project, approve, and pay invoices
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 clients, projects with tasks and time entries, files, invoices, 1 admin/freelancer and 3 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -1,14 +1,18 @@
 prompt_id: '74'
 title: Restaurant Table Reservation System
 slug: restaurant-table-reservation-system
-category: Reservations & Hospitality
+category: Booking & Reservations
+domain: Reservations & Hospitality
 app_name: TableTime Restaurant Table Reservation System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building reservation systems for restaurants (distinct from POS and online ordering).
 target_user: Guest; Host/Staff; Admin
+target_users: diners reserving tables and hosts and managers handling seating and waitlists
+role_line: You are a senior full-stack engineer who builds table reservation and seating systems for restaurants
 business_goal: Let guests reserve tables for a time and party size and let hosts manage the floor and waitlist
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: refined, welcoming, hospitality. Colors: burgundy, warm neutral, white. Clean, modern, time-slot reservation flow and a host floor view.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -182,6 +186,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Guest — reserve and manage reservations
+- Host/Staff — manage seating and waitlist
+- Admin — manage tables, hours, and policies
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~12 tables, opening hours, sample reservations and waitlist, 1 admin, 1 host, 2 guests. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

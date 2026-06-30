@@ -7,7 +7,8 @@
 | **Prompt ID** | 75 |
 | **Title** | Food Catering Order Management App |
 | **Slug** | food-catering-order-management-app |
-| **Category** | Catering & Order Management |
+| **Category** | E-commerce & Retail |
+| **Domain** | Catering & Order Management |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Admin/Caterer |

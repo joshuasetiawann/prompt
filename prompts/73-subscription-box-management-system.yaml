@@ -1,14 +1,18 @@
 prompt_id: '73'
 title: Subscription Box Management System
 slug: subscription-box-management-system
-category: Subscriptions & Recurring Commerce
+category: E-commerce & Retail
+domain: Subscriptions & Recurring Commerce
 app_name: BoxCycle Subscription Box Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building subscription-box or recurring-commerce back ends (distinct from a one-off store).
 target_user: Customer; Admin/Operator
+target_users: customers subscribing to boxes and an operator managing plans, billing, and fulfillment
+role_line: You are a senior full-stack engineer who builds subscription and recurring-commerce platforms
 business_goal: Let customers subscribe to box plans with recurring (mock) billing and let the operator manage shipments
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: playful, premium, modern. Colors: coral, navy, cream. Clean, modern, plan cards and a subscription management dashboard.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -169,6 +173,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — subscribe and manage their plan
+- Admin/Operator — manage plans, billing, and shipments
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 plans, ~15 subscriptions across statuses, billing cycles and shipments, 1 admin and 3 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

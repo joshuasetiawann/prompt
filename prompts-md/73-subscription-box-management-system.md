@@ -7,7 +7,8 @@
 | **Prompt ID** | 73 |
 | **Title** | Subscription Box Management System |
 | **Slug** | subscription-box-management-system |
-| **Category** | Subscriptions & Recurring Commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | Subscriptions & Recurring Commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Admin/Operator |

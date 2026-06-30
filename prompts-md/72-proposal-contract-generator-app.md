@@ -7,7 +7,8 @@
 | **Prompt ID** | 72 |
 | **Title** | Proposal & Contract Generator App |
 | **Slug** | proposal-contract-generator-app |
-| **Category** | Sales Documents & Contracts |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Sales Documents & Contracts |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Owner/Admin; Client |

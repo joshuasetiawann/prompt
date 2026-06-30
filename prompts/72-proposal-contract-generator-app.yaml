@@ -1,14 +1,18 @@
 prompt_id: '72'
 title: Proposal & Contract Generator App
 slug: proposal-contract-generator-app
-category: Sales Documents & Contracts
+category: Finance, Legal & HR
+domain: Sales Documents & Contracts
 app_name: ProposalForge Proposal & Contract Generator App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building proposal and contract tools for agencies, freelancers, and sales teams.
 target_user: Owner/Admin; Client
+target_users: agencies and freelancers sending proposals and contracts to clients
+role_line: You are a senior full-stack engineer who builds proposal and contract generation tools for service businesses
 business_goal: Create proposals and contracts from templates with line items and capture client approval/e-signature (mock)
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: polished, persuasive, professional. Colors: navy, teal accent, white. Clean, modern, document builder with live preview and status.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -159,6 +163,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner/Admin — build and send proposals and contracts
+- Client — review, accept, and sign (mock)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 templates, ~12 proposals across statuses, signatures, contracts, 1 admin and 2 client accounts. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

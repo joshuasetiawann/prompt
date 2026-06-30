@@ -7,7 +7,8 @@
 | **Prompt ID** | 71 |
 | **Title** | Freelance Client Portal |
 | **Slug** | freelance-client-portal |
-| **Category** | Client Portal & Freelance Ops |
+| **Category** | Business Operations |
+| **Domain** | Client Portal & Freelance Ops |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Freelancer/Admin; Client |

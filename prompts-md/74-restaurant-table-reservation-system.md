@@ -7,7 +7,8 @@
 | **Prompt ID** | 74 |
 | **Title** | Restaurant Table Reservation System |
 | **Slug** | restaurant-table-reservation-system |
-| **Category** | Reservations & Hospitality |
+| **Category** | Booking & Reservations |
+| **Domain** | Reservations & Hospitality |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Guest; Host/Staff; Admin |
@@ -68,6 +69,9 @@
 - Modify and cancel within policy
 - No-show tracking
 - Reports: covers, no-shows, and peak times
+- Seating areas/floor sections that group tables for the host floor view
+- Reservation policies: cancellation window, deposits, and no-show fees
+- Notification log for booking confirmations and reminders
 
 ## Database models
 
@@ -102,6 +106,24 @@
 **Relationships:**
 - Standalone model (no outbound foreign keys)
 
+### DiningArea
+**Fields:** `id`, `name`, `description`, `capacity`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### ReservationPolicy
+**Fields:** `id`, `name`, `description`, `cancellationWindowHours`, `depositAmount`, `noShowFee`, `maxCapacity`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### NotificationLog
+**Fields:** `id`, `reservationId`, `channel`, `recipient`, `content`, `status`, `sentAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- reservationId -> references the related record
+
 ## Backend logic
 
 - Availability by time slot, party size, and table capacity
@@ -109,6 +131,8 @@
 - Waitlist management with estimates
 - Modify/cancel within policy
 - Reporting on covers and no-shows
+- Enforce reservation policies (cancellation window, deposits, no-show fees) on booking and cancel
+- Write a mock notification log entry per confirmation, reminder, and cancellation
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -216,6 +240,9 @@ CORE FEATURES
 - Modify and cancel within policy
 - No-show tracking
 - Reports: covers, no-shows, and peak times
+- Seating areas/floor sections that group tables for the host floor view
+- Reservation policies: cancellation window, deposits, and no-show fees
+- Notification log for booking confirmations and reminders
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -223,6 +250,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Reservation: id, guestId, datetime, partySize, tableId, status, createdAt, updatedAt
 - Waitlist: id, guestName, partySize, addedAt, status, createdAt, updatedAt
 - Hours: id, dayOfWeek, openTime, closeTime, createdAt, updatedAt
+- DiningArea: id, name, description, capacity, isActive, createdAt, updatedAt
+- ReservationPolicy: id, name, description, cancellationWindowHours, depositAmount, noShowFee, maxCapacity, isActive, createdAt, updatedAt
+- NotificationLog: id, reservationId, channel, recipient, content, status, sentAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -231,6 +261,8 @@ BACKEND / API LOGIC
 - Waitlist management with estimates
 - Modify/cancel within policy
 - Reporting on covers and no-shows
+- Enforce reservation policies (cancellation window, deposits, no-show fees) on booking and cancel
+- Write a mock notification log entry per confirmation, reminder, and cancellation
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES
