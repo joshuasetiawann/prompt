@@ -458,7 +458,12 @@ def build(check=False):
         d.setdefault("domain", d.get("category"))
         cat = CATEGORY_MAP.get(d["domain"])
         if cat is None:
-            unmapped.add(d["domain"]); cat = "Business Operations"
+            # New prompts assign a clean category directly; honor it when the
+            # granular domain isn't in the legacy map.
+            if d.get("category") in CATEGORY_META:
+                cat = d["category"]
+            else:
+                unmapped.add(d["domain"]); cat = "Business Operations"
         d["category"] = cat
         d["ready_to_use_prompt"] = render_ready_prompt(d)
 
