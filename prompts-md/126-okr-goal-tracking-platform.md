@@ -1,0 +1,293 @@
+# AlignOS OKR & Goal Tracking Platform
+
+> Let teams set quarterly objectives with measurable key results, align them up and down the org, run weekly check-ins, and visualize progress and at-risk goals
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 126 |
+| **Title** | OKR & Goal Tracking Platform |
+| **Slug** | okr-goal-tracking-platform |
+| **Category** | Business Operations |
+| **Domain** | Strategy & Goal Management |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Team leads and executives; Individual contributors |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building OKR and goal-alignment tools for startups and scaling companies (distinct from task-level project management or HR reviews).
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Dashboard with my objectives, at-risk goals, and pending check-ins
+2. Company OKR tree showing alignment up and down the org
+3. Objective detail with key results, progress, and confidence history
+4. Create / edit objective with measurable key results and alignment links
+5. Weekly check-in flow for key-result updates and confidence
+6. Team page with members, objectives, and progress
+7. Cycle / quarter overview and scoring
+8. Auth (sign in / register)
+9. Admin: cycles, teams, and platform settings
+10. Reports: progress, confidence trends, and at-risk goals
+
+## Required features
+
+- Quarterly objectives with measurable, numeric key results and target/current values
+- Alignment links connecting objectives up and down the org hierarchy
+- Objective tree visualization showing parent and child alignment
+- Weekly check-ins capturing key-result progress and a confidence rating
+- Automatic progress roll-up from key results to objectives and teams
+- At-risk detection from confidence and progress against the time-elapsed pace
+- End-of-cycle scoring and grading of objectives and key results
+- Progress and confidence-trend reports filterable by team and cycle
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `teamId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- teamId -> references the related record
+
+### Team
+**Fields:** `id`, `name`, `parentTeamId`, `leadId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- parentTeamId -> references the related record
+- leadId -> references the related record
+
+### Cycle
+**Fields:** `id`, `name`, `startDate`, `endDate`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Objective
+**Fields:** `id`, `cycleId`, `ownerId`, `teamId`, `parentObjectiveId`, `title`, `description`, `level`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- cycleId -> references the related record
+- ownerId -> references the related record
+- teamId -> references the related record
+- parentObjectiveId -> references the related record
+
+### KeyResult
+**Fields:** `id`, `objectiveId`, `ownerId`, `title`, `metricType`, `startValue`, `currentValue`, `targetValue`, `unit`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- objectiveId -> references the related record
+- ownerId -> references the related record
+
+### CheckIn
+**Fields:** `id`, `keyResultId`, `authorId`, `previousValue`, `newValue`, `confidence`, `note`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- keyResultId -> references the related record
+- authorId -> references the related record
+
+## Backend logic
+
+- Create objectives with measurable key results and link them to parent objectives for alignment
+- Roll up key-result progress into objective, team, and company-level completion percentages
+- Record weekly check-ins that update a key result's current value and confidence and append to its history
+- Flag objectives as at-risk when confidence is low or progress trails the expected time-elapsed pace
+- Compute end-of-cycle scores by grading each key result against its target and averaging into objectives
+- Build the alignment tree by traversing parent and child objective links across teams
+- Aggregate progress and confidence trends for reports by team and cycle
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Updating a key result's current value rolls its progress up to the parent objective and team
+- [ ] An objective with low confidence or progress trailing the time-elapsed pace appears in the at-risk rail
+- [ ] The alignment tree shows each objective's parent and child links across teams
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds strategy and goal-management products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: AlignOS OKR & Goal Tracking Platform
+Type: OKR & Goal Tracking Platform (Strategy & Goal Management)
+Target users: team leads and executives who set and align objectives across the org and individual contributors who own key results and post weekly check-ins.
+Business goal: Let teams set quarterly objectives with measurable key results, align them up and down the org, run weekly check-ins, and visualize progress and at-risk goals.
+
+BRAND & DESIGN
+Brand style: focused, structured, motivating. Colors: deep indigo, mint green, slate white. An objective tree with key-result progress bars, a confidence dial, and an at-risk goal rail. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Dashboard with my objectives, at-risk goals, and pending check-ins
+2. Company OKR tree showing alignment up and down the org
+3. Objective detail with key results, progress, and confidence history
+4. Create / edit objective with measurable key results and alignment links
+5. Weekly check-in flow for key-result updates and confidence
+6. Team page with members, objectives, and progress
+7. Cycle / quarter overview and scoring
+8. Auth (sign in / register)
+9. Admin: cycles, teams, and platform settings
+10. Reports: progress, confidence trends, and at-risk goals
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Individual Contributor — own key results and post weekly check-ins
+- Team Lead — set team objectives, align them, and review progress
+- Executive — set company objectives and view org-wide alignment
+- Admin — manage cycles, teams, and platform settings
+
+CORE FEATURES
+- Quarterly objectives with measurable, numeric key results and target/current values
+- Alignment links connecting objectives up and down the org hierarchy
+- Objective tree visualization showing parent and child alignment
+- Weekly check-ins capturing key-result progress and a confidence rating
+- Automatic progress roll-up from key results to objectives and teams
+- At-risk detection from confidence and progress against the time-elapsed pace
+- End-of-cycle scoring and grading of objectives and key results
+- Progress and confidence-trend reports filterable by team and cycle
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, teamId, createdAt, updatedAt
+- Team: id, name, parentTeamId, leadId, createdAt, updatedAt
+- Cycle: id, name, startDate, endDate, status, createdAt, updatedAt
+- Objective: id, cycleId, ownerId, teamId, parentObjectiveId, title, description, level, status, createdAt, updatedAt
+- KeyResult: id, objectiveId, ownerId, title, metricType, startValue, currentValue, targetValue, unit, status, createdAt, updatedAt
+- CheckIn: id, keyResultId, authorId, previousValue, newValue, confidence, note, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Create objectives with measurable key results and link them to parent objectives for alignment
+- Roll up key-result progress into objective, team, and company-level completion percentages
+- Record weekly check-ins that update a key result's current value and confidence and append to its history
+- Flag objectives as at-risk when confidence is low or progress trails the expected time-elapsed pace
+- Compute end-of-cycle scores by grading each key result against its target and averaging into objectives
+- Build the alignment tree by traversing parent and child objective links across teams
+- Aggregate progress and confidence trends for reports by team and cycle
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 2 cycles (current and past), 5 teams in a 2-level org, ~20 objectives with measurable key results aligned across levels, weekly check-in history, a few at-risk goals, 1 admin, 2 executives, 3 team leads, and 5 individual contributors. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

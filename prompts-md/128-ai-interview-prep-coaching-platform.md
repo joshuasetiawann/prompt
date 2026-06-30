@@ -1,0 +1,298 @@
+# PrepPilot AI Mock Interview & Career Coaching Platform
+
+> Let candidates run AI-driven mock interviews tailored to a target role, receive scored feedback on answers and delivery, and track improvement over sessions while coaches review transcripts and assign drills
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 128 |
+| **Title** | AI Mock Interview & Career Coaching Platform |
+| **Slug** | ai-interview-prep-coaching-platform |
+| **Category** | AI Apps |
+| **Domain** | Career Coaching & Interview Prep |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Intermediate |
+| **Target user** | Job-seeking candidate; Career coach; Program admin |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building interview-prep or career-coaching products for bootcamps, universities, and outplacement services (distinct from a resume builder).
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Dashboard with progress score, recent sessions, and assigned drills
+2. Browse interview templates by target role and difficulty
+3. Mock interview session (question prompt, answer recording, next question)
+4. Session feedback with per-answer scores and delivery notes
+5. Progress over time with score trends per competency
+6. Assigned drills and practice queue
+7. Coach: candidate roster and transcript review
+8. Auth (sign in / register)
+9. Admin: question banks, role templates, and cohorts
+10. Profile and target-role settings
+
+## Required features
+
+- Role-targeted interview templates with curated question banks by difficulty
+- Mock interview sessions that ask questions and capture typed or recorded answers
+- AI scoring of each answer on content, structure, and relevance with rationale
+- AI delivery feedback such as pacing, filler words, and clarity from the response
+- Per-session report aggregating scores into competency ratings
+- Progress tracking with score trends across sessions
+- Coach transcript review with inline comments and drill assignments
+- Drill assignments that feed a candidate's practice queue
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `targetRole`, `cohortId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- cohortId -> references the related record
+
+### InterviewTemplate
+**Fields:** `id`, `title`, `targetRole`, `difficulty`, `description`, `createdById`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- createdById -> references the related record
+
+### Question
+**Fields:** `id`, `templateId`, `prompt`, `competency`, `orderIndex`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- templateId -> references the related record
+
+### Session
+**Fields:** `id`, `candidateId`, `templateId`, `status`, `overallScore`, `startedAt`, `completedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- candidateId -> references the related record
+- templateId -> references the related record
+
+### Answer
+**Fields:** `id`, `sessionId`, `questionId`, `responseText`, `audioUrl`, `contentScore`, `deliveryScore`, `feedback`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- sessionId -> references the related record
+- questionId -> references the related record
+
+### Drill
+**Fields:** `id`, `candidateId`, `coachId`, `title`, `instructions`, `status`, `dueDate`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- candidateId -> references the related record
+- coachId -> references the related record
+
+### CoachReview
+**Fields:** `id`, `sessionId`, `coachId`, `comment`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- sessionId -> references the related record
+- coachId -> references the related record
+
+## Backend logic
+
+- Assemble a mock interview session from a role-targeted template's ordered question bank
+- Capture typed or recorded answers per question and persist them to the session
+- Score each answer on content, structure, and relevance with AI-generated rationale
+- Generate delivery feedback on pacing, filler words, and clarity from the response
+- Aggregate per-answer scores into a session overall score and competency ratings
+- Compute progress trends across a candidate's completed sessions
+- Let coaches add transcript comments and assign drills into the candidate's practice queue
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Completing a session produces per-answer content and delivery scores plus an overall session score
+- [ ] A candidate's progress view shows score trends across multiple completed sessions
+- [ ] With no AI key set, scoring and feedback use a deterministic mock so a full session runs locally
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds career-coaching and interview-prep products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: PrepPilot AI Mock Interview & Career Coaching Platform
+Type: AI Mock Interview & Career Coaching Platform (Career Coaching & Interview Prep)
+Target users: job-seeking candidates who run AI mock interviews and track improvement and career coaches who review transcripts and assign drills.
+Business goal: Let candidates run AI-driven mock interviews tailored to a target role, receive scored feedback on answers and delivery, and track improvement over sessions while coaches review transcripts and assign drills.
+
+BRAND & DESIGN
+Brand style: encouraging, confident, polished. Colors: navy, coral, off-white. A mock-interview stage with a question prompt, a live answer recorder, and a scored feedback panel with a progress chart. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Dashboard with progress score, recent sessions, and assigned drills
+2. Browse interview templates by target role and difficulty
+3. Mock interview session (question prompt, answer recording, next question)
+4. Session feedback with per-answer scores and delivery notes
+5. Progress over time with score trends per competency
+6. Assigned drills and practice queue
+7. Coach: candidate roster and transcript review
+8. Auth (sign in / register)
+9. Admin: question banks, role templates, and cohorts
+10. Profile and target-role settings
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Candidate — run mock interviews, view feedback, and track progress
+- Career Coach — review transcripts, leave feedback, and assign drills
+- Program Admin — manage question banks, role templates, and cohorts
+
+CORE FEATURES
+- Role-targeted interview templates with curated question banks by difficulty
+- Mock interview sessions that ask questions and capture typed or recorded answers
+- AI scoring of each answer on content, structure, and relevance with rationale
+- AI delivery feedback such as pacing, filler words, and clarity from the response
+- Per-session report aggregating scores into competency ratings
+- Progress tracking with score trends across sessions
+- Coach transcript review with inline comments and drill assignments
+- Drill assignments that feed a candidate's practice queue
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, targetRole, cohortId, createdAt, updatedAt
+- InterviewTemplate: id, title, targetRole, difficulty, description, createdById, createdAt, updatedAt
+- Question: id, templateId, prompt, competency, orderIndex, createdAt, updatedAt
+- Session: id, candidateId, templateId, status, overallScore, startedAt, completedAt, createdAt, updatedAt
+- Answer: id, sessionId, questionId, responseText, audioUrl, contentScore, deliveryScore, feedback, createdAt, updatedAt
+- Drill: id, candidateId, coachId, title, instructions, status, dueDate, createdAt, updatedAt
+- CoachReview: id, sessionId, coachId, comment, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Assemble a mock interview session from a role-targeted template's ordered question bank
+- Capture typed or recorded answers per question and persist them to the session
+- Score each answer on content, structure, and relevance with AI-generated rationale
+- Generate delivery feedback on pacing, filler words, and clarity from the response
+- Aggregate per-answer scores into a session overall score and competency ratings
+- Compute progress trends across a candidate's completed sessions
+- Let coaches add transcript comments and assign drills into the candidate's practice queue
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- AI: implement a deterministic, offline mock AI provider behind one interface; switch to a real model (OpenAI/Anthropic) via an env var, defaulting to mock so it runs with no keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: ~6 role-targeted interview templates with question banks, candidate sessions with scored answers and feedback, progress history, assigned drills, coach reviews, 1 admin, 2 coaches, and 4 candidates. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

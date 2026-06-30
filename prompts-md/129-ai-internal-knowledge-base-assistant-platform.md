@@ -1,0 +1,297 @@
+# Verity AI Internal Knowledge Base Assistant
+
+> Let employees ask natural-language questions and get cited answers grounded in the company's connected docs and wikis, while admins manage sources, review low-confidence answers, and see analytics on knowledge gaps
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 129 |
+| **Title** | AI Internal Knowledge Base Assistant |
+| **Slug** | ai-internal-knowledge-base-assistant-platform |
+| **Category** | AI Apps |
+| **Domain** | Internal Knowledge & RAG Search |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Employee asking questions; Knowledge admin curating sources; Org admin |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building internal employee-facing RAG search for ops, HR, and support teams (distinct from an external customer support bot or single-document analyzer).
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Ask page with the question bar and streamed cited answer
+2. Answer detail with source citations linking back to documents
+3. Document source browser with sync status and scopes
+4. Add / connect source (upload docs or connect a wiki/folder — mock connector)
+5. Question history and saved answers
+6. Admin: low-confidence answer review queue
+7. Analytics: top questions, knowledge gaps, and answer confidence
+8. Members and access scopes
+9. Auth (sign in / register)
+10. Settings: retrieval and model configuration
+
+## Required features
+
+- Natural-language question answering grounded in connected company documents
+- Retrieval over chunked, embedded document sources with relevance ranking
+- Cited answers that link each claim back to its source document and passage
+- Confidence scoring that flags low-confidence answers for review
+- Source management with upload and mock wiki/folder connectors and sync status
+- Access scopes so answers only draw from sources a user is allowed to see
+- Admin review queue to approve, correct, or add sources for weak answers
+- Knowledge-gap analytics from frequent low-confidence or unanswered questions
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Source
+**Fields:** `id`, `name`, `type`, `connector`, `scope`, `syncStatus`, `ownerId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Document
+**Fields:** `id`, `sourceId`, `title`, `url`, `content`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- sourceId -> references the related record
+
+### Chunk
+**Fields:** `id`, `documentId`, `content`, `embedding`, `tokenCount`, `orderIndex`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- documentId -> references the related record
+
+### Query
+**Fields:** `id`, `userId`, `question`, `answer`, `confidence`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### Citation
+**Fields:** `id`, `queryId`, `chunkId`, `documentId`, `snippet`, `rank`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- queryId -> references the related record
+- chunkId -> references the related record
+- documentId -> references the related record
+
+### ReviewItem
+**Fields:** `id`, `queryId`, `reviewerId`, `action`, `note`, `resolvedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- queryId -> references the related record
+- reviewerId -> references the related record
+
+## Backend logic
+
+- Ingest documents from uploads or mock connectors, chunk them, and generate embeddings
+- Retrieve the most relevant chunks for a question using embedding similarity scoped to the user's access
+- Generate a grounded answer from retrieved chunks with inline citations to source passages
+- Compute an answer confidence score and route low-confidence answers to the review queue
+- Let admins resolve review items by approving, correcting, or adding sources
+- Track sync status per source and re-index documents when sources change
+- Aggregate question logs into knowledge-gap and confidence analytics
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] An answer cites the source documents and passages it was grounded in, with working links back to them
+- [ ] A low-confidence answer is flagged and surfaced in the admin review queue
+- [ ] With no AI key set, embeddings and answer generation use a deterministic mock so retrieval, citations, and confidence run locally
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds internal knowledge and RAG-search products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: Verity AI Internal Knowledge Base Assistant
+Type: AI Internal Knowledge Base Assistant (Internal Knowledge & RAG Search)
+Target users: employees who ask natural-language questions and get cited answers and knowledge admins who manage sources and review low-confidence answers.
+Business goal: Let employees ask natural-language questions and get cited answers grounded in the company's connected docs and wikis, while admins manage sources, review low-confidence answers, and see analytics on knowledge gaps.
+
+BRAND & DESIGN
+Brand style: trustworthy, clean, knowledgeable. Colors: deep teal, amber, paper white. A central ask bar with a streamed cited answer and a source-citation rail linking back to documents. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Ask page with the question bar and streamed cited answer
+2. Answer detail with source citations linking back to documents
+3. Document source browser with sync status and scopes
+4. Add / connect source (upload docs or connect a wiki/folder — mock connector)
+5. Question history and saved answers
+6. Admin: low-confidence answer review queue
+7. Analytics: top questions, knowledge gaps, and answer confidence
+8. Members and access scopes
+9. Auth (sign in / register)
+10. Settings: retrieval and model configuration
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Employee — ask questions and get cited, grounded answers
+- Knowledge Admin — manage sources, ingest documents, and review low-confidence answers
+- Org Admin — manage members, access scopes, and knowledge analytics
+
+CORE FEATURES
+- Natural-language question answering grounded in connected company documents
+- Retrieval over chunked, embedded document sources with relevance ranking
+- Cited answers that link each claim back to its source document and passage
+- Confidence scoring that flags low-confidence answers for review
+- Source management with upload and mock wiki/folder connectors and sync status
+- Access scopes so answers only draw from sources a user is allowed to see
+- Admin review queue to approve, correct, or add sources for weak answers
+- Knowledge-gap analytics from frequent low-confidence or unanswered questions
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, createdAt, updatedAt
+- Source: id, name, type, connector, scope, syncStatus, ownerId, createdAt, updatedAt
+- Document: id, sourceId, title, url, content, status, createdAt, updatedAt
+- Chunk: id, documentId, content, embedding, tokenCount, orderIndex, createdAt, updatedAt
+- Query: id, userId, question, answer, confidence, status, createdAt, updatedAt
+- Citation: id, queryId, chunkId, documentId, snippet, rank, createdAt, updatedAt
+- ReviewItem: id, queryId, reviewerId, action, note, resolvedAt, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Ingest documents from uploads or mock connectors, chunk them, and generate embeddings
+- Retrieve the most relevant chunks for a question using embedding similarity scoped to the user's access
+- Generate a grounded answer from retrieved chunks with inline citations to source passages
+- Compute an answer confidence score and route low-confidence answers to the review queue
+- Let admins resolve review items by approving, correcting, or adding sources
+- Track sync status per source and re-index documents when sources change
+- Aggregate question logs into knowledge-gap and confidence analytics
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- AI: implement a deterministic, offline mock AI provider behind one interface; switch to a real model (OpenAI/Anthropic) via an env var, defaulting to mock so it runs with no keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: ~4 connected sources with ~25 documents chunked and embedded, sample employee questions with cited answers and confidence scores, a review queue of low-confidence answers, knowledge-gap analytics, 1 org admin, 2 knowledge admins, and 4 employees. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```
