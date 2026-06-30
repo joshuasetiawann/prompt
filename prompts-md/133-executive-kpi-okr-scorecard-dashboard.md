@@ -1,0 +1,300 @@
+# NorthStar Executive KPI & OKR Scorecard Dashboard
+
+> Let leadership define KPIs and quarterly OKRs, assign owners, log actuals against targets, and run a board-ready review with department roll-ups and progress status
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 133 |
+| **Title** | Executive KPI & OKR Scorecard Dashboard |
+| **Slug** | executive-kpi-okr-scorecard-dashboard |
+| **Category** | Analytics & Dashboards |
+| **Domain** | Executive KPI & OKR Reporting |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Intermediate |
+| **Target user** | Executive / department head; Operations or strategy manager |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building goal-tracking and reporting dashboards for leadership teams, and operators who want a structured KPI/OKR scorecard instead of spreadsheets.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Company scorecard overview with KPI tiles and OKR progress
+2. OKR detail with objectives, key results, and progress
+3. KPI detail with target vs actual trend
+4. Department roll-up view
+5. Check-in feed and update entry
+6. Period planning to define quarterly OKRs and assign owners
+7. Board review and report builder with export
+8. My items: KPIs and key results I own
+9. Auth (sign in / register)
+10. Admin: departments, users, periods, and metric library
+
+## Required features
+
+- KPI definition with target, unit, direction, and owner
+- Quarterly OKR creation with objectives and measurable key results
+- Actuals logging against KPIs and key results with automatic progress calculation
+- Status indicators (on-track / at-risk / off-track) derived from progress vs the period timeline
+- Department roll-ups that aggregate owned KPIs and objectives
+- Periodic check-in updates with confidence and commentary
+- Board-ready review workflow that snapshots the scorecard for a period
+- Report export to PDF/CSV of the period scorecard
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `departmentId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- departmentId -> references the related record
+
+### Department
+**Fields:** `id`, `name`, `headId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- headId -> references the related record
+
+### Period
+**Fields:** `id`, `name`, `type`, `startDate`, `endDate`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Kpi
+**Fields:** `id`, `name`, `unit`, `direction`, `targetValue`, `ownerId`, `departmentId`, `periodId`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- departmentId -> references the related record
+- periodId -> references the related record
+
+### Objective
+**Fields:** `id`, `title`, `ownerId`, `departmentId`, `periodId`, `progress`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- departmentId -> references the related record
+- periodId -> references the related record
+
+### KeyResult
+**Fields:** `id`, `objectiveId`, `title`, `metricType`, `startValue`, `targetValue`, `currentValue`, `progress`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- objectiveId -> references the related record
+
+### CheckIn
+**Fields:** `id`, `ownerId`, `kpiId`, `keyResultId`, `value`, `confidence`, `comment`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- kpiId -> references the related record
+- keyResultId -> references the related record
+
+## Backend logic
+
+- Calculate KPI progress as actual versus target accounting for metric direction
+- Compute key-result progress from start, current, and target values and roll it up into objective progress
+- Derive on-track / at-risk / off-track status from progress against the period timeline
+- Aggregate department roll-ups from owned KPIs and objectives
+- Record check-in updates that update current values and progress over time
+- Snapshot the company scorecard for a period into a board-ready review
+- Export the period scorecard as PDF/CSV
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Key-result progress rolls up into objective progress and the company scorecard, with status derived from progress against the period timeline
+- [ ] Logging a check-in updates the current value and recomputes progress and on-track/at-risk/off-track status
+- [ ] A board review snapshots the period scorecard and can be exported to PDF/CSV
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds goal-tracking and executive reporting products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: NorthStar Executive KPI & OKR Scorecard Dashboard
+Type: Executive KPI & OKR Scorecard Dashboard (Executive KPI & OKR Reporting)
+Target users: executives and department heads who define KPIs and quarterly OKRs and operations or strategy managers who log actuals, post check-ins, and prepare board-ready reviews.
+Business goal: Let leadership define KPIs and quarterly OKRs, assign owners, log actuals against targets, and run a board-ready review with department roll-ups and progress status.
+
+BRAND & DESIGN
+Brand style: executive, polished, focused. Colors: deep indigo, slate, mint accent. A company scorecard with KPI tiles, OKR progress rings, and department roll-up cards. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Company scorecard overview with KPI tiles and OKR progress
+2. OKR detail with objectives, key results, and progress
+3. KPI detail with target vs actual trend
+4. Department roll-up view
+5. Check-in feed and update entry
+6. Period planning to define quarterly OKRs and assign owners
+7. Board review and report builder with export
+8. My items: KPIs and key results I own
+9. Auth (sign in / register)
+10. Admin: departments, users, periods, and metric library
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Executive — define company OKRs, review roll-ups, and run board reviews
+- Department Head — own department KPIs and objectives and report progress
+- Owner/Contributor — log actuals and post check-in updates on assigned items
+- Admin — manage departments, users, periods, and the metric library
+
+CORE FEATURES
+- KPI definition with target, unit, direction, and owner
+- Quarterly OKR creation with objectives and measurable key results
+- Actuals logging against KPIs and key results with automatic progress calculation
+- Status indicators (on-track / at-risk / off-track) derived from progress vs the period timeline
+- Department roll-ups that aggregate owned KPIs and objectives
+- Periodic check-in updates with confidence and commentary
+- Board-ready review workflow that snapshots the scorecard for a period
+- Report export to PDF/CSV of the period scorecard
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, departmentId, createdAt, updatedAt
+- Department: id, name, headId, createdAt, updatedAt
+- Period: id, name, type, startDate, endDate, status, createdAt, updatedAt
+- Kpi: id, name, unit, direction, targetValue, ownerId, departmentId, periodId, status, createdAt, updatedAt
+- Objective: id, title, ownerId, departmentId, periodId, progress, status, createdAt, updatedAt
+- KeyResult: id, objectiveId, title, metricType, startValue, targetValue, currentValue, progress, status, createdAt, updatedAt
+- CheckIn: id, ownerId, kpiId, keyResultId, value, confidence, comment, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Calculate KPI progress as actual versus target accounting for metric direction
+- Compute key-result progress from start, current, and target values and roll it up into objective progress
+- Derive on-track / at-risk / off-track status from progress against the period timeline
+- Aggregate department roll-ups from owned KPIs and objectives
+- Record check-in updates that update current values and progress over time
+- Snapshot the company scorecard for a period into a board-ready review
+- Export the period scorecard as PDF/CSV
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 4 departments, ~10 KPIs with targets and actuals, 2 quarterly periods with objectives and key results, a stream of check-in updates, a completed board review, 1 admin, 2 executives, and 3 department heads. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```
