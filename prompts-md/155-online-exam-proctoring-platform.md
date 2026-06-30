@@ -1,0 +1,297 @@
+# ProctorHall Online Exam & Proctoring Platform
+
+> Let instructors author timed exams from reusable question banks with randomized variants, deliver them with webcam and tab-switch proctoring flags, and auto-grade and release results with item analytics
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 155 |
+| **Title** | Online Exam & Proctoring Platform |
+| **Slug** | online-exam-proctoring-platform |
+| **Category** | Education & Learning |
+| **Domain** | Assessment & Examinations |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Exam administrators and instructors; Test-takers and certification candidates |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building secure assessment tools for training providers, certification bodies, and schools that need cheating-resistant online testing rather than just content delivery.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Dashboard with upcoming exams, recent results, and flagged sessions
+2. Question bank manager (categories, tags, question types)
+3. Exam authoring (sections, randomized variants, timing, proctoring rules)
+4. Exam scheduling and candidate enrollment
+5. Exam runner (timed, distraction-free, question palette, proctoring capture)
+6. Grading and review (auto-grade plus manual grading of open responses)
+7. Proctoring review (webcam snapshots, tab-switch and copy/paste flags)
+8. Results and item analytics (difficulty, discrimination, score distribution)
+9. Auth (sign in / register)
+10. Admin: users, roles, and exam settings
+
+## Required features
+
+- Reusable question banks with multiple item types (multiple choice, multi-select, true/false, short answer, essay)
+- Exam builder with sections, per-question scoring, and time limits
+- Randomized question and option variants drawn per candidate from the configured banks
+- Timed delivery with autosave, resume, and auto-submit on expiry
+- Webcam snapshot capture plus tab-switch, fullscreen-exit, and copy/paste proctoring flags
+- Auto-grading of objective items and manual grading of open responses
+- Item analytics: difficulty index, discrimination, and score distribution
+- Result-release controls with per-attempt feedback and pass/fail thresholds
+- Attempt limits and scheduled availability windows per candidate
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### QuestionBank
+**Fields:** `id`, `ownerId`, `name`, `subject`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Question
+**Fields:** `id`, `bankId`, `type`, `prompt`, `options`, `correctAnswer`, `points`, `difficulty`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bankId -> references the related record
+
+### Exam
+**Fields:** `id`, `ownerId`, `title`, `durationMinutes`, `passScore`, `sections`, `randomize`, `proctoringEnabled`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Attempt
+**Fields:** `id`, `examId`, `candidateId`, `startedAt`, `submittedAt`, `score`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- examId -> references the related record
+- candidateId -> references the related record
+
+### Answer
+**Fields:** `id`, `attemptId`, `questionId`, `response`, `isCorrect`, `awardedPoints`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- attemptId -> references the related record
+- questionId -> references the related record
+
+### ProctorEvent
+**Fields:** `id`, `attemptId`, `type`, `snapshotUrl`, `severity`, `occurredAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- attemptId -> references the related record
+
+## Backend logic
+
+- Assemble a per-candidate exam variant by randomly drawing questions and shuffling options from the configured banks and sections
+- Enforce exam timing with a server-side start and expiry, autosave, and forced auto-submit
+- Capture proctoring events (webcam snapshots, tab-switch, fullscreen exit, copy/paste) and score session risk
+- Auto-grade objective items on submission and queue open responses for manual grading
+- Compute item analytics (difficulty, discrimination) and exam score distributions
+- Control result release and compute pass/fail against thresholds with per-attempt feedback
+- Enforce attempt limits and scheduled availability windows per candidate
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Two candidates taking the same randomized exam receive different question orders and option shufflings drawn from the bank
+- [ ] An exam auto-submits when its server-side timer expires and objective items are graded immediately
+- [ ] Tab-switch and fullscreen-exit events during an attempt are recorded as proctoring flags visible in session review
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds secure assessment and examination products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: ProctorHall Online Exam & Proctoring Platform
+Type: Online Exam & Proctoring Platform (Assessment & Examinations)
+Target users: exam administrators and instructors who author exams from reusable question banks and test-takers who sit timed, proctored exams and receive auto-graded results.
+Business goal: Let instructors author timed exams from reusable question banks with randomized variants, deliver them with webcam and tab-switch proctoring flags, and auto-grade and release results with item analytics.
+
+BRAND & DESIGN
+Brand style: focused, secure, academic. Colors: deep indigo, slate, white. A distraction-free exam runner with a countdown timer, a question palette, and a proctoring status bar. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Dashboard with upcoming exams, recent results, and flagged sessions
+2. Question bank manager (categories, tags, question types)
+3. Exam authoring (sections, randomized variants, timing, proctoring rules)
+4. Exam scheduling and candidate enrollment
+5. Exam runner (timed, distraction-free, question palette, proctoring capture)
+6. Grading and review (auto-grade plus manual grading of open responses)
+7. Proctoring review (webcam snapshots, tab-switch and copy/paste flags)
+8. Results and item analytics (difficulty, discrimination, score distribution)
+9. Auth (sign in / register)
+10. Admin: users, roles, and exam settings
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Exam Administrator — manage question banks, exams, and result release
+- Instructor — author exams, review flags, and grade open responses
+- Test-Taker — sit proctored exams and view released results
+
+CORE FEATURES
+- Reusable question banks with multiple item types (multiple choice, multi-select, true/false, short answer, essay)
+- Exam builder with sections, per-question scoring, and time limits
+- Randomized question and option variants drawn per candidate from the configured banks
+- Timed delivery with autosave, resume, and auto-submit on expiry
+- Webcam snapshot capture plus tab-switch, fullscreen-exit, and copy/paste proctoring flags
+- Auto-grading of objective items and manual grading of open responses
+- Item analytics: difficulty index, discrimination, and score distribution
+- Result-release controls with per-attempt feedback and pass/fail thresholds
+- Attempt limits and scheduled availability windows per candidate
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, createdAt, updatedAt
+- QuestionBank: id, ownerId, name, subject, createdAt, updatedAt
+- Question: id, bankId, type, prompt, options, correctAnswer, points, difficulty, createdAt, updatedAt
+- Exam: id, ownerId, title, durationMinutes, passScore, sections, randomize, proctoringEnabled, status, createdAt, updatedAt
+- Attempt: id, examId, candidateId, startedAt, submittedAt, score, status, createdAt, updatedAt
+- Answer: id, attemptId, questionId, response, isCorrect, awardedPoints, createdAt, updatedAt
+- ProctorEvent: id, attemptId, type, snapshotUrl, severity, occurredAt, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Assemble a per-candidate exam variant by randomly drawing questions and shuffling options from the configured banks and sections
+- Enforce exam timing with a server-side start and expiry, autosave, and forced auto-submit
+- Capture proctoring events (webcam snapshots, tab-switch, fullscreen exit, copy/paste) and score session risk
+- Auto-grade objective items on submission and queue open responses for manual grading
+- Compute item analytics (difficulty, discrimination) and exam score distributions
+- Control result release and compute pass/fail against thresholds with per-attempt feedback
+- Enforce attempt limits and scheduled availability windows per candidate
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 2 question banks with ~60 mixed-type questions, 4 exams across draft, scheduled, and closed states with randomization and proctoring enabled, ~15 candidate attempts with auto-graded scores and proctoring flags, 1 admin, 2 instructors, and 3 test-takers. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```
