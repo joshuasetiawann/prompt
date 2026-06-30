@@ -1,14 +1,18 @@
 prompt_id: '50'
 title: Travel Package Booking Website
 slug: travel-package-booking-website
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: Wanderly Travel Package Booking Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building tour and travel booking sites for agencies and operators.
 target_user: Customer; Admin/Agency
+target_users: travelers booking tour packages and travel agencies managing packages and bookings
+role_line: You are a senior full-stack engineer who builds travel and tour booking platforms
 business_goal: Showcase tour packages and let customers book departures with a deposit, with agency management tools
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: inspiring, warm, wanderlust. Colors: teal, coral accent, sand. Clean, modern, immersive package pages with itineraries and a clear booking flow.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -187,6 +191,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — browse, book, and manage trips
+- Admin/Agency — manage packages, departures, and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 packages with itineraries, departures with capacity, sample bookings, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 46 |
 | **Title** | Language Learning App |
 | **Slug** | language-learning-app |
-| **Category** | Education & E-learning |
+| **Category** | Education & Learning |
+| **Domain** | Education & E-learning |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Learner; Admin |

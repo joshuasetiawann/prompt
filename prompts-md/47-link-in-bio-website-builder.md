@@ -7,7 +7,8 @@
 | **Prompt ID** | 47 |
 | **Title** | Link-in-Bio Website Builder |
 | **Slug** | link-in-bio-website-builder |
-| **Category** | Builders & SaaS |
+| **Category** | Business Operations |
+| **Domain** | Builders & SaaS |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | User; Visitor; Admin |
@@ -66,6 +67,9 @@
 - Click tracking per link and page-view counts
 - Analytics dashboard
 - Per-user pages and data
+- Social media icon links (Instagram, TikTok, X, and more)
+- Email subscriber capture on the public page
+- Reusable saved theme presets
 
 ## Database models
 
@@ -99,9 +103,29 @@
 **Relationships:**
 - bioPageId -> references the related record
 
+### SocialLink
+**Fields:** `id`, `bioPageId`, `platform`, `url`, `sortOrder`, `visible`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bioPageId -> references the related record
+
+### Subscriber
+**Fields:** `id`, `bioPageId`, `email`, `name`, `source`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bioPageId -> references the related record
+
+### CustomTheme
+**Fields:** `id`, `userId`, `name`, `description`, `isDefault`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
 ## Backend logic
 
 - Bio page and link CRUD with reordering
+- Social link and email-subscriber capture CRUD
+- Reusable saved theme presets per user
 - Public page rendering by username
 - Click and view tracking on the public page
 - Analytics aggregation per link and page
@@ -210,6 +234,9 @@ CORE FEATURES
 - Click tracking per link and page-view counts
 - Analytics dashboard
 - Per-user pages and data
+- Social media icon links (Instagram, TikTok, X, and more)
+- Email subscriber capture on the public page
+- Reusable saved theme presets
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -217,10 +244,15 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Link: id, bioPageId, title, url, sortOrder, visible, createdAt, updatedAt
 - ClickEvent: id, linkId, createdAt, updatedAt
 - PageView: id, bioPageId, createdAt, updatedAt
+- SocialLink: id, bioPageId, platform, url, sortOrder, visible, createdAt, updatedAt
+- Subscriber: id, bioPageId, email, name, source, createdAt, updatedAt
+- CustomTheme: id, userId, name, description, isDefault, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Bio page and link CRUD with reordering
+- Social link and email-subscriber capture CRUD
+- Reusable saved theme presets per user
 - Public page rendering by username
 - Click and view tracking on the public page
 - Analytics aggregation per link and page

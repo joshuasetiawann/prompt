@@ -7,7 +7,8 @@
 | **Prompt ID** | 50 |
 | **Title** | Travel Package Booking Website |
 | **Slug** | travel-package-booking-website |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Customer; Admin/Agency |
@@ -56,9 +57,10 @@
 4. Booking flow (departure date, travelers, deposit)
 5. Confirmation
 6. Customer dashboard: trips, manage booking
-7. Auth
-8. Admin: packages and departures
-9. Admin: bookings and reports
+7. Customer: wishlist and trip reviews
+8. Auth
+9. Admin: packages and departures
+10. Admin: bookings and reports
 
 ## Required features
 
@@ -69,6 +71,8 @@
 - Capacity-aware booking preventing oversold departures
 - Booking status lifecycle and cancellation window
 - Admin package and departure management with reports
+- Verified customer reviews and ratings on completed trips
+- Wishlist to save favorite packages and per-traveler details captured on bookings
 
 ## Database models
 
@@ -103,12 +107,33 @@
 **Relationships:**
 - bookingId -> references the related record
 
+### Review
+**Fields:** `id`, `packageId`, `customerId`, `rating`, `title`, `comment`, `isVerified`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- packageId -> references the related record
+- customerId -> references the related record
+
+### Traveler
+**Fields:** `id`, `bookingId`, `fullName`, `birthDate`, `passportNumber`, `nationality`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- bookingId -> references the related record
+
+### Wishlist
+**Fields:** `id`, `customerId`, `packageId`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- customerId -> references the related record
+- packageId -> references the related record
+
 ## Backend logic
 
 - Capacity-aware booking decrementing departure seats in a transaction
 - Per-person total and mock deposit calculation
 - Cancellation enforcing the policy window and freeing seats
 - Admin package/departure management and reports
+- Reviews allowed only after a completed trip, flagged as verified for that customer
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -196,9 +221,10 @@ PAGES / SCREENS
 4. Booking flow (departure date, travelers, deposit)
 5. Confirmation
 6. Customer dashboard: trips, manage booking
-7. Auth
-8. Admin: packages and departures
-9. Admin: bookings and reports
+7. Customer: wishlist and trip reviews
+8. Auth
+9. Admin: packages and departures
+10. Admin: bookings and reports
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -215,6 +241,8 @@ CORE FEATURES
 - Capacity-aware booking preventing oversold departures
 - Booking status lifecycle and cancellation window
 - Admin package and departure management with reports
+- Verified customer reviews and ratings on completed trips
+- Wishlist to save favorite packages and per-traveler details captured on bookings
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -222,6 +250,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Departure: id, packageId, date, capacity, booked, createdAt, updatedAt
 - Booking: id, departureId, customerId, travelers, status, total, depositPaid, createdAt, updatedAt
 - Payment: id, bookingId, amount, type, status, createdAt, updatedAt
+- Review: id, packageId, customerId, rating, title, comment, isVerified, createdAt, updatedAt
+- Traveler: id, bookingId, fullName, birthDate, passportNumber, nationality, createdAt, updatedAt
+- Wishlist: id, customerId, packageId, notes, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -229,6 +260,7 @@ BACKEND / API LOGIC
 - Per-person total and mock deposit calculation
 - Cancellation enforcing the policy window and freeing seats
 - Admin package/departure management and reports
+- Reviews allowed only after a completed trip, flagged as verified for that customer
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

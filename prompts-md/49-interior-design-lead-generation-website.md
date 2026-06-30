@@ -7,7 +7,8 @@
 | **Prompt ID** | 49 |
 | **Title** | Interior Design Lead Generation Website |
 | **Slug** | interior-design-lead-generation-website |
-| **Category** | Marketing & Lead Generation |
+| **Category** | Marketing & Lead Gen |
+| **Domain** | Marketing & Lead Generation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Beginner |
 | **Target user** | Visitor; Admin/Designer |

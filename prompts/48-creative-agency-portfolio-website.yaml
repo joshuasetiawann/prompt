@@ -1,14 +1,18 @@
 prompt_id: '48'
 title: Creative Agency Portfolio Website
 slug: creative-agency-portfolio-website
-category: Marketing Website
+category: Marketing & Lead Gen
+domain: Marketing Website
 app_name: Studio Nova Creative Agency Portfolio Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Beginner
 best_for: Freelancers and agencies building portfolio sites for studios, designers, and creative teams.
 target_user: Visitor; Admin
+target_users: creative agencies and studios showcasing work and attracting clients
+role_line: You are a conversion-focused web designer and developer who builds agency and portfolio sites
 business_goal: Present the agency's work and services persuasively and capture project inquiries
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: bold, editorial, design-forward. Colors: black, white, vivid accent. Clean, modern, large type, generous whitespace, and striking case-study layouts.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -114,6 +118,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Visitor — browse and inquire
+- Admin — view inquiries (optional, lightweight)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 portfolio projects with case-study content, team members, sample inquiries. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

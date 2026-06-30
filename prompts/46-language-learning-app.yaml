@@ -1,14 +1,18 @@
 prompt_id: '46'
 title: Language Learning App
 slug: language-learning-app
-category: Education & E-learning
+category: Education & Learning
+domain: Education & E-learning
 app_name: LinguaGo Language Learning App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building language or flashcard-based learning apps.
 target_user: Learner; Admin
+target_users: language learners practicing vocabulary and lessons
+role_line: You are a senior full-stack engineer who builds language-learning and spaced-repetition apps
 business_goal: Let learners progress through lessons, review vocab with spaced repetition, and take quizzes
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: playful, encouraging, clean. Colors: orange, indigo, white. Clean, modern, friendly lesson cards, a flashcard reviewer, and progress indicators.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -157,6 +161,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Learner — take lessons, review, quiz
+- Admin — manage lessons and vocabulary (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 lessons with vocabulary, review states with due dates, quizzes, progress with a streak, 1 learner (and 1 admin). Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

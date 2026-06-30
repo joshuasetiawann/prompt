@@ -1,14 +1,18 @@
 prompt_id: '47'
 title: Link-in-Bio Website Builder
 slug: link-in-bio-website-builder
-category: Builders & SaaS
+category: Business Operations
+domain: Builders & SaaS
 app_name: BioLink Link-in-Bio Website Builder
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building link-in-bio tools or simple micro-site builders for creators.
 target_user: User; Visitor; Admin
+target_users: creators and small businesses who want a single shareable links page
+role_line: You are a senior full-stack engineer who builds link-in-bio and micro-site builders
 business_goal: Let users build and customize a public bio page of links and see click analytics
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: modern, creator-friendly, vibrant. Colors: gradient (violet to pink), white, dark text. Clean, modern, split editor with a live mobile preview and a clean public page.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -173,6 +177,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — build and manage their bio page
+- Visitor — view the public page (no login)
+- Admin — oversee users (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 2 sample bio pages with links, themes, and seeded clicks/views, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

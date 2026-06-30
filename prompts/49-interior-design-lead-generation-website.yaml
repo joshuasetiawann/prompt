@@ -1,14 +1,18 @@
 prompt_id: '49'
 title: Interior Design Lead Generation Website
 slug: interior-design-lead-generation-website
-category: Marketing & Lead Generation
+category: Marketing & Lead Gen
+domain: Marketing & Lead Generation
 app_name: Haus Interiors Interior Design Lead Generation Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Beginner
 best_for: Freelancers building lead-gen sites for interior designers and other home-service businesses.
 target_user: Visitor; Admin/Designer
+target_users: interior designers attracting clients and homeowners requesting consultations
+role_line: You are a conversion-focused web developer who builds lead-generation sites for service businesses
 business_goal: Showcase design work and convert visitors into consultation leads
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: warm, elegant, aspirational. Colors: warm taupe, charcoal, soft cream. Clean, modern, image-led layout with a refined gallery and a prominent consultation form.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -116,6 +120,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Visitor — browse and request a consultation
+- Admin/Designer — view and manage leads
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 portfolio projects, services, sample leads in various statuses. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

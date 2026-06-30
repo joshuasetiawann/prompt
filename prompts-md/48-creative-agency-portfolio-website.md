@@ -7,7 +7,8 @@
 | **Prompt ID** | 48 |
 | **Title** | Creative Agency Portfolio Website |
 | **Slug** | creative-agency-portfolio-website |
-| **Category** | Marketing Website |
+| **Category** | Marketing & Lead Gen |
+| **Domain** | Marketing Website |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Beginner |
 | **Target user** | Visitor; Admin |
