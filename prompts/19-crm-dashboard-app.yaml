@@ -1,14 +1,18 @@
 prompt_id: '19'
 title: CRM Dashboard App
 slug: crm-dashboard-app
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: LeadDesk CRM Dashboard App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building lightweight CRMs for small sales teams and agencies.
 target_user: Sales Rep; Manager/Admin
+target_users: sales teams and managers tracking leads, deals, and follow-ups
+role_line: You are a senior full-stack engineer who builds CRM and sales-pipeline software
 business_goal: Organize contacts, move deals through a pipeline, log activities, and report on performance
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: focused, professional, data-clear. Colors: slate, white, emerald accent. Clean, modern, dashboard with KPIs, a kanban pipeline, and clean record views.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -203,6 +207,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Sales Rep — manage own contacts and deals
+- Manager/Admin — view all, manage users, see reports
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~30 contacts, ~20 deals across stages, activities with due dates, 1 admin/manager and 2 reps. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

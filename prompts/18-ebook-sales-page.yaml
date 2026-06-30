@@ -1,14 +1,18 @@
 prompt_id: '18'
 title: Ebook Sales Page
 slug: ebook-sales-page
-category: Digital Products & E-commerce
+category: E-commerce & Retail
+domain: Digital Products & E-commerce
 app_name: PageOne Ebook Sales Page
 app_type: Production-grade full-stack web app scaffold
 difficulty: Beginner
 best_for: Authors and creators who want a focused, high-converting page to sell a single ebook or guide.
 target_user: Customer; Admin/Author
+target_users: authors and creators selling an ebook and buyers purchasing instant access
+role_line: You are a conversion copywriter and full-stack developer who builds digital-product sales pages
 business_goal: Sell an ebook with a strong sales page and deliver the download immediately after purchase
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, credible, author-focused. Colors: warm neutral, charcoal text, single accent. Clean, modern, long-form sales layout with book mockup, benefits, and a clear buy button.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -135,6 +139,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — buy and download
+- Admin/Author — manage product and view orders
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 1 ebook with sample, ~10 sample orders, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

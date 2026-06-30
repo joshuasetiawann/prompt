@@ -1,14 +1,18 @@
 prompt_id: '20'
 title: Project Management App
 slug: project-management-app
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: TaskFlow Project Management App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building team task tools for agencies, startups, and small teams.
 target_user: Admin/Owner; Member
+target_users: teams organizing work across projects with assignments and deadlines
+role_line: You are a senior full-stack engineer who builds team project and task management tools
 business_goal: Plan projects, manage tasks on a board and list, assign owners, and track progress
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, productive, modern SaaS. Colors: indigo, white, soft grey. Clean, modern, board and list views with quick filters and a task drawer.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -150,6 +154,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/Owner — manage projects and members
+- Member — manage assigned tasks and projects they belong to
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 projects with members, ~25 tasks across statuses, subtasks and comments, 1 admin and 3 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

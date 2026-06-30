@@ -7,7 +7,8 @@
 | **Prompt ID** | 18 |
 | **Title** | Ebook Sales Page |
 | **Slug** | ebook-sales-page |
-| **Category** | Digital Products & E-commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | Digital Products & E-commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Beginner |
 | **Target user** | Customer; Admin/Author |

@@ -7,7 +7,8 @@
 | **Prompt ID** | 19 |
 | **Title** | CRM Dashboard App |
 | **Slug** | crm-dashboard-app |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Sales Rep; Manager/Admin |
@@ -54,8 +55,10 @@
 3. Contacts list (search/filter) and contact detail
 4. Deals pipeline (kanban by stage) and deal detail
 5. Activities/tasks list
-6. Reports
-7. Settings/users
+6. Companies/accounts list and company detail
+7. Leads inbox (capture and convert to contacts/deals)
+8. Reports
+9. Settings/users
 
 ## Required features
 
@@ -65,6 +68,9 @@
 - Dashboard KPIs and simple charts
 - Filtering and search across records
 - Reports: pipeline value, win rate, activities; CSV export concept
+- Companies/accounts that group contacts and deals
+- Lead capture, qualification, and conversion into contacts/deals
+- Notes on records and a mock notification log for follow-ups
 - Role-based visibility (own vs all)
 
 ## Database models
@@ -96,9 +102,40 @@
 - contactId -> references the related record
 - ownerId -> references the related record
 
+### Company
+**Fields:** `id`, `ownerId`, `name`, `industry`, `website`, `phone`, `address`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Lead
+**Fields:** `id`, `ownerId`, `companyId`, `name`, `email`, `phone`, `source`, `status`, `estimatedValue`, `createdAt`, `convertedAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- companyId -> references the related record
+
+### Note
+**Fields:** `id`, `contactId`, `dealId`, `ownerId`, `content`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- contactId -> references the related record
+- dealId -> references the related record
+- ownerId -> references the related record
+
+### NotificationLog
+**Fields:** `id`, `userId`, `contactId`, `channel`, `subject`, `body`, `status`, `sentAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- contactId -> references the related record
+
 ## Backend logic
 
 - CRUD for contacts, deals, and activities with role scoping
+- Company/account CRUD with linked contacts and deals
+- Lead capture and conversion into contacts/deals
+- Notes on contacts and deals; mock notification log for follow-ups
 - Pipeline stage updates (drag-and-drop)
 - Dashboard and report aggregations
 - Search and filter across records
@@ -188,8 +225,10 @@ PAGES / SCREENS
 3. Contacts list (search/filter) and contact detail
 4. Deals pipeline (kanban by stage) and deal detail
 5. Activities/tasks list
-6. Reports
-7. Settings/users
+6. Companies/accounts list and company detail
+7. Leads inbox (capture and convert to contacts/deals)
+8. Reports
+9. Settings/users
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -205,6 +244,9 @@ CORE FEATURES
 - Dashboard KPIs and simple charts
 - Filtering and search across records
 - Reports: pipeline value, win rate, activities; CSV export concept
+- Companies/accounts that group contacts and deals
+- Lead capture, qualification, and conversion into contacts/deals
+- Notes on records and a mock notification log for follow-ups
 - Role-based visibility (own vs all)
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -212,10 +254,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Contact: id, ownerId, name, email, phone, company, notes, createdAt, updatedAt
 - Deal: id, contactId, ownerId, title, value, stage, createdAt, closedAt, updatedAt
 - Activity: id, dealId, contactId, ownerId, type, dueDate, done, note, createdAt, updatedAt
+- Company: id, ownerId, name, industry, website, phone, address, notes, createdAt, updatedAt
+- Lead: id, ownerId, companyId, name, email, phone, source, status, estimatedValue, createdAt, convertedAt, updatedAt
+- Note: id, contactId, dealId, ownerId, content, createdAt, updatedAt
+- NotificationLog: id, userId, contactId, channel, subject, body, status, sentAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - CRUD for contacts, deals, and activities with role scoping
+- Company/account CRUD with linked contacts and deals
+- Lead capture and conversion into contacts/deals
+- Notes on contacts and deals; mock notification log for follow-ups
 - Pipeline stage updates (drag-and-drop)
 - Dashboard and report aggregations
 - Search and filter across records

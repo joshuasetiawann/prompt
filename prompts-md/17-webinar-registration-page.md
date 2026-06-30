@@ -7,7 +7,8 @@
 | **Prompt ID** | 17 |
 | **Title** | Webinar Registration Page |
 | **Slug** | webinar-registration-page |
-| **Category** | Marketing & Lead Capture |
+| **Category** | Marketing & Lead Gen |
+| **Domain** | Marketing & Lead Capture |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Beginner |
 | **Target user** | Visitor; Host/Admin |

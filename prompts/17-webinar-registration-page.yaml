@@ -1,14 +1,18 @@
 prompt_id: '17'
 title: Webinar Registration Page
 slug: webinar-registration-page
-category: Marketing & Lead Capture
+category: Marketing & Lead Gen
+domain: Marketing & Lead Capture
 app_name: WebinarGo Webinar Registration Page
 app_type: Production-grade full-stack web app scaffold
 difficulty: Beginner
 best_for: Creators, coaches, and marketers who need a fast, polished registration page for a live session.
 target_user: Visitor; Host/Admin
+target_users: webinar hosts collecting registrations and prospects signing up to attend
+role_line: You are a conversion-focused full-stack developer who builds high-converting event registration pages
 business_goal: Convert visitors into registered attendees and confirm them with the details
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: professional, urgent, credible. Colors: blue gradient, white, bright CTA accent. Clean, modern, focused single page with a sticky registration form and countdown.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -98,6 +102,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Visitor — register
+- Host/Admin — view registrants
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 1 webinar with date/time, ~10 sample registrants. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -1,14 +1,18 @@
 prompt_id: '16'
 title: Membership Community Portal
 slug: membership-community-portal
-category: Community & Membership
+category: Community, Civic & Nonprofit
+domain: Community & Membership
 app_name: CircleSpace Membership Community Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Creators and developers building paid communities, cohorts, or membership sites.
 target_user: Member; Admin/Owner
+target_users: community owners running paid memberships and members accessing gated content and discussion
+role_line: You are a senior full-stack engineer who builds paid community and membership platforms
 business_goal: Let owners run a tiered paid community and members post, discuss, and access gated content
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: warm, belonging-focused, modern. Colors: purple, white, amber accent. Clean, modern, feed-centric layout with channels sidebar and member profiles.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -172,6 +176,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Member — read, post, comment per tier access
+- Admin/Owner — manage tiers, content, members, and moderation
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 tiers, ~15 members across tiers, channels, sample posts/comments, 1 admin and 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

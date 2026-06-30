@@ -7,7 +7,8 @@
 | **Prompt ID** | 16 |
 | **Title** | Membership Community Portal |
 | **Slug** | membership-community-portal |
-| **Category** | Community & Membership |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Community & Membership |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Member; Admin/Owner |
