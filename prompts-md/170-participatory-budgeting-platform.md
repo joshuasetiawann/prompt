@@ -1,0 +1,301 @@
+# OurBudget Participatory Budgeting Platform
+
+> Let residents propose community projects and vote to allocate a fixed budget while organizers screen, cost, and track funded projects through to completion
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 170 |
+| **Title** | Participatory Budgeting Platform |
+| **Slug** | participatory-budgeting-platform |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Participatory Democracy & Civic Budgeting |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | City budget officers and facilitators; residents and project proposers |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building civic-engagement tools for municipalities, city councils, and community boards.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Home with the active cycle, budget remaining, and featured proposals
+2. Proposal submission form (title, description, category, location, requested cost)
+3. Proposal catalog with category, status, and cost filters
+4. Proposal detail with costing, comments, and vote action
+5. Voting ballot (allocate votes or budget across shortlisted proposals)
+6. Results and allocation board (funded vs unfunded against the budget)
+7. Resident account: my proposals, votes, and followed projects
+8. Auth (sign in / register)
+9. Facilitator: screening and costing queue
+10. Admin: cycles, budget, eligibility, and reports
+
+## Required features
+
+- Budget cycle with a fixed total allocation and configurable phases (submission, screening, voting, delivery)
+- Resident proposal submission with category, location, and requested cost
+- Facilitator screening workflow that approves, rejects, or returns proposals with reasons
+- Proposal costing that attaches an official estimate and feasibility note
+- Eligibility-gated voting with one ballot per verified resident and double-vote prevention
+- Budget-aware tallying that funds proposals in rank order until the budget is exhausted
+- Results publication showing funded and unfunded proposals against remaining budget
+- Funded-project tracking through delivery milestones to completion
+- Comment threads and proposal following for supporter updates
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `district`, `verified`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### BudgetCycle
+**Fields:** `id`, `name`, `totalBudget`, `phase`, `votingMethod`, `startsAt`, `endsAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Proposal
+**Fields:** `id`, `cycleId`, `proposerId`, `title`, `description`, `category`, `location`, `requestedCost`, `estimatedCost`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- cycleId -> references the related record
+- proposerId -> references the related record
+
+### ScreeningReview
+**Fields:** `id`, `proposalId`, `reviewerId`, `decision`, `feasibilityNote`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- proposalId -> references the related record
+- reviewerId -> references the related record
+
+### Vote
+**Fields:** `id`, `proposalId`, `voterId`, `cycleId`, `weight`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- proposalId -> references the related record
+- voterId -> references the related record
+- cycleId -> references the related record
+
+### Allocation
+**Fields:** `id`, `proposalId`, `cycleId`, `fundedAmount`, `rank`, `funded`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- proposalId -> references the related record
+- cycleId -> references the related record
+
+### ProjectMilestone
+**Fields:** `id`, `proposalId`, `title`, `dueDate`, `status`, `completedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- proposalId -> references the related record
+
+## Backend logic
+
+- Advance a budget cycle through submission, screening, voting, and delivery phases
+- Accept resident proposals and route them into the facilitator screening queue
+- Apply screening decisions that approve, reject, or return proposals with reasons
+- Attach official cost estimates and feasibility notes to screened proposals
+- Record eligibility-gated votes and prevent duplicate ballots per resident and cycle
+- Tally votes and fund proposals in rank order until the fixed budget is exhausted
+- Track funded-project milestones and update delivery status through to completion
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Votes are tallied and proposals are funded in rank order until the fixed budget is exhausted, with the remainder shown as unfunded
+- [ ] A resident can submit only one valid ballot per cycle and cannot vote twice on the same proposal
+- [ ] A proposal returned in screening goes back to the proposer and cannot enter the voting ballot until re-approved
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds participatory democracy and civic budgeting products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: OurBudget Participatory Budgeting Platform
+Type: Participatory Budgeting Platform (Participatory Democracy & Civic Budgeting)
+Target users: residents who propose and vote on community projects and budget officers who screen, cost, and fund proposals against a fixed budget.
+Business goal: Let residents propose community projects and vote to allocate a fixed budget while organizers screen, cost, and track funded projects through to completion.
+
+BRAND & DESIGN
+Brand style: civic, transparent, approachable. Colors: ballot blue, clean white, warm slate. A budget allocation board showing remaining funds beside a card grid of proposals with vote tallies and cost tags. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Home with the active cycle, budget remaining, and featured proposals
+2. Proposal submission form (title, description, category, location, requested cost)
+3. Proposal catalog with category, status, and cost filters
+4. Proposal detail with costing, comments, and vote action
+5. Voting ballot (allocate votes or budget across shortlisted proposals)
+6. Results and allocation board (funded vs unfunded against the budget)
+7. Resident account: my proposals, votes, and followed projects
+8. Auth (sign in / register)
+9. Facilitator: screening and costing queue
+10. Admin: cycles, budget, eligibility, and reports
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Resident — propose projects, vote to allocate the budget, and follow funded projects
+- Facilitator — screen submissions, cost proposals, and run voting rounds
+- Budget Officer — set the budget cycle, publish results, and track project delivery
+- Admin — manage cycles, users, eligibility rules, and reports
+
+CORE FEATURES
+- Budget cycle with a fixed total allocation and configurable phases (submission, screening, voting, delivery)
+- Resident proposal submission with category, location, and requested cost
+- Facilitator screening workflow that approves, rejects, or returns proposals with reasons
+- Proposal costing that attaches an official estimate and feasibility note
+- Eligibility-gated voting with one ballot per verified resident and double-vote prevention
+- Budget-aware tallying that funds proposals in rank order until the budget is exhausted
+- Results publication showing funded and unfunded proposals against remaining budget
+- Funded-project tracking through delivery milestones to completion
+- Comment threads and proposal following for supporter updates
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, district, verified, createdAt, updatedAt
+- BudgetCycle: id, name, totalBudget, phase, votingMethod, startsAt, endsAt, status, createdAt, updatedAt
+- Proposal: id, cycleId, proposerId, title, description, category, location, requestedCost, estimatedCost, status, createdAt, updatedAt
+- ScreeningReview: id, proposalId, reviewerId, decision, feasibilityNote, createdAt, updatedAt
+- Vote: id, proposalId, voterId, cycleId, weight, createdAt, updatedAt
+- Allocation: id, proposalId, cycleId, fundedAmount, rank, funded, createdAt, updatedAt
+- ProjectMilestone: id, proposalId, title, dueDate, status, completedAt, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Advance a budget cycle through submission, screening, voting, and delivery phases
+- Accept resident proposals and route them into the facilitator screening queue
+- Apply screening decisions that approve, reject, or return proposals with reasons
+- Attach official cost estimates and feasibility notes to screened proposals
+- Record eligibility-gated votes and prevent duplicate ballots per resident and cycle
+- Tally votes and fund proposals in rank order until the fixed budget is exhausted
+- Track funded-project milestones and update delivery status through to completion
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 1 active budget cycle with a fixed total budget across 4 phases, ~25 proposals in mixed statuses with cost estimates, screening reviews, eligibility-gated votes producing a funded shortlist and allocation board, delivery milestones on funded projects, and demo logins for 1 admin, 2 facilitators, and 3 residents. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

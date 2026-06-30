@@ -1,0 +1,345 @@
+prompt_id: '167'
+title: Blood Donation Drive Coordination Platform
+slug: blood-donation-drive-platform
+category: Community, Civic & Nonprofit
+domain: Blood Donation & Drives
+app_name: VitalDrop Blood Donation Drive Coordination Platform
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building coordination tools for blood banks, donation centers, and hospital drive programs.
+target_user: Blood drive coordinators and screening staff; donors
+target_users: donors who register, pre-screen for eligibility, and book appointment slots and blood drive coordinators and screening staff who schedule drives, screen donors, and monitor stock by blood type
+role_line: You are a senior full-stack engineer who builds blood donation and drives products
+business_goal: Let blood centers schedule donation drives, register and pre-screen donors for eligibility, book appointment slots, track donation history and deferrals, and monitor blood stock levels by type
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: caring, urgent, reassuring. Colors: crimson red, clean white, slate grey. A drive scheduling calendar beside a blood-type stock gauge and an appointment slot grid.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Drives home with upcoming drives and eligibility info
+- Donor registration and profile (blood type, history)
+- Eligibility pre-screening questionnaire
+- Appointment slot booking calendar
+- 'Donor portal: appointments, history, and deferral status'
+- 'Screening: donor check-in and eligibility review queue'
+- Drive management and slot capacity setup
+- Blood stock dashboard by type with expiry
+- Auth (sign in / register)
+- 'Admin: centers, drives, and reports'
+required_features:
+- Drive scheduling with location, date, capacity, and per-time-slot appointment limits
+- Donor registration capturing blood type, contact details, and prior donation history
+- Eligibility pre-screening questionnaire with automatic deferral rules (travel, medication, weight, recent donation)
+- Appointment slot booking against drive capacity with rescheduling and cancellation
+- Donation interval enforcement preventing booking before the minimum gap since last donation
+- Deferral tracking with temporary and permanent deferral periods that block ineligible donors
+- Donation recording that creates blood units and increments stock by blood type
+- Blood stock dashboard by type with units, expiry tracking, and low-stock alerts
+- Donor portal with upcoming appointments, donation history, and next eligible date
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - bloodType
+  - phone
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Drive
+  fields:
+  - id
+  - name
+  - location
+  - scheduledDate
+  - capacity
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: AppointmentSlot
+  fields:
+  - id
+  - driveId
+  - startTime
+  - capacity
+  - bookedCount
+  - createdAt
+  - updatedAt
+  relationships:
+  - driveId -> references the related record
+- name: Appointment
+  fields:
+  - id
+  - slotId
+  - donorId
+  - status
+  - checkedInAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - slotId -> references the related record
+  - donorId -> references the related record
+- name: Screening
+  fields:
+  - id
+  - appointmentId
+  - donorId
+  - questionnaire
+  - outcome
+  - deferralReason
+  - deferredUntil
+  - screenedById
+  - createdAt
+  - updatedAt
+  relationships:
+  - appointmentId -> references the related record
+  - donorId -> references the related record
+  - screenedById -> references the related record
+- name: Donation
+  fields:
+  - id
+  - appointmentId
+  - donorId
+  - bloodType
+  - volumeMl
+  - status
+  - donatedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - appointmentId -> references the related record
+  - donorId -> references the related record
+- name: BloodUnit
+  fields:
+  - id
+  - donationId
+  - bloodType
+  - status
+  - collectedAt
+  - expiryDate
+  - createdAt
+  - updatedAt
+  relationships:
+  - donationId -> references the related record
+backend_logic:
+- Schedule drives and generate appointment slots with per-slot capacity
+- Book, reschedule, and cancel appointments while enforcing per-slot capacity limits
+- Score the pre-screening questionnaire and apply deferral rules to accept, temporarily defer, or permanently defer a donor
+- Enforce the minimum donation interval and active deferrals when a donor attempts to book
+- Record a completed donation, create blood units, and increment stock by blood type
+- Track blood unit expiry and raise low-stock alerts per blood type
+- Compute each donor's next eligible donation date and surface it in the portal
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Donor — register, complete eligibility pre-screening, book appointment slots, and view donation history
+- Screening Staff — run eligibility questionnaires, record deferrals, and confirm donations
+- Drive Coordinator — schedule drives, manage appointment slots, and monitor blood stock by type
+- Admin — manage users, centers, and reports
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 2 donation centers with ~4 scheduled drives and time-slot capacity, ~30 registered donors across blood types with donation histories, pre-screening records with temporary and permanent deferrals, recorded donations and blood units with expiry dates, current stock levels by type, 1 admin, 2 screening staff, and 6 donors. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- A donor who fails a deferral rule (e.g., recent donation or a disqualifying answer) is deferred and cannot book until eligible
+- Booking is blocked when a time slot is at capacity or the donor is within the minimum donation interval
+- Recording a donation creates blood units and increments stock for the correct blood type, and expiring units trigger alerts
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds blood donation and drives products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: VitalDrop Blood Donation Drive Coordination Platform
+  Type: Blood Donation Drive Coordination Platform (Blood Donation & Drives)
+  Target users: donors who register, pre-screen for eligibility, and book appointment slots and blood drive coordinators and screening staff who schedule drives, screen donors, and monitor stock by blood type.
+  Business goal: Let blood centers schedule donation drives, register and pre-screen donors for eligibility, book appointment slots, track donation history and deferrals, and monitor blood stock levels by type.
+
+  BRAND & DESIGN
+  Brand style: caring, urgent, reassuring. Colors: crimson red, clean white, slate grey. A drive scheduling calendar beside a blood-type stock gauge and an appointment slot grid. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Drives home with upcoming drives and eligibility info
+  2. Donor registration and profile (blood type, history)
+  3. Eligibility pre-screening questionnaire
+  4. Appointment slot booking calendar
+  5. Donor portal: appointments, history, and deferral status
+  6. Screening: donor check-in and eligibility review queue
+  7. Drive management and slot capacity setup
+  8. Blood stock dashboard by type with expiry
+  9. Auth (sign in / register)
+  10. Admin: centers, drives, and reports
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Donor — register, complete eligibility pre-screening, book appointment slots, and view donation history
+  - Screening Staff — run eligibility questionnaires, record deferrals, and confirm donations
+  - Drive Coordinator — schedule drives, manage appointment slots, and monitor blood stock by type
+  - Admin — manage users, centers, and reports
+
+  CORE FEATURES
+  - Drive scheduling with location, date, capacity, and per-time-slot appointment limits
+  - Donor registration capturing blood type, contact details, and prior donation history
+  - Eligibility pre-screening questionnaire with automatic deferral rules (travel, medication, weight, recent donation)
+  - Appointment slot booking against drive capacity with rescheduling and cancellation
+  - Donation interval enforcement preventing booking before the minimum gap since last donation
+  - Deferral tracking with temporary and permanent deferral periods that block ineligible donors
+  - Donation recording that creates blood units and increments stock by blood type
+  - Blood stock dashboard by type with units, expiry tracking, and low-stock alerts
+  - Donor portal with upcoming appointments, donation history, and next eligible date
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, bloodType, phone, createdAt, updatedAt
+  - Drive: id, name, location, scheduledDate, capacity, status, createdAt, updatedAt
+  - AppointmentSlot: id, driveId, startTime, capacity, bookedCount, createdAt, updatedAt
+  - Appointment: id, slotId, donorId, status, checkedInAt, createdAt, updatedAt
+  - Screening: id, appointmentId, donorId, questionnaire, outcome, deferralReason, deferredUntil, screenedById, createdAt, updatedAt
+  - Donation: id, appointmentId, donorId, bloodType, volumeMl, status, donatedAt, createdAt, updatedAt
+  - BloodUnit: id, donationId, bloodType, status, collectedAt, expiryDate, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Schedule drives and generate appointment slots with per-slot capacity
+  - Book, reschedule, and cancel appointments while enforcing per-slot capacity limits
+  - Score the pre-screening questionnaire and apply deferral rules to accept, temporarily defer, or permanently defer a donor
+  - Enforce the minimum donation interval and active deferrals when a donor attempts to book
+  - Record a completed donation, create blood units, and increment stock by blood type
+  - Track blood unit expiry and raise low-stock alerts per blood type
+  - Compute each donor's next eligible donation date and surface it in the portal
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 2 donation centers with ~4 scheduled drives and time-slot capacity, ~30 registered donors across blood types with donation histories, pre-screening records with temporary and permanent deferrals, recorded donations and blood units with expiry dates, current stock levels by type, 1 admin, 2 screening staff, and 6 donors. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
