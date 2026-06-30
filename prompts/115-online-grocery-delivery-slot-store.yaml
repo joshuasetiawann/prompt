@@ -1,0 +1,352 @@
+prompt_id: '115'
+title: Online Grocery Store with Delivery Slots
+slug: online-grocery-delivery-slot-store
+category: E-commerce & Retail
+domain: Grocery & Fresh Commerce
+app_name: FreshCart Online Grocery Store with Delivery Slots
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building online grocery and fresh-food ordering for supermarkets and local stores that need slot booking and substitution handling, not a generic catalog.
+target_user: Shopper ordering groceries and booking a slot; Picker/dispatcher fulfilling and substituting items
+target_users: shoppers ordering groceries and booking a delivery or pickup slot and pickers fulfilling baskets and handling substitutions
+role_line: You are a senior full-stack engineer who builds online grocery and fresh-commerce products
+business_goal: Let shoppers order weight-priced and perishable groceries, reserve a delivery or pickup slot, and approve substitutions while pickers fulfill their baskets
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fresh, friendly, appetizing. Colors: leaf green, citrus yellow, white. A produce-forward catalog with a delivery-slot calendar and a picker checklist view.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Home with departments and weekly deals
+- Catalog by department with search and dietary/perishable filters
+- Product detail with unit or by-weight pricing and substitution options
+- Cart with weight-priced items and substitution preferences
+- Delivery/pickup slot selection
+- Checkout with mock payment pre-authorization for weight adjustments
+- 'Shopper: orders, slot, and substitution approvals'
+- Auth (sign up / log in)
+- 'Picker: pick list with weigh-and-scan and substitution proposals'
+- 'Dispatcher/Admin: slots, picker assignments, and fulfillment dashboard'
+required_features:
+- Grocery catalog with unit-priced and weight-priced (per kg/lb) items
+- Perishable handling with stock and best-before awareness
+- Reserved delivery and pickup time slots with capacity limits
+- Cart with per-item substitution preferences (allow, specific, or none)
+- Weight-based pricing with an estimated total and final reconciliation at pick
+- 'Picker workflow: pick, weigh, scan, mark out-of-stock, and propose substitutions'
+- Shopper substitution approval and rejection during fulfillment
+- Mock pre-authorized payment with a final charge captured after weighing
+- Slot capacity management and a fulfillment dashboard
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Product
+  fields:
+  - id
+  - name
+  - department
+  - pricingType
+  - unitPrice
+  - pricePerKg
+  - stock
+  - perishable
+  - bestBefore
+  - photos
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: DeliverySlot
+  fields:
+  - id
+  - type
+  - date
+  - startTime
+  - endTime
+  - capacity
+  - booked
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Order
+  fields:
+  - id
+  - shopperId
+  - slotId
+  - status
+  - fulfillmentStatus
+  - estimatedTotal
+  - finalTotal
+  - createdAt
+  - updatedAt
+  relationships:
+  - shopperId -> references the related record
+  - slotId -> references the related record
+- name: OrderItem
+  fields:
+  - id
+  - orderId
+  - productId
+  - requestedQty
+  - pickedQty
+  - pickedWeight
+  - unitPriceAtOrder
+  - lineTotal
+  - substitutionPref
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - orderId -> references the related record
+  - productId -> references the related record
+- name: Substitution
+  fields:
+  - id
+  - orderItemId
+  - suggestedProductId
+  - status
+  - priceDelta
+  - createdAt
+  - updatedAt
+  relationships:
+  - orderItemId -> references the related record
+  - suggestedProductId -> references the related record
+- name: Payment
+  fields:
+  - id
+  - orderId
+  - authorizedAmount
+  - capturedAmount
+  - method
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - orderId -> references the related record
+backend_logic:
+- Compute the cart estimated total combining unit-priced and weight-priced items
+- Reserve a delivery/pickup slot at checkout enforcing per-slot capacity inside a transaction
+- Pre-authorize a mock payment for the estimated total to allow for weight adjustments
+- 'Run the picker workflow: record picked quantities, captured weights, and out-of-stock items'
+- Propose substitutions and route them to the shopper for approval or rejection
+- Reconcile the final total from picked weights and approved substitutions, then capture the final charge
+- 'Aggregate fulfillment metrics: slot utilization, pick accuracy, and substitution rate'
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Shopper — browse groceries, book a slot, set substitution preferences, and order
+- Picker — pick baskets, weigh items, and propose substitutions
+- Dispatcher — manage slots, assign pickers, and track fulfillment
+- Admin — manage the catalog, pricing, and reports
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 6 departments, ~40 grocery products mixing unit-priced and by-weight perishable items, delivery and pickup slots with capacities, sample orders across picking and substitution states, 1 admin, 2 pickers, and 3 shoppers. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- A weight-priced item shows an estimated price at order and reconciles to the final weight at pick
+- Booking a slot decrements its capacity and a full slot cannot be selected
+- A picker-proposed substitution only applies to the order after the shopper approves it
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds online grocery and fresh-commerce products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: FreshCart Online Grocery Store with Delivery Slots
+  Type: Online Grocery Store with Delivery Slots (Grocery & Fresh Commerce)
+  Target users: shoppers ordering groceries and booking a delivery or pickup slot and pickers fulfilling baskets and handling substitutions.
+  Business goal: Let shoppers order weight-priced and perishable groceries, reserve a delivery or pickup slot, and approve substitutions while pickers fulfill their baskets.
+
+  BRAND & DESIGN
+  Brand style: fresh, friendly, appetizing. Colors: leaf green, citrus yellow, white. A produce-forward catalog with a delivery-slot calendar and a picker checklist view. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Home with departments and weekly deals
+  2. Catalog by department with search and dietary/perishable filters
+  3. Product detail with unit or by-weight pricing and substitution options
+  4. Cart with weight-priced items and substitution preferences
+  5. Delivery/pickup slot selection
+  6. Checkout with mock payment pre-authorization for weight adjustments
+  7. Shopper: orders, slot, and substitution approvals
+  8. Auth (sign up / log in)
+  9. Picker: pick list with weigh-and-scan and substitution proposals
+  10. Dispatcher/Admin: slots, picker assignments, and fulfillment dashboard
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Shopper — browse groceries, book a slot, set substitution preferences, and order
+  - Picker — pick baskets, weigh items, and propose substitutions
+  - Dispatcher — manage slots, assign pickers, and track fulfillment
+  - Admin — manage the catalog, pricing, and reports
+
+  CORE FEATURES
+  - Grocery catalog with unit-priced and weight-priced (per kg/lb) items
+  - Perishable handling with stock and best-before awareness
+  - Reserved delivery and pickup time slots with capacity limits
+  - Cart with per-item substitution preferences (allow, specific, or none)
+  - Weight-based pricing with an estimated total and final reconciliation at pick
+  - Picker workflow: pick, weigh, scan, mark out-of-stock, and propose substitutions
+  - Shopper substitution approval and rejection during fulfillment
+  - Mock pre-authorized payment with a final charge captured after weighing
+  - Slot capacity management and a fulfillment dashboard
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, createdAt, updatedAt
+  - Product: id, name, department, pricingType, unitPrice, pricePerKg, stock, perishable, bestBefore, photos, status, createdAt, updatedAt
+  - DeliverySlot: id, type, date, startTime, endTime, capacity, booked, createdAt, updatedAt
+  - Order: id, shopperId, slotId, status, fulfillmentStatus, estimatedTotal, finalTotal, createdAt, updatedAt
+  - OrderItem: id, orderId, productId, requestedQty, pickedQty, pickedWeight, unitPriceAtOrder, lineTotal, substitutionPref, status, createdAt, updatedAt
+  - Substitution: id, orderItemId, suggestedProductId, status, priceDelta, createdAt, updatedAt
+  - Payment: id, orderId, authorizedAmount, capturedAmount, method, status, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Compute the cart estimated total combining unit-priced and weight-priced items
+  - Reserve a delivery/pickup slot at checkout enforcing per-slot capacity inside a transaction
+  - Pre-authorize a mock payment for the estimated total to allow for weight adjustments
+  - Run the picker workflow: record picked quantities, captured weights, and out-of-stock items
+  - Propose substitutions and route them to the shopper for approval or rejection
+  - Reconcile the final total from picked weights and approved substitutions, then capture the final charge
+  - Aggregate fulfillment metrics: slot utilization, pick accuracy, and substitution rate
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Payments: implement a mock checkout/deposit that records a Payment status; structure it to swap in a real gateway (e.g., Stripe) via env vars.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 6 departments, ~40 grocery products mixing unit-priced and by-weight perishable items, delivery and pickup slots with capacities, sample orders across picking and substitution states, 1 admin, 2 pickers, and 3 shoppers. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.

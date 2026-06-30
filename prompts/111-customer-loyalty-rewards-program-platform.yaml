@@ -1,0 +1,341 @@
+prompt_id: '111'
+title: Customer Loyalty & Rewards Program Platform
+slug: customer-loyalty-rewards-program-platform
+category: E-commerce & Retail
+domain: Loyalty & Rewards
+app_name: LoyalLoop Customer Loyalty & Rewards Program Platform
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers adding a configurable points-and-tiers loyalty layer for retail brands that want to drive repeat purchases and referrals.
+target_user: Retail marketer configuring earn/redeem rules; Customer earning and redeeming points
+target_users: retail marketers configuring earn rules, tiers, and rewards and customers earning, tracking, and redeeming points at checkout
+role_line: You are a senior full-stack engineer who builds loyalty and rewards products
+business_goal: Let retailers define earn rules, point tiers, and referral bonuses while customers track balances and redeem points for discounts and rewards at checkout
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: rewarding, vibrant, polished. Colors: royal purple, gold, warm white. A points-forward dashboard with a circular tier-progress ring and a card-based rewards catalog.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Home / program overview with how-to-earn and tier benefits
+- Rewards catalog of redeemable rewards with point costs
+- 'Customer dashboard: points balance, tier progress, and recent activity'
+- Points and transaction history (ledger)
+- Referral page with shareable code and referral status
+- Redeem and checkout to apply points or a reward for a discount
+- Auth (sign up / log in)
+- 'Admin: earn rules and tier configuration'
+- 'Admin: rewards catalog management'
+- 'Admin: program analytics dashboard (issued, redeemed, liability, tier mix)'
+required_features:
+- Configurable earn rules for purchases, signup, birthdays, and referrals
+- Tiered membership with thresholds, point multipliers, and perks
+- Point balance, lifetime points, and tier-progress tracking per customer
+- Referral program with shareable codes and dual-sided bonuses
+- Redeemable rewards catalog with point costs and discount/voucher issuance
+- Points redemption at checkout that recalculates the order total
+- Point ledger with earn, redeem, expire, and manual adjustment entries
+- Points expiry rules with scheduled expiry processing
+- 'Program analytics: points issued, redeemed, outstanding liability, and tier mix'
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: EarnRule
+  fields:
+  - id
+  - name
+  - type
+  - pointsPerUnit
+  - multiplier
+  - active
+  - startsAt
+  - endsAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Tier
+  fields:
+  - id
+  - name
+  - threshold
+  - pointMultiplier
+  - perks
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: LoyaltyAccount
+  fields:
+  - id
+  - userId
+  - pointsBalance
+  - lifetimePoints
+  - currentTierId
+  - referralCode
+  - createdAt
+  - updatedAt
+  relationships:
+  - userId -> references the related record
+  - currentTierId -> references the related record
+- name: PointsTransaction
+  fields:
+  - id
+  - accountId
+  - type
+  - points
+  - sourceRef
+  - expiresAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - accountId -> references the related record
+- name: Reward
+  fields:
+  - id
+  - name
+  - type
+  - pointsCost
+  - value
+  - active
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Redemption
+  fields:
+  - id
+  - accountId
+  - rewardId
+  - pointsSpent
+  - discountCode
+  - status
+  - redeemedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - accountId -> references the related record
+  - rewardId -> references the related record
+backend_logic:
+- Calculate points earned on a completed purchase by applying active earn rules and the account's tier multiplier
+- Award referral bonus points to both referrer and referee when a referred customer's first order completes
+- Recompute a customer's tier from lifetime points and apply the new tier's multiplier and perks
+- Redeem points for a reward at checkout, deduct the balance, and issue a usable discount code
+- Expire points past their expiry date and write expiry entries to the points ledger
+- Apply earn-rule windows and promotional multipliers within their active date ranges
+- 'Aggregate program performance: points issued, redeemed, outstanding liability, and tier distribution'
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — earn, track, and redeem points and refer friends
+- Retail Marketer — configure earn rules, tiers, rewards, and referral bonuses
+- Admin — manage the program, customers, and view analytics
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 1 loyalty program with 4 tiers, ~8 earn rules covering purchase, signup, and referral bonuses, ~10 redeemable rewards, 1 admin/marketer, and 4 customers with point balances, ledger history, and sample redemptions. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- A completed purchase awards points using the active earn rules and the customer's tier multiplier
+- Crossing a tier threshold promotes the customer and applies the new tier's multiplier and perks
+- Redeeming a reward deducts the exact point cost and issues a usable discount code at checkout
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds loyalty and rewards products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: LoyalLoop Customer Loyalty & Rewards Program Platform
+  Type: Customer Loyalty & Rewards Program Platform (Loyalty & Rewards)
+  Target users: retail marketers configuring earn rules, tiers, and rewards and customers earning, tracking, and redeeming points at checkout.
+  Business goal: Let retailers define earn rules, point tiers, and referral bonuses while customers track balances and redeem points for discounts and rewards at checkout.
+
+  BRAND & DESIGN
+  Brand style: rewarding, vibrant, polished. Colors: royal purple, gold, warm white. A points-forward dashboard with a circular tier-progress ring and a card-based rewards catalog. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Home / program overview with how-to-earn and tier benefits
+  2. Rewards catalog of redeemable rewards with point costs
+  3. Customer dashboard: points balance, tier progress, and recent activity
+  4. Points and transaction history (ledger)
+  5. Referral page with shareable code and referral status
+  6. Redeem and checkout to apply points or a reward for a discount
+  7. Auth (sign up / log in)
+  8. Admin: earn rules and tier configuration
+  9. Admin: rewards catalog management
+  10. Admin: program analytics dashboard (issued, redeemed, liability, tier mix)
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Customer — earn, track, and redeem points and refer friends
+  - Retail Marketer — configure earn rules, tiers, rewards, and referral bonuses
+  - Admin — manage the program, customers, and view analytics
+
+  CORE FEATURES
+  - Configurable earn rules for purchases, signup, birthdays, and referrals
+  - Tiered membership with thresholds, point multipliers, and perks
+  - Point balance, lifetime points, and tier-progress tracking per customer
+  - Referral program with shareable codes and dual-sided bonuses
+  - Redeemable rewards catalog with point costs and discount/voucher issuance
+  - Points redemption at checkout that recalculates the order total
+  - Point ledger with earn, redeem, expire, and manual adjustment entries
+  - Points expiry rules with scheduled expiry processing
+  - Program analytics: points issued, redeemed, outstanding liability, and tier mix
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, createdAt, updatedAt
+  - EarnRule: id, name, type, pointsPerUnit, multiplier, active, startsAt, endsAt, createdAt, updatedAt
+  - Tier: id, name, threshold, pointMultiplier, perks, createdAt, updatedAt
+  - LoyaltyAccount: id, userId, pointsBalance, lifetimePoints, currentTierId, referralCode, createdAt, updatedAt
+  - PointsTransaction: id, accountId, type, points, sourceRef, expiresAt, createdAt, updatedAt
+  - Reward: id, name, type, pointsCost, value, active, createdAt, updatedAt
+  - Redemption: id, accountId, rewardId, pointsSpent, discountCode, status, redeemedAt, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Calculate points earned on a completed purchase by applying active earn rules and the account's tier multiplier
+  - Award referral bonus points to both referrer and referee when a referred customer's first order completes
+  - Recompute a customer's tier from lifetime points and apply the new tier's multiplier and perks
+  - Redeem points for a reward at checkout, deduct the balance, and issue a usable discount code
+  - Expire points past their expiry date and write expiry entries to the points ledger
+  - Apply earn-rule windows and promotional multipliers within their active date ranges
+  - Aggregate program performance: points issued, redeemed, outstanding liability, and tier distribution
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Payments: implement a mock checkout/deposit that records a Payment status; structure it to swap in a real gateway (e.g., Stripe) via env vars.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 1 loyalty program with 4 tiers, ~8 earn rules covering purchase, signup, and referral bonuses, ~10 redeemable rewards, 1 admin/marketer, and 4 customers with point balances, ledger history, and sample redemptions. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
