@@ -7,7 +7,8 @@
 | **Prompt ID** | 38 |
 | **Title** | HR Management System |
 | **Slug** | hr-management-system |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/HR; Manager; Employee |

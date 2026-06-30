@@ -8,6 +8,7 @@
 | **Title** | Analytics Dashboard |
 | **Slug** | analytics-dashboard |
 | **Category** | Analytics & Dashboards |
+| **Domain** | Analytics & Dashboards |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Admin; Viewer |
@@ -65,6 +66,8 @@
 - Drill-down from summary to detail rows
 - Per-widget loading, empty, and error states
 - Export concept (CSV) and saved-view concept
+- Customizable dashboards composed of configurable widgets per metric
+- Saved views and named, re-runnable reports
 - Role-based access to sections
 
 ## Database models
@@ -93,12 +96,37 @@
 **Relationships:**
 - Standalone model (no outbound foreign keys)
 
+### Dashboard
+**Fields:** `id`, `name`, `description`, `isDefault`, `userId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Belongs to a User via userId; has many Widgets and Reports
+
+### Widget
+**Fields:** `id`, `title`, `chartType`, `metric`, `position`, `dashboardId`, `segmentId`, `channelId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Belongs to a Dashboard via dashboardId; optionally scoped to a Segment via segmentId and a Channel via channelId
+
+### SavedView
+**Fields:** `id`, `name`, `dateRange`, `isPinned`, `userId`, `segmentId`, `channelId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Belongs to a User via userId; references a Segment via segmentId and a Channel via channelId
+
+### Report
+**Fields:** `id`, `name`, `description`, `fileType`, `status`, `lastRunAt`, `dashboardId`, `userId`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Belongs to a User via userId and a Dashboard via dashboardId
+
 ## Backend logic
 
 - Aggregation endpoints for each KPI and chart
 - Filter application across date, segment, and channel
 - Drill-down queries to underlying rows
 - Export aggregation
+- CRUD for dashboards, widgets, saved views, and reports scoped to the current user
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -202,6 +230,8 @@ CORE FEATURES
 - Drill-down from summary to detail rows
 - Per-widget loading, empty, and error states
 - Export concept (CSV) and saved-view concept
+- Customizable dashboards composed of configurable widgets per metric
+- Saved views and named, re-runnable reports
 - Role-based access to sections
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -209,6 +239,10 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - MetricDaily: id, date, segment, channel, metric, value, createdAt, updatedAt
 - Segment: id, name, createdAt, updatedAt
 - Channel: id, name, createdAt, updatedAt
+- Dashboard: id, name, description, isDefault, userId, createdAt, updatedAt
+- Widget: id, title, chartType, metric, position, dashboardId, segmentId, channelId, createdAt, updatedAt
+- SavedView: id, name, dateRange, isPinned, userId, segmentId, channelId, createdAt, updatedAt
+- Report: id, name, description, fileType, status, lastRunAt, dashboardId, userId, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -216,6 +250,7 @@ BACKEND / API LOGIC
 - Filter application across date, segment, and channel
 - Drill-down queries to underlying rows
 - Export aggregation
+- CRUD for dashboards, widgets, saved views, and reports scoped to the current user
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

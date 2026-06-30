@@ -7,7 +7,8 @@
 | **Prompt ID** | 36 |
 | **Title** | AI Social Media Planner App |
 | **Slug** | ai-social-media-planner-app |
-| **Category** | AI Tools |
+| **Category** | AI Apps |
+| **Domain** | AI Tools |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | User; Admin |
@@ -58,6 +59,8 @@
 6. Drafts library
 7. Settings (brand voice, platforms)
 8. Usage view
+9. Campaigns (group posts into named campaigns)
+10. Media library (images and videos attached to posts)
 
 ## Required features
 
@@ -68,6 +71,9 @@
 - Drafts library with status (idea, draft, scheduled)
 - Brand-voice settings influencing generation
 - Usage/limit concept and admin monitoring
+- Campaign organization grouping posts into named campaigns
+- Media asset library with images and videos attached to posts
+- Post performance metrics (views, likes, shares) per published post
 
 ## Database models
 
@@ -101,12 +107,33 @@
 **Relationships:**
 - userId -> references the related record
 
+### Campaign
+**Fields:** `id`, `userId`, `name`, `description`, `status`, `startDate`, `endDate`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### MediaAsset
+**Fields:** `id`, `userId`, `postId`, `url`, `type`, `altText`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- postId -> references the related record
+
+### PostMetric
+**Fields:** `id`, `postId`, `views`, `likeCount`, `shareCount`, `engagementRate`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- postId -> references the related record
+
 ## Backend logic
 
 - Mock AI caption/hashtag generation per platform using brand voice
 - Mock AI idea generation from a topic
 - Calendar querying posts by date range
 - Credit deduction and admin aggregation
+- Campaign grouping with per-campaign post aggregation
+- Engagement metric aggregation per post and platform
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -196,6 +223,8 @@ PAGES / SCREENS
 6. Drafts library
 7. Settings (brand voice, platforms)
 8. Usage view
+9. Campaigns (group posts into named campaigns)
+10. Media library (images and videos attached to posts)
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -212,6 +241,9 @@ CORE FEATURES
 - Drafts library with status (idea, draft, scheduled)
 - Brand-voice settings influencing generation
 - Usage/limit concept and admin monitoring
+- Campaign organization grouping posts into named campaigns
+- Media asset library with images and videos attached to posts
+- Post performance metrics (views, likes, shares) per published post
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -219,6 +251,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Idea: id, userId, topic, output, createdAt, updatedAt
 - BrandVoice: id, userId, tone, keywords, createdAt, updatedAt
 - UsageCredit: id, userId, period, used, limit, createdAt, updatedAt
+- Campaign: id, userId, name, description, status, startDate, endDate, createdAt, updatedAt
+- MediaAsset: id, userId, postId, url, type, altText, createdAt, updatedAt
+- PostMetric: id, postId, views, likeCount, shareCount, engagementRate, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -226,6 +261,8 @@ BACKEND / API LOGIC
 - Mock AI idea generation from a topic
 - Calendar querying posts by date range
 - Credit deduction and admin aggregation
+- Campaign grouping with per-campaign post aggregation
+- Engagement metric aggregation per post and platform
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

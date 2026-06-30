@@ -2,13 +2,17 @@ prompt_id: '37'
 title: Analytics Dashboard
 slug: analytics-dashboard
 category: Analytics & Dashboards
+domain: Analytics & Dashboards
 app_name: InsightBoard Analytics Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building reporting dashboards for products, agencies, or internal teams.
 target_user: Admin; Viewer
+target_users: founders, ops, and marketing teams who need to see and act on key metrics
+role_line: You are a data product engineer who builds clear, decision-focused analytics dashboards
 business_goal: Present KPIs and trends clearly with filtering and drill-down so users can make decisions
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, analytical, modern. Colors: slate, blue, white. Clean, modern, KPI cards, well-chosen charts, and a filter bar.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -176,6 +180,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin — full access and user management
+- Viewer — read-only dashboards
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~120 days of mock metric rows across segments and channels for realistic charts, 1 admin and 1 viewer. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

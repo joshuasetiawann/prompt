@@ -1,14 +1,18 @@
 prompt_id: '38'
 title: HR Management System
 slug: hr-management-system
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: PeopleHub HR Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building HR systems for small and mid-size companies.
 target_user: Admin/HR; Manager; Employee
+target_users: HR teams and managers managing people processes and employees self-serving
+role_line: You are a senior full-stack engineer who builds HR and people-operations systems
 business_goal: Centralize employee records, leave, attendance, and onboarding with role-based access
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: professional, organized, people-friendly. Colors: teal, slate, white. Clean, modern, clean dashboard with directory, profiles, and request flows.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -161,6 +165,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/HR — full access to records and settings
+- Manager — view team, approve leave
+- Employee — self-service profile, leave requests, onboarding
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 departments, ~25 employees, leave requests and balances, onboarding tasks, 1 admin/HR, 1 manager, 2 employees. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

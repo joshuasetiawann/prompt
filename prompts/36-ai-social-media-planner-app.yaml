@@ -1,14 +1,18 @@
 prompt_id: '36'
 title: AI Social Media Planner App
 slug: ai-social-media-planner-app
-category: AI Tools
+category: AI Apps
+domain: AI Tools
 app_name: SocialPlan AI Social Media Planner App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building social-media planning tools for managers, agencies, and creators.
 target_user: User; Admin
+target_users: social media managers and creators planning content and admins monitoring usage
+role_line: You are a senior full-stack engineer who builds AI-assisted social media planning tools
 business_goal: Plan posts on a calendar, generate captions and ideas with AI, and organize drafts by platform
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: vibrant, creative, organized. Colors: pink, indigo, white. Clean, modern, calendar view plus a composer with an AI assist panel.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -183,6 +187,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — plan posts and generate content
+- Admin — monitor usage and manage users
+env_payments: false
+env_ai: true
+seed_data: '- Seed realistic demo data: ~25 posts across platforms and statuses on the calendar, sample ideas, brand voice, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -1,14 +1,18 @@
 prompt_id: '40'
 title: Tutor Booking App
 slug: tutor-booking-app
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: TutorMatch Tutor Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building tutoring or coaching booking platforms.
 target_user: Student; Tutor; Admin
+target_users: students booking tutoring and tutors managing availability, plus an admin overseeing the platform
+role_line: You are a senior full-stack engineer who builds tutoring and session-booking marketplaces
 business_goal: Let students find tutors and book available sessions, and let tutors manage schedules and sessions
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: friendly, smart, encouraging. Colors: indigo, amber accent, white. Clean, modern, tutor cards with ratings, a clear availability picker, and simple booking.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -152,6 +156,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Student — search, book, and manage sessions
+- Tutor — manage availability and sessions
+- Admin — oversee tutors and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~10 tutors across subjects, availability, sample sessions and reviews, 1 admin, 2 tutors, 2 students. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

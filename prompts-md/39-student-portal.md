@@ -7,7 +7,8 @@
 | **Prompt ID** | 39 |
 | **Title** | Student Portal |
 | **Slug** | student-portal |
-| **Category** | Education & Portals |
+| **Category** | Education & Learning |
+| **Domain** | Education & Portals |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Student; Teacher; Admin |

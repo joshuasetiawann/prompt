@@ -7,7 +7,8 @@
 | **Prompt ID** | 40 |
 | **Title** | Tutor Booking App |
 | **Slug** | tutor-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Student; Tutor; Admin |
