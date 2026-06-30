@@ -1,0 +1,299 @@
+# CapStack Cap Table & Equity Management Platform
+
+> Maintain a single source of truth for shares, options, SAFEs, and convertible notes, automate vesting schedules and grant approvals, and model dilution across funding rounds with stakeholder-specific access
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 175 |
+| **Title** | Cap Table & Equity Management Platform |
+| **Slug** | cap-table-equity-management-platform |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Equity & Cap Table Management |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Founders and finance/legal admins; Employees and investors viewing holdings |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building equity-management tooling for startups, founders, and fund administrators.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Cap table overview with ownership by stakeholder and class
+2. Stakeholders directory (founders, employees, investors)
+3. Security issuance (shares, options, SAFEs, convertible notes)
+4. Option grant detail with vesting schedule
+5. Grant approval queue
+6. Funding round and dilution modeling
+7. Stakeholder portal: my holdings and vesting
+8. Share classes and equity pool setup
+9. Auth (sign in / register)
+10. Admin: users, access, and reports
+
+## Required features
+
+- Single-source cap table tracking shares, options, SAFEs, and convertible notes by stakeholder and share class
+- Security issuance with share classes, an equity pool, and price per share
+- Option grants with configurable vesting schedules (cliff plus monthly or quarterly vesting)
+- Automated vesting computation showing vested versus unvested shares as of a date
+- Grant approval workflow routing grants through draft, pending, and approved states
+- SAFE and convertible note tracking with cap, discount, and conversion terms
+- Funding round and dilution modeling with a pre/post-money ownership waterfall
+- Stakeholder-specific access so each stakeholder sees only their own holdings and documents
+- Issued and fully-diluted ownership reporting across classes and the option pool
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Stakeholder
+**Fields:** `id`, `userId`, `name`, `type`, `email`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### ShareClass
+**Fields:** `id`, `name`, `classType`, `parValue`, `liquidationPreference`, `authorizedShares`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Security
+**Fields:** `id`, `stakeholderId`, `shareClassId`, `instrumentType`, `quantity`, `pricePerShare`, `issueDate`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- stakeholderId -> references the related record
+- shareClassId -> references the related record
+
+### VestingSchedule
+**Fields:** `id`, `securityId`, `startDate`, `cliffMonths`, `durationMonths`, `frequency`, `vestedQuantity`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- securityId -> references the related record
+
+### Grant
+**Fields:** `id`, `securityId`, `stakeholderId`, `quantity`, `strikePrice`, `status`, `approvedById`, `approvedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- securityId -> references the related record
+- stakeholderId -> references the related record
+- approvedById -> references the related record
+
+### FundingRound
+**Fields:** `id`, `name`, `roundType`, `preMoneyValuation`, `amountRaised`, `pricePerShare`, `closedAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+## Backend logic
+
+- Maintain the cap table by aggregating issued securities into ownership by stakeholder and share class
+- Issue securities (common, preferred, options, SAFEs, notes) and attach them to share classes and the equity pool
+- Compute vested versus unvested quantities from each grant's cliff, duration, and frequency as of a date
+- Route option grants through draft, pending, and approved states with approver actions
+- Convert SAFEs and notes using cap and discount terms when modeling a priced round
+- Model a funding round's pre/post-money valuation and produce a dilution waterfall across stakeholders
+- Compute issued and fully-diluted ownership percentages across classes and the option pool for reports
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Issued securities roll up into a cap table whose ownership percentages by stakeholder and class sum to 100%
+- [ ] Vesting computes the correct vested versus unvested quantity for a grant given its cliff, duration, and the current date
+- [ ] A stakeholder sees only their own holdings and vesting, and modeling a funding round produces a correct pre/post-money dilution waterfall
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds equity and cap table management products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: CapStack Cap Table & Equity Management Platform
+Type: Cap Table & Equity Management Platform (Equity & Cap Table Management)
+Target users: founders and finance/legal admins who manage shares, grants, and funding rounds and employees and investors who view their own holdings and vesting.
+Business goal: Maintain a single source of truth for shares, options, SAFEs, and convertible notes, automate vesting schedules and grant approvals, and model dilution across funding rounds with stakeholder-specific access.
+
+BRAND & DESIGN
+Brand style: authoritative, precise, polished. Colors: midnight blue, gold accent, off-white. A cap table ownership ledger beside a vesting timeline and a dilution waterfall chart. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Cap table overview with ownership by stakeholder and class
+2. Stakeholders directory (founders, employees, investors)
+3. Security issuance (shares, options, SAFEs, convertible notes)
+4. Option grant detail with vesting schedule
+5. Grant approval queue
+6. Funding round and dilution modeling
+7. Stakeholder portal: my holdings and vesting
+8. Share classes and equity pool setup
+9. Auth (sign in / register)
+10. Admin: users, access, and reports
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Founder/Admin — manage the cap table, share classes, rounds, and grant approvals
+- Finance/Legal Admin — issue securities, manage SAFEs and notes, and model dilution
+- Stakeholder — view personal holdings, vesting progress, and documents
+- Admin — manage users, access, and reports
+
+CORE FEATURES
+- Single-source cap table tracking shares, options, SAFEs, and convertible notes by stakeholder and share class
+- Security issuance with share classes, an equity pool, and price per share
+- Option grants with configurable vesting schedules (cliff plus monthly or quarterly vesting)
+- Automated vesting computation showing vested versus unvested shares as of a date
+- Grant approval workflow routing grants through draft, pending, and approved states
+- SAFE and convertible note tracking with cap, discount, and conversion terms
+- Funding round and dilution modeling with a pre/post-money ownership waterfall
+- Stakeholder-specific access so each stakeholder sees only their own holdings and documents
+- Issued and fully-diluted ownership reporting across classes and the option pool
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, createdAt, updatedAt
+- Stakeholder: id, userId, name, type, email, status, createdAt, updatedAt
+- ShareClass: id, name, classType, parValue, liquidationPreference, authorizedShares, createdAt, updatedAt
+- Security: id, stakeholderId, shareClassId, instrumentType, quantity, pricePerShare, issueDate, status, createdAt, updatedAt
+- VestingSchedule: id, securityId, startDate, cliffMonths, durationMonths, frequency, vestedQuantity, createdAt, updatedAt
+- Grant: id, securityId, stakeholderId, quantity, strikePrice, status, approvedById, approvedAt, createdAt, updatedAt
+- FundingRound: id, name, roundType, preMoneyValuation, amountRaised, pricePerShare, closedAt, status, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Maintain the cap table by aggregating issued securities into ownership by stakeholder and share class
+- Issue securities (common, preferred, options, SAFEs, notes) and attach them to share classes and the equity pool
+- Compute vested versus unvested quantities from each grant's cliff, duration, and frequency as of a date
+- Route option grants through draft, pending, and approved states with approver actions
+- Convert SAFEs and notes using cap and discount terms when modeling a priced round
+- Model a funding round's pre/post-money valuation and produce a dilution waterfall across stakeholders
+- Compute issued and fully-diluted ownership percentages across classes and the option pool for reports
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 1 company with 3 share classes and an option pool, ~12 stakeholders across founders, employees, and investors, issued common and preferred shares, option grants with cliff-and-monthly vesting at varied progress, 2 SAFEs and a convertible note, 1 priced funding round with dilution, 1 admin, 2 finance/legal admins, and several stakeholder logins. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```
