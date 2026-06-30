@@ -1,0 +1,347 @@
+prompt_id: '150'
+title: Special Education IEP Management System
+slug: special-education-iep-management-system
+category: Education & Learning
+domain: Special Education & IEP
+app_name: GuardianIEP Special Education IEP Management System
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building compliance-grade IEP tooling for special-education teams that must document goals, services, and legally required reviews for students with disabilities.
+target_user: Special-education coordinators and case managers; Teachers, specialists, and parents/guardians
+target_users: case managers who draft IEPs with measurable goals and accommodations and teachers, specialists, and parents who monitor progress and provide sign-offs on reviews
+role_line: You are a senior full-stack engineer who builds special-education compliance products
+business_goal: Let teams draft Individualized Education Programs with measurable goals and accommodations, track periodic progress monitoring against each goal, schedule review meetings, and capture multi-party sign-offs with full audit history
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: caring, trustworthy, accessible. Colors: teal, soft white, slate. A student IEP workspace with a goals panel, a progress-trend chart, and a sign-off checklist.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Dashboard with students, upcoming reviews, and pending sign-offs
+- Student profile with eligibility and IEP history
+- IEP draft editor (present levels, goals, accommodations, services)
+- Goal detail with measurable targets and a progress monitoring log
+- Progress monitoring entry with per-goal trend chart
+- Review meeting scheduler with invitees and agenda
+- Multi-party sign-off and approval workspace
+- Audit history / compliance log
+- Auth (sign in / register)
+- 'Admin: students, staff assignments, and compliance reports'
+required_features:
+- IEP drafting with present levels, measurable goals, accommodations, and services
+- Measurable goal targets with baseline, target, measure, and monitoring schedule
+- Periodic progress monitoring entries charted as trend lines per goal
+- Review meeting scheduling with invitees, agenda, and due reminders
+- Multi-party sign-off capture from case manager, specialists, and parents
+- Versioned IEP documents across draft, active, and amended states
+- Full audit trail of edits, status changes, and sign-offs
+- Accommodation and service tracking with responsible providers
+- Compliance alerts for overdue reviews and missing sign-offs
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Student
+  fields:
+  - id
+  - name
+  - dateOfBirth
+  - gradeLevel
+  - disabilityCategory
+  - caseManagerId
+  - createdAt
+  - updatedAt
+  relationships:
+  - caseManagerId -> references the related record
+- name: Iep
+  fields:
+  - id
+  - studentId
+  - status
+  - version
+  - effectiveDate
+  - reviewDate
+  - presentLevels
+  - accommodations
+  - services
+  - createdAt
+  - updatedAt
+  relationships:
+  - studentId -> references the related record
+- name: Goal
+  fields:
+  - id
+  - iepId
+  - area
+  - description
+  - baseline
+  - target
+  - measure
+  - monitoringSchedule
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - iepId -> references the related record
+- name: ProgressEntry
+  fields:
+  - id
+  - goalId
+  - recordedById
+  - date
+  - value
+  - note
+  - createdAt
+  - updatedAt
+  relationships:
+  - goalId -> references the related record
+  - recordedById -> references the related record
+- name: ReviewMeeting
+  fields:
+  - id
+  - iepId
+  - scheduledAt
+  - location
+  - agenda
+  - inviteeIds
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - iepId -> references the related record
+- name: SignOff
+  fields:
+  - id
+  - iepId
+  - signerId
+  - signerRole
+  - decision
+  - signedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - iepId -> references the related record
+  - signerId -> references the related record
+backend_logic:
+- Draft and version IEP documents with present levels, goals, accommodations, and services
+- Validate that each goal has a measurable baseline, target, measure, and monitoring schedule
+- Record progress monitoring entries and compute the trend toward each goal target
+- Schedule review meetings with invitees and emit reminders as the review date approaches
+- Collect multi-party sign-offs and gate IEP activation on all required approvals
+- Maintain an immutable audit trail of edits, status transitions, and sign-offs
+- Flag overdue reviews and IEPs missing required sign-offs for compliance follow-up
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Case Manager — draft IEPs, set goals and accommodations, and schedule reviews
+- Teacher / Specialist — log progress monitoring data against assigned goals
+- Parent / Guardian — review the IEP, add input, and provide sign-off
+- Admin — manage students, staff assignments, and compliance reporting
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 students with active and draft IEPs, measurable goals with baselines and targets, periodic progress entries trending toward goals, scheduled review meetings, partial multi-party sign-offs, and a populated audit history, 1 admin, 1 case manager, 2 specialists, and 2 parents. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- Each IEP goal records a baseline and target and progress entries render as a trend toward that target
+- An IEP cannot move to active until all required parties have signed off
+- Every edit, status change, and sign-off is captured in the immutable audit history
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds special-education compliance products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: GuardianIEP Special Education IEP Management System
+  Type: Special Education IEP Management System (Special Education & IEP)
+  Target users: case managers who draft IEPs with measurable goals and accommodations and teachers, specialists, and parents who monitor progress and provide sign-offs on reviews.
+  Business goal: Let teams draft Individualized Education Programs with measurable goals and accommodations, track periodic progress monitoring against each goal, schedule review meetings, and capture multi-party sign-offs with full audit history.
+
+  BRAND & DESIGN
+  Brand style: caring, trustworthy, accessible. Colors: teal, soft white, slate. A student IEP workspace with a goals panel, a progress-trend chart, and a sign-off checklist. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Dashboard with students, upcoming reviews, and pending sign-offs
+  2. Student profile with eligibility and IEP history
+  3. IEP draft editor (present levels, goals, accommodations, services)
+  4. Goal detail with measurable targets and a progress monitoring log
+  5. Progress monitoring entry with per-goal trend chart
+  6. Review meeting scheduler with invitees and agenda
+  7. Multi-party sign-off and approval workspace
+  8. Audit history / compliance log
+  9. Auth (sign in / register)
+  10. Admin: students, staff assignments, and compliance reports
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Case Manager — draft IEPs, set goals and accommodations, and schedule reviews
+  - Teacher / Specialist — log progress monitoring data against assigned goals
+  - Parent / Guardian — review the IEP, add input, and provide sign-off
+  - Admin — manage students, staff assignments, and compliance reporting
+
+  CORE FEATURES
+  - IEP drafting with present levels, measurable goals, accommodations, and services
+  - Measurable goal targets with baseline, target, measure, and monitoring schedule
+  - Periodic progress monitoring entries charted as trend lines per goal
+  - Review meeting scheduling with invitees, agenda, and due reminders
+  - Multi-party sign-off capture from case manager, specialists, and parents
+  - Versioned IEP documents across draft, active, and amended states
+  - Full audit trail of edits, status changes, and sign-offs
+  - Accommodation and service tracking with responsible providers
+  - Compliance alerts for overdue reviews and missing sign-offs
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, createdAt, updatedAt
+  - Student: id, name, dateOfBirth, gradeLevel, disabilityCategory, caseManagerId, createdAt, updatedAt
+  - Iep: id, studentId, status, version, effectiveDate, reviewDate, presentLevels, accommodations, services, createdAt, updatedAt
+  - Goal: id, iepId, area, description, baseline, target, measure, monitoringSchedule, status, createdAt, updatedAt
+  - ProgressEntry: id, goalId, recordedById, date, value, note, createdAt, updatedAt
+  - ReviewMeeting: id, iepId, scheduledAt, location, agenda, inviteeIds, status, createdAt, updatedAt
+  - SignOff: id, iepId, signerId, signerRole, decision, signedAt, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Draft and version IEP documents with present levels, goals, accommodations, and services
+  - Validate that each goal has a measurable baseline, target, measure, and monitoring schedule
+  - Record progress monitoring entries and compute the trend toward each goal target
+  - Schedule review meetings with invitees and emit reminders as the review date approaches
+  - Collect multi-party sign-offs and gate IEP activation on all required approvals
+  - Maintain an immutable audit trail of edits, status transitions, and sign-offs
+  - Flag overdue reviews and IEPs missing required sign-offs for compliance follow-up
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: ~6 students with active and draft IEPs, measurable goals with baselines and targets, periodic progress entries trending toward goals, scheduled review meetings, partial multi-party sign-offs, and a populated audit history, 1 admin, 1 case manager, 2 specialists, and 2 parents. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
