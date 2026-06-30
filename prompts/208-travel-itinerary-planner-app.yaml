@@ -1,0 +1,346 @@
+prompt_id: '208'
+title: Personal Travel Itinerary Planner
+slug: travel-itinerary-planner-app
+category: Productivity & Personal
+domain: Travel Planning
+app_name: TripWeave Personal Travel Itinerary Planner
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building multi-day trip and itinerary planning tools for independent travelers; distinct from flight-booking engines, hotel OTAs, or corporate expense-reimbursement apps.
+target_user: Indie developers; independent travelers and trip organizers
+target_users: independent travelers and trip organizers who plan multi-day itineraries with day-by-day activities, bookings, and budgets, plus companions they invite to collaborate or view
+role_line: You are a senior full-stack engineer who builds travel itinerary planning products
+business_goal: Let users plan multi-day trips with day-by-day itineraries, store flight and lodging bookings, map destinations, track a trip budget, and share trips with companions as editors or viewers
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: wanderlust, airy, organized. Colors: horizon blue, sand beige, sunset coral. A day-by-day itinerary timeline beside an interactive destination map and a running trip-budget panel.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Dashboard (upcoming and past trips)
+- Trip overview (dates, destinations, and budget summary)
+- Day-by-day itinerary builder (per-day activity timeline)
+- Activity editor (time, location, category, notes, and estimated cost)
+- Bookings (flights, lodging, and transport with confirmation details)
+- Map view of destinations and activity locations
+- Trip budget and expense breakdown
+- Trip sharing and companion management
+- Auth (sign in / register)
+- Settings and account admin (profile, home currency, and distance unit)
+required_features:
+- Multi-day trip creation with start and end dates and one or more destinations
+- Day-by-day itinerary builder that orders activities on a per-day timeline with times
+- Activity entries with location, category, notes, duration, and estimated cost
+- Booking records for flights, lodging, and transport with confirmation numbers and times
+- Interactive map plotting trip destinations and geocoded activity locations
+- Trip budget tracking that totals planned and actual costs by category against a budget
+- Automatic conflict detection for overlapping activity times on the same day
+- Activity rescheduling that moves an item to another day or time and reorders the timeline
+- Trip sharing with companions as editor or viewer
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - homeCurrency
+  - distanceUnit
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Trip
+  fields:
+  - id
+  - ownerId
+  - title
+  - destination
+  - startDate
+  - endDate
+  - budgetAmount
+  - currency
+  - createdAt
+  - updatedAt
+  relationships:
+  - ownerId -> references the related record
+- name: TripDay
+  fields:
+  - id
+  - tripId
+  - dayDate
+  - dayNumber
+  - notes
+  - createdAt
+  - updatedAt
+  relationships:
+  - tripId -> references the related record
+- name: Activity
+  fields:
+  - id
+  - tripDayId
+  - title
+  - category
+  - location
+  - latitude
+  - longitude
+  - startTime
+  - endTime
+  - estimatedCost
+  - notes
+  - createdAt
+  - updatedAt
+  relationships:
+  - tripDayId -> references the related record
+- name: Booking
+  fields:
+  - id
+  - tripId
+  - type
+  - provider
+  - confirmationNumber
+  - startDateTime
+  - endDateTime
+  - cost
+  - createdAt
+  - updatedAt
+  relationships:
+  - tripId -> references the related record
+- name: BudgetEntry
+  fields:
+  - id
+  - tripId
+  - category
+  - label
+  - plannedAmount
+  - actualAmount
+  - createdAt
+  - updatedAt
+  relationships:
+  - tripId -> references the related record
+- name: TripShare
+  fields:
+  - id
+  - tripId
+  - userId
+  - role
+  - invitedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - tripId -> references the related record
+  - userId -> references the related record
+backend_logic:
+- Generate trip-day records spanning the trip's start and end dates and renumber them when the dates change
+- Order activities within each day by start time and flag conflicts when two activities overlap
+- Reschedule an activity to a different day or time and reorder the affected day timelines
+- Geocode activity and destination locations into coordinates for the map view using a mock geocoder locally
+- Aggregate planned and actual costs across activities, bookings, and budget entries into category totals and a remaining-budget figure
+- Compile a chronological trip overview merging activities and bookings across all days
+- Invite companions to a trip as editor or viewer and enforce that role on itinerary and booking edits
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner — create trips, build itineraries, manage the budget, and invite companions
+- Editor — add and edit days, activities, and bookings on shared trips
+- Viewer — view the itinerary, map, and bookings without editing
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 trips, a 7-day itinerary with ~30 activities, flight and lodging bookings, a categorized trip budget, a trip shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- Changing a trip's start or end date regenerates and renumbers its day records without losing activities on the remaining days
+- Two activities scheduled at overlapping times on the same day are flagged as a conflict
+- A trip shared as viewer is read-only while an editor can add activities and bookings, and the budget panel totals planned versus actual costs correctly
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds travel itinerary planning products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: TripWeave Personal Travel Itinerary Planner
+  Type: Personal Travel Itinerary Planner (Travel Planning)
+  Target users: independent travelers and trip organizers who plan multi-day itineraries with day-by-day activities, bookings, and budgets, plus companions they invite to collaborate or view.
+  Business goal: Let users plan multi-day trips with day-by-day itineraries, store flight and lodging bookings, map destinations, track a trip budget, and share trips with companions as editors or viewers.
+
+  BRAND & DESIGN
+  Brand style: wanderlust, airy, organized. Colors: horizon blue, sand beige, sunset coral. A day-by-day itinerary timeline beside an interactive destination map and a running trip-budget panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Dashboard (upcoming and past trips)
+  2. Trip overview (dates, destinations, and budget summary)
+  3. Day-by-day itinerary builder (per-day activity timeline)
+  4. Activity editor (time, location, category, notes, and estimated cost)
+  5. Bookings (flights, lodging, and transport with confirmation details)
+  6. Map view of destinations and activity locations
+  7. Trip budget and expense breakdown
+  8. Trip sharing and companion management
+  9. Auth (sign in / register)
+  10. Settings and account admin (profile, home currency, and distance unit)
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Owner — create trips, build itineraries, manage the budget, and invite companions
+  - Editor — add and edit days, activities, and bookings on shared trips
+  - Viewer — view the itinerary, map, and bookings without editing
+
+  CORE FEATURES
+  - Multi-day trip creation with start and end dates and one or more destinations
+  - Day-by-day itinerary builder that orders activities on a per-day timeline with times
+  - Activity entries with location, category, notes, duration, and estimated cost
+  - Booking records for flights, lodging, and transport with confirmation numbers and times
+  - Interactive map plotting trip destinations and geocoded activity locations
+  - Trip budget tracking that totals planned and actual costs by category against a budget
+  - Automatic conflict detection for overlapping activity times on the same day
+  - Activity rescheduling that moves an item to another day or time and reorders the timeline
+  - Trip sharing with companions as editor or viewer
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, homeCurrency, distanceUnit, createdAt, updatedAt
+  - Trip: id, ownerId, title, destination, startDate, endDate, budgetAmount, currency, createdAt, updatedAt
+  - TripDay: id, tripId, dayDate, dayNumber, notes, createdAt, updatedAt
+  - Activity: id, tripDayId, title, category, location, latitude, longitude, startTime, endTime, estimatedCost, notes, createdAt, updatedAt
+  - Booking: id, tripId, type, provider, confirmationNumber, startDateTime, endDateTime, cost, createdAt, updatedAt
+  - BudgetEntry: id, tripId, category, label, plannedAmount, actualAmount, createdAt, updatedAt
+  - TripShare: id, tripId, userId, role, invitedAt, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Generate trip-day records spanning the trip's start and end dates and renumber them when the dates change
+  - Order activities within each day by start time and flag conflicts when two activities overlap
+  - Reschedule an activity to a different day or time and reorder the affected day timelines
+  - Geocode activity and destination locations into coordinates for the map view using a mock geocoder locally
+  - Aggregate planned and actual costs across activities, bookings, and budget entries into category totals and a remaining-budget figure
+  - Compile a chronological trip overview merging activities and bookings across all days
+  - Invite companions to a trip as editor or viewer and enforce that role on itinerary and booking edits
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 3 trips, a 7-day itinerary with ~30 activities, flight and lodging bookings, a categorized trip budget, a trip shared with 1 editor and 1 viewer, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
