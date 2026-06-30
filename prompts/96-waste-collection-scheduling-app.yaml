@@ -1,14 +1,18 @@
 prompt_id: '96'
 title: Waste Collection Scheduling App
 slug: waste-collection-scheduling-app
-category: Municipal & Scheduling
+category: Community, Civic & Nonprofit
+domain: Municipal & Scheduling
 app_name: BinCycle Waste Collection Scheduling App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building collection scheduling and routing apps for municipalities or haulers.
 target_user: Resident; Driver; Operator/Admin
+target_users: residents tracking collection days and operators and drivers managing routes and pickups
+role_line: You are a senior full-stack engineer who builds municipal collection scheduling and routing apps
 business_goal: Publish collection schedules, handle special-pickup requests, manage routes, and update residents
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: civic, clean, practical. Colors: green, slate, white. Clean, modern, schedule calendar and a route/pickup board.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -150,6 +154,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Resident — view schedule and request special pickups
+- Driver — work assigned route and mark pickups
+- Operator/Admin — manage zones, schedules, and routes
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 zones with schedules, households, special pickups, routes and stops, 1 admin, 1 driver, 2 residents. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

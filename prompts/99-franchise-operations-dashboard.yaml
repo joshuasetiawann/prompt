@@ -1,14 +1,18 @@
 prompt_id: '99'
 title: Franchise Operations Dashboard
 slug: franchise-operations-dashboard
-category: Multi-Location Operations
+category: Business Operations
+domain: Multi-Location Operations
 app_name: FranchiseIQ Franchise Operations Dashboard
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building multi-location or franchise operations dashboards.
 target_user: Franchisor/Admin; Franchisee; Auditor
+target_users: franchisors overseeing franchisees, franchisees running locations, and auditors checking compliance
+role_line: You are a senior full-stack engineer who builds multi-location operations and compliance dashboards for franchises
 business_goal: Roll up location KPIs, push tasks and compliance checklists to franchisees, and track support tickets
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: corporate, organized, multi-brand. Colors: navy, slate, amber accent. Clean, modern, location rollup with KPI cards and compliance trackers.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -160,6 +164,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Franchisor/Admin — oversee locations, push tasks, view rollup
+- Franchisee — manage their location, complete tasks/compliance
+- Auditor — review compliance across locations
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 locations with KPIs, rolled-out tasks and completions, compliance audits, tickets, 1 admin, 3 franchisees, 1 auditor. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

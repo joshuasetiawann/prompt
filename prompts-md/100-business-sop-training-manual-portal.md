@@ -7,7 +7,8 @@
 | **Prompt ID** | 100 |
 | **Title** | Business SOP & Training Manual Portal |
 | **Slug** | business-sop-training-manual-portal |
-| **Category** | Knowledge & Training |
+| **Category** | Education & Learning |
+| **Domain** | Knowledge & Training |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Employee; Admin/Manager |

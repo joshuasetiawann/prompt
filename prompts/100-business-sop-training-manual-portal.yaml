@@ -1,14 +1,18 @@
 prompt_id: '100'
 title: Business SOP & Training Manual Portal
 slug: business-sop-training-manual-portal
-category: Knowledge & Training
+category: Education & Learning
+domain: Knowledge & Training
 app_name: PlaybookHQ Business SOP & Training Manual Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building SOP, knowledge-base, and training portals (distinct from generic document storage).
 target_user: Employee; Admin/Manager
+target_users: businesses documenting procedures and training employees, and employees learning and certifying
+role_line: You are a senior full-stack engineer who builds SOP, knowledge, and employee-training portals
 business_goal: Organize SOPs and training modules, run quizzes, and track employee completion and acknowledgements
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: organized, professional, clear. Colors: slate, blue accent, white. Clean, modern, document library plus training modules with progress.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -179,6 +183,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Employee — read SOPs, take training, pass quizzes
+- Admin/Manager — author SOPs and training, assign, track
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: SOP categories and versioned SOPs, training modules with quizzes, assignments and attempts, 1 admin and 3 employees. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

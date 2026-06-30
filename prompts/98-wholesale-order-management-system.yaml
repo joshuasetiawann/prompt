@@ -1,14 +1,18 @@
 prompt_id: '98'
 title: Wholesale Order Management System
 slug: wholesale-order-management-system
-category: Wholesale & Order Management
+category: E-commerce & Retail
+domain: Wholesale & Order Management
 app_name: WholesaleOne Wholesale Order Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building wholesale/back-office order management (distinct from a consumer store or B2B buyer portal).
 target_user: Admin/Sales; Wholesale Customer
+target_users: sales and operations staff managing wholesale customers and orders
+role_line: You are a senior full-stack engineer who builds back-office wholesale order and fulfillment systems
 business_goal: Manage wholesale customers with price tiers, take orders with MOQ rules, and track fulfillment and invoices
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: operational, clean, business. Colors: slate, teal accent, white. Clean, modern, order entry with tiered pricing and a fulfillment board.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -168,6 +172,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/Sales — manage customers, products, and orders
+- Wholesale Customer — view their orders and invoices (portal)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 tiers, ~10 wholesale customers, ~25 products with tier pricing and MOQs, orders and invoices, 1 admin and 2 customer accounts. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

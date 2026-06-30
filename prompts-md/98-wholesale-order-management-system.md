@@ -7,7 +7,8 @@
 | **Prompt ID** | 98 |
 | **Title** | Wholesale Order Management System |
 | **Slug** | wholesale-order-management-system |
-| **Category** | Wholesale & Order Management |
+| **Category** | E-commerce & Retail |
+| **Domain** | Wholesale & Order Management |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/Sales; Wholesale Customer |

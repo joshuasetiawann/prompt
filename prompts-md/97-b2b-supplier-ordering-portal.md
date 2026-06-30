@@ -7,7 +7,8 @@
 | **Prompt ID** | 97 |
 | **Title** | B2B Supplier Ordering Portal |
 | **Slug** | b2b-supplier-ordering-portal |
-| **Category** | B2B Commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | B2B Commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Buyer; Approver (buyer admin); Supplier Admin |

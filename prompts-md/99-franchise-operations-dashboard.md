@@ -7,7 +7,8 @@
 | **Prompt ID** | 99 |
 | **Title** | Franchise Operations Dashboard |
 | **Slug** | franchise-operations-dashboard |
-| **Category** | Multi-Location Operations |
+| **Category** | Business Operations |
+| **Domain** | Multi-Location Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Franchisor/Admin; Franchisee; Auditor |

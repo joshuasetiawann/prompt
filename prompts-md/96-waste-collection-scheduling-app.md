@@ -7,7 +7,8 @@
 | **Prompt ID** | 96 |
 | **Title** | Waste Collection Scheduling App |
 | **Slug** | waste-collection-scheduling-app |
-| **Category** | Municipal & Scheduling |
+| **Category** | Community, Civic & Nonprofit |
+| **Domain** | Municipal & Scheduling |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Resident; Driver; Operator/Admin |

@@ -1,14 +1,18 @@
 prompt_id: '97'
 title: B2B Supplier Ordering Portal
 slug: b2b-supplier-ordering-portal
-category: B2B Commerce
+category: E-commerce & Retail
+domain: B2B Commerce
 app_name: SupplyDesk B2B Supplier Ordering Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building B2B ordering portals (distinct from a consumer store) for suppliers and distributors.
 target_user: Buyer; Approver (buyer admin); Supplier Admin
+target_users: business buyers ordering from a supplier and supplier admins managing catalog, pricing, and orders
+role_line: You are a senior full-stack engineer who builds B2B ordering portals with account pricing and approvals
 business_goal: Let business accounts order with negotiated pricing, route large orders for approval, and reorder easily
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: professional, efficient, B2B. Colors: navy, slate, white. Clean, modern, catalog with account pricing, order lists, and approvals.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -173,6 +177,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Buyer — browse account pricing and place orders
+- Approver (buyer admin) — approve large orders
+- Supplier Admin — manage catalog, accounts, pricing, and orders
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~3 accounts with custom pricing, ~25 products, orders incl. ones needing approval, 1 supplier admin, 2 buyers, 1 approver. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
