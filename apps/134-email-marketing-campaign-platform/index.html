@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mailforge — Email Marketing &amp; Campaign Platform</title>
+<meta name="description" content="Mailforge lets marketing teams and newsletter creators build subscriber lists, segment audiences with live-count rules, design emails with drag-and-drop blocks, and run drip automations — with open, click, and unsubscribe analytics in one workspace." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand palette: electric coral, ink navy, off-white */
+    --coral: #FF5A45;
+    --coral-bright: #FF7361;
+    --coral-dark: #E23C28;
+    --coral-deep: #C42E1C;
+    --coral-tint: #FFEAE5;
+    --coral-tint-2: #FFD8CF;
+
+    --navy-950: #0A1424;
+    --navy-900: #0E1B2E;
+    --navy-850: #122237;
+    --navy-800: #16293F;
+    --navy-700: #21384F;
+    --navy-600: #33506C;
+
+    --mint: #14B17F;
+    --mint-bright: #1FD49A;
+    --mint-tint: #E1F6EE;
+    --amber: #E89324;
+    --amber-tint: #FBEBD2;
+
+    --ink: #131F30;
+    --ink-2: #41546B;
+    --muted: #647689;
+    --muted-2: #8b9aaa;
+    --line: #E7E0D6;
+    --line-2: #F0EAE0;
+
+    --cream: #FBF7F1;
+    --cream-2: #F5EFE6;
+    --cream-3: #EFE7DA;
+    --surface: #ffffff;
+
+    --shadow-sm: 0 1px 2px rgba(14,27,46,.06), 0 2px 8px rgba(14,27,46,.05);
+    --shadow-md: 0 16px 38px -18px rgba(14,27,46,.30), 0 5px 14px rgba(14,27,46,.06);
+    --shadow-lg: 0 44px 96px -38px rgba(10,20,36,.55);
+    --shadow-coral: 0 16px 34px -14px rgba(226,60,40,.55);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --radius-lg: 26px;
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.62;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { line-height: 1.07; letter-spacing: -0.025em; color: var(--ink); font-weight: 800; }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  ::selection { background: var(--coral); color: #fff; }
+  img { max-width: 100%; display: block; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--coral-deep); background: var(--coral-tint); border: 1px solid var(--coral-tint-2);
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .eyebrow.on-dark { color: var(--coral-bright); background: rgba(255,90,69,.10); border-color: rgba(255,90,69,.26); }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 0 rgba(255,90,69,.5); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(255,90,69,.45);} 50%{ box-shadow: 0 0 0 7px rgba(255,90,69,0);} }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: inherit; font-weight: 700; font-size: 15.5px;
+    padding: 14px 24px; border-radius: 12px; cursor: pointer; border: 1.5px solid transparent;
+    transition: transform .15s ease, box-shadow .22s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--coral-bright), var(--coral-dark)); color: #fff; box-shadow: var(--shadow-coral); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 22px 40px -14px rgba(226,60,40,.62); }
+  .btn-primary:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+  .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--coral); color: var(--coral-dark); transform: translateY(-2px); }
+  .btn-ghost:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+  .btn-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.28); }
+  .btn-light:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+  .btn-light:focus-visible { outline: 3px solid var(--coral-bright); outline-offset: 3px; }
+  .btn-sm { padding: 10px 18px; font-size: 14px; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--coral-dark); }
+  .link-arrow.on-dark { color: var(--coral-bright); }
+  .link-arrow svg { transition: transform .2s ease; }
+  .link-arrow:hover svg { transform: translateX(4px); }
+
+  /* ---------- NAV ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(251,247,241,.82);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px; letter-spacing: -.03em; color: var(--ink); }
+  .brand .mark {
+    width: 40px; height: 40px; border-radius: 12px; flex: none; position: relative;
+    background: linear-gradient(150deg, var(--coral-bright), var(--coral-dark));
+    display: grid; place-items: center; box-shadow: 0 8px 18px -7px rgba(226,60,40,.7);
+  }
+  .brand .mark svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a { font-size: 15px; font-weight: 600; color: var(--ink-2); padding: 9px 14px; border-radius: 9px; transition: background .18s ease, color .18s ease; }
+  .nav-links a:hover { color: var(--ink); background: var(--cream-3); }
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+  .nav-cta .signin { font-size: 15px; font-weight: 600; color: var(--ink-2); padding: 9px 14px; border-radius: 9px; }
+  .nav-cta .signin:hover { color: var(--coral-dark); }
+  .nav-toggle { display: none; background: #fff; border: 1.5px solid var(--line); border-radius: 10px; width: 44px; height: 44px; cursor: pointer; align-items: center; justify-content: center; }
+  .nav-toggle svg { width: 22px; height: 22px; color: var(--ink); }
+  #mobile-menu { display: none; }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; overflow: hidden; padding: 76px 0 92px; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(720px 460px at 86% -6%, rgba(255,90,69,.16), transparent 62%),
+      radial-gradient(620px 460px at -8% 14%, rgba(20,177,127,.10), transparent 60%);
+  }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.04fr 1.16fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(38px, 5vw, 60px); letter-spacing: -.035em; }
+  .hero h1 .hl { color: var(--coral-dark); position: relative; white-space: nowrap; }
+  .hero h1 .hl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 12px; background: var(--coral-tint-2); z-index: -1; border-radius: 3px; }
+  .hero .sub { font-size: 19px; color: var(--ink-2); margin-top: 22px; max-width: 540px; line-height: 1.6; }
+  .hero-cta { display: flex; align-items: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+  .trust { margin-top: 30px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14.5px; font-weight: 600; }
+  .trust .avatars { display: flex; }
+  .trust .avatars span { width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid var(--cream); margin-left: -10px; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: #fff; }
+  .trust .avatars span:first-child { margin-left: 0; }
+  .stars { color: var(--coral); letter-spacing: 2px; font-size: 15px; }
+
+  /* Hero workspace mockup */
+  .workspace { position: relative; }
+  .ws-window { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+  .ws-top { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line-2); background: var(--cream); }
+  .ws-dots { display: flex; gap: 7px; }
+  .ws-dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .ws-url { margin-left: 8px; font-size: 12.5px; color: var(--muted); font-weight: 600; background: #fff; border: 1px solid var(--line-2); border-radius: 8px; padding: 5px 12px; }
+  .ws-tag { margin-left: auto; font-size: 11.5px; font-weight: 700; color: var(--mint); background: var(--mint-tint); border-radius: 999px; padding: 4px 11px; }
+  .ws-body { display: grid; grid-template-columns: 1.25fr 1fr; }
+  .ws-canvas { padding: 18px; border-right: 1px solid var(--line-2); background: linear-gradient(180deg, #fff, var(--cream)); }
+  .ws-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .ws-label::before { content: ""; width: 6px; height: 6px; border-radius: 2px; background: var(--coral); }
+  .mail-card { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); }
+  .mail-hd { height: 84px; background: linear-gradient(135deg, var(--coral-bright), var(--coral-dark)); position: relative; display: grid; place-items: center; }
+  .mail-hd b { color: #fff; font-size: 17px; letter-spacing: -.02em; }
+  .mail-hd .pin { position: absolute; top: 8px; right: 8px; font-size: 10px; font-weight: 700; color: #fff; background: rgba(255,255,255,.22); border: 1px solid rgba(255,255,255,.35); border-radius: 6px; padding: 2px 7px; }
+  .mail-bd { padding: 14px; }
+  .mail-bd .h { height: 11px; border-radius: 4px; background: var(--cream-3); margin-bottom: 8px; }
+  .mail-bd .h.w70 { width: 70%; } .mail-bd .h.w90 { width: 90%; } .mail-bd .h.w50 { width: 50%; }
+  .mail-bd .h.dark { background: var(--navy-800); height: 13px; width: 58%; margin-bottom: 12px; }
+  .mail-btn { margin-top: 12px; display: inline-block; background: var(--coral); color: #fff; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: 8px; }
+  .block-row { display: flex; gap: 8px; margin-top: 12px; }
+  .block-chip { flex: 1; border: 1.5px dashed var(--line); border-radius: 9px; padding: 8px 6px; text-align: center; font-size: 10.5px; font-weight: 700; color: var(--muted); background: var(--cream); }
+  .block-chip.active { border-style: solid; border-color: var(--coral); color: var(--coral-dark); background: var(--coral-tint); }
+
+  .ws-side { padding: 18px; display: flex; flex-direction: column; gap: 16px; background: var(--surface); }
+  .seg { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--cream); }
+  .seg .rule { display: flex; align-items: center; gap: 7px; font-size: 12px; margin-bottom: 8px; }
+  .seg .rule .k { font-weight: 700; color: var(--ink); }
+  .seg .rule .op { color: var(--muted); }
+  .seg .rule .v { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; font-weight: 600; color: var(--navy-800); }
+  .seg .andor { font-size: 10px; font-weight: 700; color: var(--coral-dark); background: var(--coral-tint); border-radius: 5px; padding: 1px 7px; }
+  .seg-count { margin-top: 10px; padding-top: 12px; border-top: 1px dashed var(--line); display: flex; align-items: baseline; justify-content: space-between; }
+  .seg-count .n { font-size: 26px; font-weight: 800; color: var(--coral-dark); letter-spacing: -.02em; }
+  .seg-count .l { font-size: 11.5px; font-weight: 600; color: var(--muted); }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #fff; }
+  .kpi .l { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .kpi .n { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin-top: 3px; }
+  .kpi .d { font-size: 11px; font-weight: 700; margin-top: 2px; color: var(--mint); }
+  .kpi.coral .n { color: var(--coral-dark); }
+  .bars { display: flex; align-items: flex-end; gap: 5px; height: 46px; margin-top: 10px; }
+  .bars i { flex: 1; border-radius: 4px 4px 0 0; background: var(--coral-tint-2); display: block; }
+  .bars i.on { background: linear-gradient(180deg, var(--coral-bright), var(--coral-dark)); }
+  .float-badge {
+    position: absolute; z-index: 3; background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow-md); padding: 11px 14px; display: flex; align-items: center; gap: 11px;
+  }
+  .float-badge .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .float-badge .t b { display: block; font-size: 14px; letter-spacing: -.01em; }
+  .float-badge .t span { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .float-1 { top: -22px; left: -26px; }
+  .float-2 { bottom: -24px; right: -22px; }
+
+  /* logos strip */
+  .logos { border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); background: var(--cream-2); }
+  .logos-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 0; flex-wrap: wrap; }
+  .logos .cap { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .logos .row { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+  .logos .row b { font-size: 18px; font-weight: 800; color: var(--navy-700); opacity: .58; letter-spacing: -.02em; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section { position: relative; }
+  .sec-pad { padding: 92px 0; }
+  .sec-head { max-width: 660px; margin: 0 auto 54px; text-align: center; }
+  .sec-head.left { margin-left: 0; text-align: left; }
+  .sec-head h2 { font-size: clamp(30px, 3.7vw, 44px); letter-spacing: -.03em; }
+  .sec-head p { font-size: 18px; color: var(--ink-2); margin-top: 16px; }
+
+  /* ---------- FEATURES ---------- */
+  .features { background: var(--surface); border-top: 1px solid var(--line-2); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feat {
+    background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 26px 24px; transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease, background .2s ease;
+  }
+  .feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--coral-tint-2); background: #fff; }
+  .feat .ic { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; font-size: 24px; margin-bottom: 18px; background: var(--coral-tint); border: 1px solid var(--coral-tint-2); }
+  .feat h3 { font-size: 19px; letter-spacing: -.02em; }
+  .feat p { font-size: 15px; color: var(--muted); margin-top: 9px; line-height: 1.55; }
+  .feat .tag { display: inline-block; margin-top: 14px; font-size: 11.5px; font-weight: 700; color: var(--coral-dark); background: var(--coral-tint); border-radius: 999px; padding: 4px 11px; }
+
+  /* ---------- HOW IT WORKS / SCREENS ---------- */
+  .works { background: linear-gradient(180deg, var(--cream), var(--cream-2)); border-top: 1px solid var(--line-2); }
+  .step-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: center; margin-bottom: 84px; }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-row.rev { grid-template-columns: 1.15fr 1fr; }
+  .step-row.rev .step-txt { order: 2; }
+  .step-num { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--coral-dark); margin-bottom: 16px; }
+  .step-num span { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--coral); color: #fff; font-size: 14px; }
+  .step-txt h3 { font-size: 27px; letter-spacing: -.025em; }
+  .step-txt p { font-size: 16.5px; color: var(--ink-2); margin-top: 13px; }
+  .step-txt ul { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 11px; }
+  .step-txt li { display: flex; align-items: flex-start; gap: 11px; font-size: 15px; color: var(--ink-2); font-weight: 500; }
+  .step-txt li svg { flex: none; margin-top: 3px; color: var(--mint); }
+
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+  .panel-bar { display: flex; align-items: center; gap: 9px; padding: 13px 16px; border-bottom: 1px solid var(--line-2); background: var(--cream); }
+  .panel-bar .d { width: 10px; height: 10px; border-radius: 50%; }
+  .panel-bar .ttl { margin-left: 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+  .panel-bar .pill { margin-left: auto; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .panel-in { padding: 20px; }
+
+  /* Dashboard panel */
+  .dash-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .dash-kpi { border: 1px solid var(--line); border-radius: 13px; padding: 14px; background: var(--cream); }
+  .dash-kpi .l { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .dash-kpi .n { font-size: 23px; font-weight: 800; letter-spacing: -.02em; margin-top: 4px; }
+  .dash-kpi .d { font-size: 11.5px; font-weight: 700; margin-top: 3px; }
+  .up { color: var(--mint); } .down { color: var(--coral-dark); }
+  .growth { margin-top: 16px; border: 1px solid var(--line); border-radius: 13px; padding: 16px; background: #fff; }
+  .growth .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .growth .top b { font-size: 14px; } .growth .top span { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .area { display: flex; align-items: flex-end; gap: 7px; height: 92px; }
+  .area i { flex: 1; border-radius: 5px 5px 0 0; background: linear-gradient(180deg, var(--coral-tint-2), var(--coral-tint)); position: relative; }
+  .area i::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--coral); border-radius: 3px; }
+  .camp-rows { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .camp-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line-2); border-radius: 11px; padding: 10px 13px; background: #fff; }
+  .camp-row .nm { font-size: 13.5px; font-weight: 700; flex: 1; }
+  .camp-row .st { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .st.sent { color: var(--mint); background: var(--mint-tint); }
+  .st.sched { color: var(--amber); background: var(--amber-tint); }
+  .st.draft { color: var(--muted); background: var(--cream-3); }
+  .camp-row .rate { font-size: 12.5px; font-weight: 700; color: var(--ink-2); min-width: 78px; text-align: right; }
+
+  /* segment builder panel */
+  .seg-build { display: flex; flex-direction: column; gap: 12px; }
+  .seg-rule { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--cream); }
+  .seg-rule select, .seg-rule .field { font-size: 13px; font-weight: 700; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; color: var(--navy-800); }
+  .seg-rule .op2 { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .seg-join { display: flex; align-items: center; gap: 10px; }
+  .seg-join .ln { flex: 1; height: 1px; background: var(--line); }
+  .seg-join b { font-size: 11px; font-weight: 700; color: var(--coral-dark); background: var(--coral-tint); border-radius: 999px; padding: 3px 11px; }
+  .seg-add { font-size: 13px; font-weight: 700; color: var(--coral-dark); border: 1.5px dashed var(--coral-tint-2); border-radius: 10px; padding: 10px; text-align: center; background: var(--coral-tint); }
+  .seg-live { margin-top: 4px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); border-radius: 13px; padding: 14px 16px; background: var(--navy-900); color: #fff; }
+  .seg-live .l { font-size: 12px; color: var(--coral-bright); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .seg-live .n { font-size: 28px; font-weight: 800; letter-spacing: -.02em; }
+  .seg-live .n small { font-size: 13px; font-weight: 600; color: var(--muted-2); }
+
+  /* analytics panel */
+  .an-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .an-cell { border: 1px solid var(--line); border-radius: 13px; padding: 15px; background: var(--cream); }
+  .an-cell .l { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .an-cell .n { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin-top: 5px; }
+  .donut { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto; }
+  .an-cell.center { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .an-bars { margin-top: 12px; }
+  .an-line { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .an-line .nm { font-size: 12.5px; font-weight: 700; width: 92px; }
+  .an-line .track { flex: 1; height: 9px; border-radius: 999px; background: var(--cream-3); overflow: hidden; }
+  .an-line .fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--coral-bright), var(--coral-dark)); }
+  .an-line .pc { font-size: 12.5px; font-weight: 700; width: 42px; text-align: right; color: var(--ink-2); }
+
+  /* automation panel */
+  .flow { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .flow-node { width: 100%; border: 1px solid var(--line); border-radius: 13px; padding: 13px 15px; background: #fff; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-sm); }
+  .flow-node .ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; flex: none; font-size: 17px; }
+  .flow-node .t b { display: block; font-size: 13.5px; letter-spacing: -.01em; }
+  .flow-node .t span { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .flow-node.trigger .ic { background: var(--coral-tint); }
+  .flow-node.delay .ic { background: var(--amber-tint); }
+  .flow-node.send .ic { background: var(--mint-tint); }
+  .flow-node.branch .ic { background: var(--cream-3); }
+  .flow-con { width: 2px; height: 18px; background: var(--line); }
+  .flow-split { display: flex; gap: 12px; width: 100%; }
+  .flow-split .flow-node { flex: 1; }
+
+  /* ---------- WHO IT'S FOR ---------- */
+  .roles { background: var(--surface); border-top: 1px solid var(--line-2); }
+  .roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .role {
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 22px; background: var(--cream);
+    transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .role:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--coral-tint-2); }
+  .role .ic { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; margin-bottom: 16px; background: #fff; border: 1px solid var(--line); }
+  .role h3 { font-size: 17px; letter-spacing: -.02em; }
+  .role p { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.55; }
+  .role ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .role li { font-size: 13px; color: var(--ink-2); font-weight: 600; display: flex; gap: 8px; align-items: flex-start; }
+  .role li::before { content: ""; width: 6px; height: 6px; border-radius: 2px; background: var(--coral); margin-top: 7px; flex: none; }
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-band { padding: 96px 0; background: var(--cream-2); }
+  .cta-card {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--navy-900), var(--navy-850) 60%, var(--navy-800));
+    padding: 64px 56px; box-shadow: var(--shadow-lg); text-align: center;
+  }
+  .cta-card::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(560px 300px at 84% -10%, rgba(255,90,69,.34), transparent 60%), radial-gradient(460px 320px at 4% 120%, rgba(20,177,127,.18), transparent 60%); }
+  .cta-card > * { position: relative; z-index: 1; }
+  .cta-card h2 { color: #fff; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.03em; }
+  .cta-card p { color: #cdd7e2; font-size: 18px; margin-top: 18px; max-width: 560px; margin-left: auto; margin-right: auto; }
+  .cta-card .hero-cta { justify-content: center; margin-top: 32px; }
+  .cta-note { margin-top: 20px; font-size: 13.5px; color: var(--muted-2); font-weight: 600; }
+
+  /* ---------- FOOTER ---------- */
+  footer { background: var(--navy-950); color: #aebccb; padding: 64px 0 34px; }
+  .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 36px; }
+  .foot-brand .brand { color: #fff; margin-bottom: 16px; }
+  .foot-brand p { font-size: 14.5px; color: #8195a8; max-width: 300px; line-height: 1.6; }
+  .foot-col h4 { color: #fff; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px; font-weight: 700; }
+  .foot-col a { display: block; font-size: 14.5px; color: #9fb0c1; padding: 6px 0; transition: color .18s ease; }
+  .foot-col a:hover { color: var(--coral-bright); }
+  .foot-bot { margin-top: 46px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.09); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: #7c8ea0; }
+  .foot-bot .socials { display: flex; gap: 10px; }
+  .foot-bot .socials a { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); transition: background .18s ease, border-color .18s; }
+  .foot-bot .socials a:hover { background: rgba(255,90,69,.18); border-color: rgba(255,90,69,.4); }
+  .foot-bot .socials svg { width: 18px; height: 18px; color: #cbd6e1; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .hero { padding: 56px 0 76px; }
+    .hero .sub { max-width: none; }
+    .feat-grid { grid-template-columns: repeat(2, 1fr); }
+    .roles-grid { grid-template-columns: repeat(2, 1fr); }
+    .step-row, .step-row.rev { grid-template-columns: 1fr; gap: 30px; }
+    .step-row.rev .step-txt { order: 0; }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+    .float-1 { left: 0; } .float-2 { right: 0; }
+  }
+  @media (max-width: 680px) {
+    body { font-size: 16px; }
+    .nav-links, .nav-cta .signin, .nav-cta .btn-ghost { display: none; }
+    .nav-toggle { display: flex; }
+    #mobile-menu.open { display: block; border-top: 1px solid var(--line-2); background: var(--cream); }
+    #mobile-menu .mwrap { display: flex; flex-direction: column; gap: 4px; padding: 14px 24px 20px; }
+    #mobile-menu a { font-size: 16px; font-weight: 600; color: var(--ink-2); padding: 12px 14px; border-radius: 10px; }
+    #mobile-menu a:hover { background: var(--cream-3); color: var(--ink); }
+    #mobile-menu .btn { margin-top: 8px; }
+    .sec-pad { padding: 64px 0; }
+    .cta-band { padding: 64px 0; }
+    .cta-card { padding: 44px 26px; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .roles-grid { grid-template-columns: 1fr; }
+    .ws-body { grid-template-columns: 1fr; }
+    .ws-canvas { border-right: none; border-bottom: 1px solid var(--line-2); }
+    .dash-kpis { grid-template-columns: 1fr 1fr; }
+    .hero-cta .btn { width: 100%; }
+    .hero-cta { gap: 12px; }
+    .float-badge { display: none; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="Mailforge home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 6.5 12 13l9-6.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="18" height="14" rx="3" stroke="#fff" stroke-width="2"/></svg>
+      </span>
+      Mailforge
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#workflow">How it works</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#analytics">Analytics</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#top" class="signin">Sign in</a>
+      <a href="#cta" class="btn btn-ghost btn-sm">Book a demo</a>
+      <a href="#cta" class="btn btn-primary btn-sm">Start free</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu">
+    <div class="mwrap">
+      <a href="#features">Features</a>
+      <a href="#workflow">How it works</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#analytics">Analytics</a>
+      <a href="#top">Sign in</a>
+      <a href="#cta" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-txt">
+      <span class="eyebrow"><span class="dot"></span> Lists · Segments · Campaigns · Automations</span>
+      <h1 style="margin-top:20px;">Build lists, send campaigns people <span class="hl">actually open</span>.</h1>
+      <p class="sub">Mailforge gives marketing teams and newsletter creators one workspace to grow subscriber lists, segment audiences with live-count rules, design emails with drag-and-drop blocks, and run drip automations — with open, click, and unsubscribe analytics on every send.</p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary">Start building free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#workflow" class="link-arrow">See the campaign workspace
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="trust">
+        <div class="avatars" aria-hidden="true">
+          <span style="background:#FF5A45;">MR</span>
+          <span style="background:#14B17F;">JD</span>
+          <span style="background:#21384F;">AP</span>
+          <span style="background:#E89324;">SK</span>
+        </div>
+        <div><span class="stars">★★★★★</span><br><strong style="color:var(--ink-2);">Trusted by 4,200+</strong> senders &amp; creators</div>
+      </div>
+    </div>
+
+    <div class="workspace">
+      <div class="float-badge float-1">
+        <span class="ic" style="background:var(--mint-tint);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#14B17F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="t"><b>Double opt-in confirmed</b><span>312 new subscribers this week</span></div>
+      </div>
+      <div class="float-badge float-2">
+        <span class="ic" style="background:var(--coral-tint);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 3 7-8" stroke="#E23C28" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="t"><b>48.2% open rate</b><span>"Spring Launch" · A/B winner</span></div>
+      </div>
+
+      <div class="ws-window">
+        <div class="ws-top">
+          <div class="ws-dots"><i style="background:#FF6155;"></i><i style="background:#F6BE3F;"></i><i style="background:#36C780;"></i></div>
+          <span class="ws-url">app.mailforge.io / campaigns / spring-launch</span>
+          <span class="ws-tag">● Live preview</span>
+        </div>
+        <div class="ws-body">
+          <div class="ws-canvas">
+            <div class="ws-label">Drag &amp; drop designer</div>
+            <div class="mail-card">
+              <div class="mail-hd"><b>Spring is here 🌱</b><span class="pin">HERO</span></div>
+              <div class="mail-bd">
+                <div class="h dark"></div>
+                <div class="h w90"></div>
+                <div class="h w70"></div>
+                <div class="h w50"></div>
+                <span class="mail-btn">Shop the collection →</span>
+              </div>
+            </div>
+            <div class="block-row">
+              <div class="block-chip active">＋ Text</div>
+              <div class="block-chip">▦ Image</div>
+              <div class="block-chip">▭ Button</div>
+              <div class="block-chip">⋯ Divider</div>
+            </div>
+          </div>
+          <div class="ws-side">
+            <div>
+              <div class="ws-label">Segment builder</div>
+              <div class="seg">
+                <div class="rule"><span class="k">Country</span><span class="op">is</span><span class="v">Germany</span></div>
+                <div class="rule"><span class="andor">AND</span><span class="k">Opened</span><span class="op">in</span><span class="v">last 30d</span></div>
+                <div class="rule"><span class="andor">AND</span><span class="k">Tag</span><span class="op">≠</span><span class="v">VIP</span></div>
+                <div class="seg-count"><span class="l">Matching now</span><span class="n">2,418</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="ws-label">Live analytics</div>
+              <div class="kpis">
+                <div class="kpi coral"><div class="l">Open rate</div><div class="n">48.2%</div><div class="d">▲ 6.1 pts</div></div>
+                <div class="kpi coral"><div class="l">Click rate</div><div class="n">12.7%</div><div class="d">▲ 2.4 pts</div></div>
+              </div>
+              <div class="bars" aria-hidden="true">
+                <i style="height:38%"></i><i style="height:55%"></i><i style="height:46%"></i><i class="on" style="height:78%"></i><i style="height:62%"></i><i class="on" style="height:90%"></i><i style="height:70%"></i><i style="height:84%"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOGOS ============ -->
+<div class="logos">
+  <div class="wrap logos-inner">
+    <span class="cap">Powering senders at lean teams &amp; independent newsletters</span>
+    <div class="row" aria-hidden="true">
+      <b>NorthFold</b><b>Brightside</b><b>Cooper&amp;Lane</b><b>Tidewater</b><b>Maple&amp;Co</b>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FEATURES ============ -->
+<section class="features sec-pad" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Everything in one workspace</span>
+      <h2 style="margin-top:16px;">From first subscriber to sent campaign</h2>
+      <p>Own your list and your sending. Mailforge handles the whole lifecycle — capture, segment, design, send, automate, and measure — without juggling five tools.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic">📇</div>
+        <h3>List management &amp; CSV import</h3>
+        <p>Import contacts from CSV with automatic deduplication and double opt-in handling, so every subscriber is real and consented.</p>
+        <span class="tag">Double opt-in</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🎯</div>
+        <h3>Rule-based segmentation</h3>
+        <p>Filter on fields and behavior with stacked AND/OR rules — and watch a live count update before you ever hit send.</p>
+        <span class="tag">Live count preview</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🎨</div>
+        <h3>Drag-and-drop designer</h3>
+        <p>Compose emails from reusable blocks, save layouts as templates, and reuse your best-performing sections across campaigns.</p>
+        <span class="tag">Saved templates</span>
+      </div>
+      <div class="feat">
+        <div class="ic">📨</div>
+        <h3>Scheduling &amp; sending</h3>
+        <p>Schedule a campaign to a list or segment and send to exactly the matching audience. Mock-send locally, real-provider in production.</p>
+        <span class="tag">List &amp; segment targeting</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🔁</div>
+        <h3>Drip automation builder</h3>
+        <p>Chain triggers, delays, and conditional branches into welcome series and re-engagement flows that run on their own.</p>
+        <span class="tag">Triggers &amp; branches</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🛰️</div>
+        <h3>Open &amp; click tracking</h3>
+        <p>Track opens with a pixel and clicks through wrapped links, recording an email event for every subscriber interaction.</p>
+        <span class="tag">Per-subscriber events</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🚪</div>
+        <h3>Unsubscribe &amp; suppression</h3>
+        <p>A public preferences page lets contacts opt down or out, and the suppression list keeps them off every future send.</p>
+        <span class="tag">Preferences page</span>
+      </div>
+      <div class="feat">
+        <div class="ic">📊</div>
+        <h3>Per-campaign analytics</h3>
+        <p>See open rate, click rate, unsubscribe rate, and bounces roll up per campaign — the numbers that decide your next send.</p>
+        <span class="tag">Opens · clicks · bounces</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🧪</div>
+        <h3>A/B subject-line testing</h3>
+        <p>Test subject lines on a sample of the audience, then send the winner to everyone else — automatically.</p>
+        <span class="tag">Sample then send winner</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS / SCREENS ============ -->
+<section class="works sec-pad" id="workflow">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How Mailforge works</span>
+      <h2 style="margin-top:16px;">Four screens, one clean send flow</h2>
+      <p>Every page is built to move you from a raw list to a measured campaign — no dead ends, no guesswork.</p>
+    </div>
+
+    <!-- Step 1: Dashboard -->
+    <div class="step-row">
+      <div class="step-txt">
+        <div class="step-num"><span>1</span> Dashboard</div>
+        <h3>Start the day with the numbers that matter</h3>
+        <p>Land on recent campaigns and audience growth the moment you sign in. Spot which send is climbing, which list is growing, and what needs a nudge.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Recent campaigns with status and open rate at a glance</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Audience growth chart across all lists</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Draft, scheduled, and sent campaigns in one feed</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#FF6155;"></span><span class="d" style="background:#F6BE3F;"></span><span class="d" style="background:#36C780;"></span><span class="ttl">Dashboard</span><span class="pill" style="color:var(--mint);background:var(--mint-tint);">All lists</span></div>
+        <div class="panel-in">
+          <div class="dash-kpis">
+            <div class="dash-kpi"><div class="l">Subscribers</div><div class="n">18,940</div><div class="d up">▲ 312 this week</div></div>
+            <div class="dash-kpi"><div class="l">Avg open rate</div><div class="n">41.6%</div><div class="d up">▲ 3.2 pts</div></div>
+            <div class="dash-kpi"><div class="l">Unsub rate</div><div class="n">0.34%</div><div class="d down">▼ 0.08 pts</div></div>
+          </div>
+          <div class="growth">
+            <div class="top"><b>Audience growth</b><span>Last 8 weeks</span></div>
+            <div class="area" aria-hidden="true">
+              <i style="height:34%"></i><i style="height:42%"></i><i style="height:40%"></i><i style="height:55%"></i><i style="height:60%"></i><i style="height:72%"></i><i style="height:81%"></i><i style="height:96%"></i>
+            </div>
+          </div>
+          <div class="camp-rows">
+            <div class="camp-row"><span class="nm">Spring Launch 2026</span><span class="st sent">Sent</span><span class="rate">48.2% open</span></div>
+            <div class="camp-row"><span class="nm">May Newsletter #14</span><span class="st sched">Scheduled</span><span class="rate">Tue 9:00</span></div>
+            <div class="camp-row"><span class="nm">Win-back: lapsed 90d</span><span class="st draft">Draft</span><span class="rate">— —</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Segment builder -->
+    <div class="step-row rev">
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#FF6155;"></span><span class="d" style="background:#F6BE3F;"></span><span class="d" style="background:#36C780;"></span><span class="ttl">Segment builder</span><span class="pill" style="color:var(--coral-dark);background:var(--coral-tint);">Newsletter list</span></div>
+        <div class="panel-in">
+          <div class="seg-build">
+            <div class="seg-rule"><span class="field">Signup source</span><span class="op2">is</span><span class="field">Website footer</span></div>
+            <div class="seg-join"><span class="ln"></span><b>AND</b><span class="ln"></span></div>
+            <div class="seg-rule"><span class="field">Last opened</span><span class="op2">within</span><span class="field">30 days</span></div>
+            <div class="seg-join"><span class="ln"></span><b>AND</b><span class="ln"></span></div>
+            <div class="seg-rule"><span class="field">Status</span><span class="op2">is</span><span class="field">Subscribed</span></div>
+            <div class="seg-add">＋ Add rule</div>
+            <div class="seg-live"><span class="l">Live matching count</span><span class="n">2,418 <small>/ 7,103</small></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-txt">
+        <div class="step-num"><span>2</span> Segment builder</div>
+        <h3>Target the exact people, see the count instantly</h3>
+        <p>Stack rules on subscriber fields and behavior. As you add and edit conditions, the matching audience recalculates live — so you send to the right people, not the whole list.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Field and behavior rules with AND / OR logic</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Live count preview updates as rules change</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Save segments and reuse them across campaigns</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Step 3: Automation builder -->
+    <div class="step-row">
+      <div class="step-txt">
+        <div class="step-num"><span>3</span> Automation builder</div>
+        <h3>Set up a drip once, let it run forever</h3>
+        <p>Drop in a trigger, add delays, and split on conditions to build welcome series, onboarding flows, and re-engagement journeys. Subscribers advance step by step on their own.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Triggers on signup, tag, or campaign activity</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Timed delays between each step</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Conditional branches based on opens and clicks</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#FF6155;"></span><span class="d" style="background:#F6BE3F;"></span><span class="d" style="background:#36C780;"></span><span class="ttl">Automation · Welcome series</span><span class="pill" style="color:var(--mint);background:var(--mint-tint);">Active</span></div>
+        <div class="panel-in">
+          <div class="flow">
+            <div class="flow-node trigger"><span class="ic">⚡</span><div class="t"><b>Trigger — New subscriber</b><span>When a contact confirms double opt-in</span></div></div>
+            <div class="flow-con"></div>
+            <div class="flow-node send"><span class="ic">✉️</span><div class="t"><b>Send — "Welcome to Mailforge"</b><span>Immediately</span></div></div>
+            <div class="flow-con"></div>
+            <div class="flow-node delay"><span class="ic">⏱️</span><div class="t"><b>Wait 2 days</b><span>Delay before next step</span></div></div>
+            <div class="flow-con"></div>
+            <div class="flow-split">
+              <div class="flow-node branch"><span class="ic">✅</span><div class="t"><b>Opened?</b><span>Send tips digest</span></div></div>
+              <div class="flow-node branch"><span class="ic">↩️</span><div class="t"><b>No open?</b><span>Resend with new subject</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Analytics -->
+    <div class="step-row rev" id="analytics">
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#FF6155;"></span><span class="d" style="background:#F6BE3F;"></span><span class="d" style="background:#36C780;"></span><span class="ttl">Campaign analytics · Spring Launch</span><span class="pill" style="color:var(--mint);background:var(--mint-tint);">Sent to 2,418</span></div>
+        <div class="panel-in">
+          <div class="an-grid">
+            <div class="an-cell"><div class="l">Open rate</div><div class="n" style="color:var(--coral-dark);">48.2%</div></div>
+            <div class="an-cell"><div class="l">Click rate</div><div class="n" style="color:var(--coral-dark);">12.7%</div></div>
+            <div class="an-cell"><div class="l">Unsubscribes</div><div class="n">0.31%</div></div>
+            <div class="an-cell"><div class="l">Bounces</div><div class="n">0.6%</div></div>
+          </div>
+          <div class="an-bars">
+            <div class="an-line"><span class="nm">Delivered</span><span class="track"><span class="fill" style="width:99.4%"></span></span><span class="pc">99.4%</span></div>
+            <div class="an-line"><span class="nm">Opened</span><span class="track"><span class="fill" style="width:48.2%"></span></span><span class="pc">48.2%</span></div>
+            <div class="an-line"><span class="nm">Clicked</span><span class="track"><span class="fill" style="width:12.7%"></span></span><span class="pc">12.7%</span></div>
+            <div class="an-line"><span class="nm">Unsubbed</span><span class="track"><span class="fill" style="width:6%"></span></span><span class="pc">0.31%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step-txt">
+        <div class="step-num"><span>4</span> Campaign analytics</div>
+        <h3>Know what landed — down to the link</h3>
+        <p>Every send rolls up open rate, click rate, unsubscribe rate, and bounces per campaign. Opens and clicks are tracked per subscriber, so you learn what to do next.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Open, click, unsubscribe, and bounce rates per send</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Per-link click tracking via wrapped URLs</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> A/B subject-line winner sent to the rest of the list</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO IT'S FOR ============ -->
+<section class="roles sec-pad" id="roles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Built for your team</span>
+      <h2 style="margin-top:16px;">One workspace, the right view for every role</h2>
+      <p>Mailforge gives each person exactly what they need — and role-based access keeps everyone in their lane.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role">
+        <div class="ic">🧭</div>
+        <h3>Marketing Manager</h3>
+        <p>Own the audience strategy end to end, from raw lists to running automations.</p>
+        <ul>
+          <li>Manage subscriber lists and imports</li>
+          <li>Build segments and run campaigns</li>
+          <li>Launch and tune drip automations</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">✍️</div>
+        <h3>Newsletter Creator</h3>
+        <p>Focus on the craft — design beautiful emails and get them out the door.</p>
+        <ul>
+          <li>Design content with drag-and-drop blocks</li>
+          <li>Save and reuse template layouts</li>
+          <li>Schedule campaign sends</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">📈</div>
+        <h3>Analyst</h3>
+        <p>Read the results and turn opens and clicks into the next decision.</p>
+        <ul>
+          <li>Review open and click analytics</li>
+          <li>Track unsubscribe and bounce trends</li>
+          <li>Compare campaign performance</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">⚙️</div>
+        <h3>Admin</h3>
+        <p>Keep the workspace healthy — people, sending, and the shared template library.</p>
+        <ul>
+          <li>Manage team members and roles</li>
+          <li>Configure sending settings</li>
+          <li>Curate the template library</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta-band" id="cta">
+  <div class="wrap">
+    <div class="cta-card">
+      <span class="eyebrow on-dark"><span class="dot"></span> Own your list. Own your sending.</span>
+      <h2 style="margin-top:18px;">Your next campaign is one workspace away</h2>
+      <p>Spin up Mailforge locally on seed data — three lists, real segments, sample campaigns, and a live drip — with no paid keys required. Add a real provider when you're ready to send for real.</p>
+      <div class="hero-cta">
+        <a href="#top" class="btn btn-primary">Start building free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#workflow" class="btn btn-light">Book a 20-min demo</a>
+      </div>
+      <p class="cta-note">No credit card · Runs locally in mock mode · Vercel &amp; Docker ready</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3 6.5 12 13l9-6.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="18" height="14" rx="3" stroke="#fff" stroke-width="2"/></svg>
+          </span>
+          Mailforge
+        </a>
+        <p>The email marketing &amp; campaign platform for teams and creators who want to own their list, their sending, and their data.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#workflow">How it works</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#roles">For teams</a>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#features">Segmentation</a>
+        <a href="#features">Email designer</a>
+        <a href="#workflow">Automations</a>
+        <a href="#cta">Suppression list</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#top">Sign in</a>
+        <a href="#cta">Start free</a>
+        <a href="#cta">Book a demo</a>
+        <a href="#cta">Preferences</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 Mailforge. Built for senders and creators who own their audience.</span>
+      <div class="socials" aria-label="Social links">
+        <a href="#top" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+        <a href="#top" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a1.94 1.94 0 11-3.88 0 1.94 1.94 0 013.88 0zM3.5 8.5h3.5V20H3.5V8.5zm6 0H13v1.6c.5-.9 1.7-1.9 3.5-1.9 3 0 4 1.9 4 5V20h-3.5v-5.4c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.8 1.4-.1.2-.1.6-.1.9V20H10V8.5z"/></svg></a>
+        <a href="#top" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.3-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var t = document.getElementById('navToggle');
+    var m = document.getElementById('mobile-menu');
+    if (!t || !m) return;
+    t.addEventListener('click', function () {
+      var open = m.classList.toggle('open');
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    m.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { m.classList.remove('open'); t.setAttribute('aria-expanded', 'false'); }
+    });
+  })();
+</script>
+
+</body>
+</html>

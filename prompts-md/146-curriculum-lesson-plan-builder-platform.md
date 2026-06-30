@@ -60,6 +60,8 @@
 8. My plans with version history and status
 9. Auth (sign in / register)
 10. Admin: subjects, terms, standard sets, and users
+11. Notifications inbox / activity feed listing review events with read/unread state and a link to each related plan
+12. Print-ready export preview page that renders an approved lesson plan in a clean, print/PDF-friendly layout
 
 ## Required features
 
@@ -72,6 +74,7 @@
 - Plan version history across draft, submitted, approved, and published states
 - Clone-and-reuse of existing units and lessons into a new term
 - Printable export of approved lesson plans (mock PDF)
+- In-app notification center with an unread badge and mock-email alerts for review events — plan submitted for review, approved, or returned with requested changes
 
 ## Database models
 
@@ -106,11 +109,12 @@
 - ownerId -> references the related record
 
 ### LessonPlan
-**Fields:** `id`, `unitId`, `authorId`, `title`, `objectiveIds`, `resourceIds`, `activities`, `assessment`, `status`, `createdAt`, `updatedAt`
+**Fields:** `id`, `unitId`, `authorId`, `title`, `objectiveIds`, `resourceIds`, `activities`, `assessment`, `status`, `assignedReviewerId`, `materials`, `submittedAt`, `approvedAt`, `publishedAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - unitId -> references the related record
 - authorId -> references the related record
+- assignedReviewerId -> references the related record
 
 ### Review
 **Fields:** `id`, `lessonPlanId`, `reviewerId`, `decision`, `comments`, `reviewedAt`, `createdAt`, `updatedAt`
@@ -118,6 +122,13 @@
 **Relationships:**
 - lessonPlanId -> references the related record
 - reviewerId -> references the related record
+
+### Notification
+**Fields:** `id`, `userId`, `lessonPlanId`, `type`, `message`, `linkUrl`, `readAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- lessonPlanId -> references the related record
 
 ## Backend logic
 
@@ -128,6 +139,8 @@
 - Apply review decisions (approve or request changes) and record reviewer comments
 - Clone an existing unit or lesson into a new term with remapped references
 - Generate a printable export of an approved lesson plan (mock PDF)
+- Resolve the department-head recipient for a submitted plan from the author's department, set assignedReviewerId, and create a notification plus a mock email for that reviewer
+- On an approve or request-changes decision, create a notification and mock email for the plan's author including the decision and reviewer comments
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -181,6 +194,8 @@
 - [ ] Tagging a lesson to standards updates the unit's covered-standards rollup and the term coverage map
 - [ ] A submitted plan appears in the department head's review queue and an approval changes its status
 - [ ] The coverage map highlights standards with no covering unit as gaps
+- [ ] Submitting a plan creates an unread notification for the assigned department head, and an approve or request-changes decision creates an unread notification for the plan's author
+- [ ] Opening a notification marks it read, decrements the unread badge count, and links to the related lesson plan
 
 ## Ready-to-use prompt
 
@@ -199,7 +214,7 @@ Target users: teachers and curriculum coordinators who build standards-aligned u
 Business goal: Let teachers assemble standards-aligned units and lesson plans from a reusable objective and resource library, map coverage across a term, and route plans through department-head review and approval.
 
 BRAND & DESIGN
-Brand style: scholarly, organized, calm. Colors: deep indigo, chalk white, sage. A unit board with standards-tagged lesson cards and a term coverage matrix. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: scholarly, organized, calm. Colors: deep indigo (#2e2870), chalk white (#f8f8f3), sage (#5f7d68), with warm amber (#c98a2b) for in-review accents; pair Fraunces serif headings with Inter sans-serif body. Signature layout: a unit board of standards-tagged lesson cards beside a color-coded standards-vs-units coverage matrix. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -219,6 +234,8 @@ PAGES / SCREENS
 8. My plans with version history and status
 9. Auth (sign in / register)
 10. Admin: subjects, terms, standard sets, and users
+11. Notifications inbox / activity feed listing review events with read/unread state and a link to each related plan
+12. Print-ready export preview page that renders an approved lesson plan in a clean, print/PDF-friendly layout
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -239,6 +256,7 @@ CORE FEATURES
 - Plan version history across draft, submitted, approved, and published states
 - Clone-and-reuse of existing units and lessons into a new term
 - Printable export of approved lesson plans (mock PDF)
+- In-app notification center with an unread badge and mock-email alerts for review events — plan submitted for review, approved, or returned with requested changes
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, department, createdAt, updatedAt
@@ -246,8 +264,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Objective: id, ownerId, title, description, subject, standardIds, createdAt, updatedAt
 - Resource: id, ownerId, title, type, url, subject, createdAt, updatedAt
 - Unit: id, ownerId, term, subject, gradeLevel, title, sequence, status, createdAt, updatedAt
-- LessonPlan: id, unitId, authorId, title, objectiveIds, resourceIds, activities, assessment, status, createdAt, updatedAt
+- LessonPlan: id, unitId, authorId, title, objectiveIds, resourceIds, activities, assessment, status, assignedReviewerId, materials, submittedAt, approvedAt, publishedAt, createdAt, updatedAt
 - Review: id, lessonPlanId, reviewerId, decision, comments, reviewedAt, createdAt, updatedAt
+- Notification: id, userId, lessonPlanId, type, message, linkUrl, readAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -258,6 +277,8 @@ BACKEND / API LOGIC
 - Apply review decisions (approve or request changes) and record reviewer comments
 - Clone an existing unit or lesson into a new term with remapped references
 - Generate a printable export of an approved lesson plan (mock PDF)
+- Resolve the department-head recipient for a submitted plan from the author's department, set assignedReviewerId, and create a notification plus a mock email for that reviewer
+- On an approve or request-changes decision, create a notification and mock email for the plan's author including the decision and reviewer comments
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

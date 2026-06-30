@@ -60,6 +60,7 @@
 8. Performance review log and review detail
 9. Auth (sign in / register)
 10. Admin: teams, agents, queues, SLA targets, and CSAT survey config
+11. Notifications / alerts center listing SLA-breach and coaching alerts with severity, source link (team, agent, or flag), timestamp, and read/unread filtering.
 
 ## Required features
 
@@ -72,6 +73,8 @@
 - Coaching workflow that logs performance reviews with action items and follow-up dates
 - SLA breach drill-down to the underlying contacts that missed the threshold
 - Report export to CSV for scorecards and SLA reports
+- Real-time alerting that pushes SLA-breach and agent-flag events to an in-app notification feed and the mock email/SMS log so the responsible manager or team lead is notified instead of having to watch the board, with read/unread state and an unread badge.
+- CSAT verbatim explorer that surfaces the free-text survey comment alongside each score, filterable by score band and queue, so the survey results page shows the 'why' behind the number, not only rollup averages.
 
 ## Database models
 
@@ -94,7 +97,7 @@
 - Standalone model (no outbound foreign keys)
 
 ### Contact
-**Fields:** `id`, `queueId`, `agentId`, `channel`, `waitSeconds`, `handleSeconds`, `resolved`, `firstContactResolution`, `csatScore`, `occurredAt`, `createdAt`, `updatedAt`
+**Fields:** `id`, `queueId`, `agentId`, `channel`, `waitSeconds`, `handleSeconds`, `resolved`, `firstContactResolution`, `csatScore`, `occurredAt`, `csatComment`, `csatRespondedAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - queueId -> references the related record
@@ -108,7 +111,7 @@
 - teamId -> references the related record
 
 ### CoachingFlag
-**Fields:** `id`, `agentId`, `metric`, `threshold`, `actualValue`, `status`, `raisedAt`, `createdAt`, `updatedAt`
+**Fields:** `id`, `agentId`, `metric`, `threshold`, `actualValue`, `status`, `raisedAt`, `notifiedAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - agentId -> references the related record
@@ -121,6 +124,15 @@
 - agentId -> references the related record
 - reviewerId -> references the related record
 
+### Notification
+**Fields:** `id`, `type`, `severity`, `channel`, `title`, `body`, `recipientId`, `teamId`, `agentId`, `flagId`, `read`, `readAt`, `sentAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- recipientId -> references the related record
+- teamId -> references the related record
+- agentId -> references the related record
+- flagId -> references the related record
+
 ## Backend logic
 
 - Compute live queue metrics (volume, longest wait, available agents) from open contacts with periodic refresh
@@ -130,6 +142,8 @@
 - Drive the coaching workflow by opening a review from a flag, recording action items, and tracking follow-up to closure
 - Drill down an SLA breach to the underlying contacts that missed the threshold
 - Export scorecard and SLA reports as CSV
+- Evaluate SLA and metric breaches against team and queue targets and generate alert notifications for the responsible manager and team lead, writing to the in-app feed and the mock email/SMS log, and deduplicating repeat breaches for the same agent or team within a configurable window.
+- Aggregate CSAT verbatim comments by score band, agent, and queue to power the survey explorer alongside the existing numeric rollups.
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -183,6 +197,8 @@
 - [ ] Average handle time, first-contact resolution, and SLA compliance recompute correctly when filtered by team, agent, or shift
 - [ ] An agent who breaches a metric threshold is automatically flagged into the coaching queue and can be routed into a logged performance review
 - [ ] The live queue view refreshes and reflects current volume, longest wait, and available agents
+- [ ] When a team's SLA compliance or an agent's handle time, FCR, or CSAT crosses its configured target, a notification record is created for the responsible manager/team lead and appears in the notification center and the mock email/SMS log within one refresh cycle.
+- [ ] Opening the CSAT explorer for a contact with a submitted survey shows its verbatim comment and score, and filtering by score band returns only matching survey responses.
 
 ## Ready-to-use prompt
 
@@ -201,7 +217,7 @@ Target users: contact-center managers who track live queue and SLA metrics acros
 Business goal: Let support managers monitor live queue volume, handle time, first-contact resolution, SLA compliance, and per-agent CSAT, and run a coaching workflow that flags agents and logs performance reviews.
 
 BRAND & DESIGN
-Brand style: operational, data-dense, calm. Colors: midnight navy, teal, signal green. A live queue board with KPI tiles, a team scorecard grid, and an agent coaching panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: operational, data-dense, calm. Colors: midnight navy #08182b, teal #16b5ae and signal green #1fae5a, with amber #e0922b and rose #e1556b for on-target/watch/breaching status on white #ffffff surfaces. Signature layout: a dark live-queue board of monospaced KPI tiles above a color-coded team scorecard grid and an agent coaching panel; pair Space Grotesk headings with Inter body and IBM Plex Mono tabular numerals for metrics. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -221,6 +237,7 @@ PAGES / SCREENS
 8. Performance review log and review detail
 9. Auth (sign in / register)
 10. Admin: teams, agents, queues, SLA targets, and CSAT survey config
+11. Notifications / alerts center listing SLA-breach and coaching alerts with severity, source link (team, agent, or flag), timestamp, and read/unread filtering.
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -241,15 +258,18 @@ CORE FEATURES
 - Coaching workflow that logs performance reviews with action items and follow-up dates
 - SLA breach drill-down to the underlying contacts that missed the threshold
 - Report export to CSV for scorecards and SLA reports
+- Real-time alerting that pushes SLA-breach and agent-flag events to an in-app notification feed and the mock email/SMS log so the responsible manager or team lead is notified instead of having to watch the board, with read/unread state and an unread badge.
+- CSAT verbatim explorer that surfaces the free-text survey comment alongside each score, filterable by score band and queue, so the survey results page shows the 'why' behind the number, not only rollup averages.
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, teamId, createdAt, updatedAt
 - Team: id, name, managerId, slaTargetSeconds, csatTarget, createdAt, updatedAt
 - Queue: id, name, channel, slaThresholdSeconds, active, createdAt, updatedAt
-- Contact: id, queueId, agentId, channel, waitSeconds, handleSeconds, resolved, firstContactResolution, csatScore, occurredAt, createdAt, updatedAt
+- Contact: id, queueId, agentId, channel, waitSeconds, handleSeconds, resolved, firstContactResolution, csatScore, occurredAt, csatComment, csatRespondedAt, createdAt, updatedAt
 - Shift: id, agentId, teamId, startsAt, endsAt, status, createdAt, updatedAt
-- CoachingFlag: id, agentId, metric, threshold, actualValue, status, raisedAt, createdAt, updatedAt
+- CoachingFlag: id, agentId, metric, threshold, actualValue, status, raisedAt, notifiedAt, createdAt, updatedAt
 - PerformanceReview: id, flagId, agentId, reviewerId, summary, actionItems, followUpDate, status, createdAt, updatedAt
+- Notification: id, type, severity, channel, title, body, recipientId, teamId, agentId, flagId, read, readAt, sentAt, status, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -260,6 +280,8 @@ BACKEND / API LOGIC
 - Drive the coaching workflow by opening a review from a flag, recording action items, and tracking follow-up to closure
 - Drill down an SLA breach to the underlying contacts that missed the threshold
 - Export scorecard and SLA reports as CSV
+- Evaluate SLA and metric breaches against team and queue targets and generate alert notifications for the responsible manager and team lead, writing to the in-app feed and the mock email/SMS log, and deduplicating repeat breaches for the same agent or team within a configurable window.
+- Aggregate CSAT verbatim comments by score band, agent, and queue to power the survey explorer alongside the existing numeric rollups.
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

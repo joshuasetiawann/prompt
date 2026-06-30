@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PulseDesk — Contact Center Performance Analytics Dashboard</title>
+<meta name="description" content="PulseDesk gives support managers a live queue board, color-coded team and agent scorecards, and a coaching workflow that flags at-risk agents and logs performance reviews — SLA, handle time, FCR, and CSAT in one calm, operational view." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand palette: midnight navy, teal, signal green */
+    --navy-950: #050e1a;
+    --navy-900: #08182b;
+    --navy-850: #0b2138;
+    --navy-800: #102a45;
+    --navy-700: #1a3a5a;
+    --navy-600: #274c6e;
+    --teal: #16b5ae;
+    --teal-bright: #2bd9cf;
+    --teal-dark: #0c8a85;
+    --teal-tint: #e2f7f5;
+    --teal-tint-2: #c7efeb;
+    --green: #1fae5a;
+    --green-bright: #2ce06f;
+    --green-dark: #16823f;
+    --green-tint: #e4f7ec;
+    --amber: #e0922b;
+    --amber-tint: #fbedd8;
+    --rose: #e1556b;
+    --rose-tint: #fbe4e8;
+
+    --ink: #0c1b2a;
+    --ink-2: #36506a;
+    --muted: #607a92;
+    --muted-2: #8aa0b3;
+    --line: #e2e9f0;
+    --line-2: #eef3f7;
+    --surface: #ffffff;
+    --surface-2: #f4f8fb;
+    --surface-3: #eef4f9;
+
+    --shadow-sm: 0 1px 2px rgba(8,24,43,.06), 0 2px 8px rgba(8,24,43,.05);
+    --shadow-md: 0 14px 36px -16px rgba(8,24,43,.26), 0 4px 12px rgba(8,24,43,.06);
+    --shadow-lg: 0 40px 90px -34px rgba(5,14,26,.6);
+    --shadow-glow: 0 0 0 1px rgba(43,217,207,.18), 0 20px 60px -20px rgba(22,181,174,.45);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --radius-lg: 24px;
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--surface);
+    line-height: 1.62;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { font-family: 'Space Grotesk', system-ui, sans-serif; line-height: 1.08; letter-spacing: -0.02em; color: var(--ink); }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  ::selection { background: var(--teal-bright); color: var(--navy-900); }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--teal-dark); background: var(--teal-tint); border: 1px solid var(--teal-tint-2);
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .eyebrow.on-dark { color: var(--teal-bright); background: rgba(43,217,207,.08); border-color: rgba(43,217,207,.22); }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 0 4px rgba(44,224,111,.22); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(44,224,111,.4);} 50%{ box-shadow: 0 0 0 6px rgba(44,224,111,0);} }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 15.5px;
+    padding: 14px 24px; border-radius: 12px; cursor: pointer; border: 1.5px solid transparent;
+    transition: transform .15s ease, box-shadow .22s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--teal), var(--teal-dark)); color: #fff; box-shadow: 0 10px 24px -10px rgba(12,138,133,.8); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -12px rgba(12,138,133,.85); }
+  .btn-primary:focus-visible { outline: 3px solid var(--teal-bright); outline-offset: 3px; }
+  .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal-dark); transform: translateY(-2px); }
+  .btn-ghost:focus-visible { outline: 3px solid var(--teal-bright); outline-offset: 3px; }
+  .btn-light { background: rgba(255,255,255,.10); color: #fff; border-color: rgba(255,255,255,.26); }
+  .btn-light:hover { background: rgba(255,255,255,.18); transform: translateY(-2px); }
+  .btn-light:focus-visible { outline: 3px solid var(--teal-bright); outline-offset: 3px; }
+  .btn-sm { padding: 10px 18px; font-size: 14px; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--teal-dark); font-family: 'Space Grotesk', sans-serif; }
+  .link-arrow.on-dark { color: var(--teal-bright); }
+  .link-arrow svg { transition: transform .2s ease; }
+  .link-arrow:hover svg { transform: translateX(4px); }
+
+  /* ---------- NAV ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(8,24,43,.78);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: -.02em; color: #fff; }
+  .brand .mark {
+    width: 40px; height: 40px; border-radius: 12px; flex: none; position: relative;
+    background: linear-gradient(150deg, var(--teal-bright), var(--teal-dark));
+    display: grid; place-items: center; box-shadow: 0 8px 18px -7px rgba(22,181,174,.8);
+  }
+  .brand .mark svg { width: 22px; height: 22px; }
+  .brand small { display: block; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 11px; letter-spacing: .03em; color: var(--muted-2); margin-top: -2px; }
+  .nav-links { display: flex; align-items: center; gap: 2px; }
+  .nav-links a.navlink {
+    font-size: 14.5px; font-weight: 500; color: #c4d4e2; padding: 9px 14px; border-radius: 9px;
+    transition: background .15s, color .15s;
+  }
+  .nav-links a.navlink:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+  .nav-cta .signin { font-size: 14.5px; font-weight: 600; color: #c4d4e2; padding: 10px 14px; border-radius: 9px; font-family: 'Space Grotesk', sans-serif; }
+  .nav-cta .signin:hover { color: #fff; }
+  .nav-toggle { display: none; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16); border-radius: 10px; width: 44px; height: 44px; cursor: pointer; align-items: center; justify-content: center; }
+  .nav-toggle svg { width: 22px; height: 22px; color: #fff; }
+  .mobile-menu { display: none; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative; overflow: hidden; color: #eaf2f8;
+    background:
+      radial-gradient(1200px 520px at 84% -12%, rgba(22,181,174,.26), transparent 58%),
+      radial-gradient(820px 460px at 2% 8%, rgba(31,174,90,.14), transparent 55%),
+      linear-gradient(180deg, var(--navy-900), var(--navy-950));
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 46px 46px; mask-image: radial-gradient(900px 600px at 70% 25%, #000, transparent 75%);
+    -webkit-mask-image: radial-gradient(900px 600px at 70% 25%, #000, transparent 75%);
+  }
+  .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1.02fr 1.08fr; gap: 56px; align-items: center; padding: 72px 0 90px; }
+  .hero h1 { font-size: clamp(2.5rem, 5vw, 3.85rem); color: #fff; margin: 22px 0 0; }
+  .hero h1 .accent { background: linear-gradient(120deg, var(--teal-bright), var(--green-bright)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p.lede { font-size: 1.2rem; color: #b7cadb; margin-top: 22px; max-width: 560px; line-height: 1.6; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; align-items: center; }
+  .hero-trust { display: flex; flex-wrap: wrap; gap: 22px 28px; margin-top: 38px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.1); }
+  .hero-trust .t { display: flex; flex-direction: column; gap: 2px; }
+  .hero-trust .t b { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; color: #fff; letter-spacing: -.01em; }
+  .hero-trust .t span { font-size: 13px; color: var(--muted-2); }
+
+  /* ---------- LIVE QUEUE BOARD PREVIEW ---------- */
+  .board {
+    position: relative; z-index: 2;
+    background: linear-gradient(180deg, var(--navy-850), var(--navy-900));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 18px; overflow: hidden;
+  }
+  .board-top { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .board-top .title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 14.5px; color: #eaf2f8; }
+  .live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 0 0 rgba(44,224,111,.5); animation: pulse 2s infinite; }
+  .board-top .clock { font-size: 12px; color: var(--muted-2); }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0 12px; }
+  .kpi { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 13px; padding: 13px 14px; }
+  .kpi .lbl { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .kpi .val { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 1.55rem; color: #fff; margin-top: 6px; letter-spacing: -.01em; }
+  .kpi .delta { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; margin-top: 5px; }
+  .kpi .delta.up { color: var(--green-bright); }
+  .kpi .delta.down { color: #ff95a4; }
+  .kpi .delta.flat { color: var(--muted-2); }
+  .kpi.accent { background: linear-gradient(160deg, rgba(22,181,174,.18), rgba(22,181,174,.04)); border-color: rgba(43,217,207,.3); }
+
+  .board-scores { padding: 6px 0 4px; }
+  .board-scores .sc-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px 10px; }
+  .board-scores .sc-head span { font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .sc-row { display: grid; grid-template-columns: 1.4fr .9fr .9fr auto; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 11px; background: rgba(255,255,255,.03); margin-bottom: 7px; }
+  .sc-row .team { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #dfeaf3; font-weight: 500; }
+  .sc-row .av { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 11px; color: var(--navy-900); flex: none; }
+  .sc-row .metric { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #cbd9e6; }
+  .pill { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; justify-self: end; }
+  .pill.ok { background: rgba(44,224,111,.16); color: var(--green-bright); }
+  .pill.warn { background: rgba(224,146,43,.18); color: #f6b765; }
+  .pill.risk { background: rgba(225,85,107,.18); color: #ff95a4; }
+
+  .board-foot { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 11px 13px; background: rgba(225,85,107,.1); border: 1px solid rgba(225,85,107,.22); border-radius: 12px; }
+  .board-foot .flag { font-size: 15px; }
+  .board-foot p { font-size: 12.5px; color: #ffd4db; }
+  .board-foot p b { color: #fff; }
+
+  .float-badge { position: absolute; z-index: 3; background: #fff; color: var(--ink); border-radius: 13px; box-shadow: var(--shadow-md); padding: 11px 14px; display: flex; align-items: center; gap: 10px; }
+  .float-badge .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .float-badge .tx b { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 14px; }
+  .float-badge .tx span { font-size: 11.5px; color: var(--muted); }
+  .fb-1 { top: -46px; left: -28px; }
+  .fb-2 { bottom: -30px; right: -28px; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section { position: relative; }
+  .sec-pad { padding: 96px 0; }
+  .sec-head { max-width: 720px; margin: 0 auto; text-align: center; }
+  .sec-head.left { margin: 0; text-align: left; }
+  .sec-head h2 { font-size: clamp(1.9rem, 3.4vw, 2.7rem); margin-top: 16px; }
+  .sec-head p { font-size: 1.12rem; color: var(--ink-2); margin-top: 16px; }
+
+  /* logos / trusted strip */
+  .strip { background: var(--navy-950); border-bottom: 1px solid rgba(255,255,255,.06); }
+  .strip-inner { display: flex; align-items: center; justify-content: center; gap: 14px 40px; flex-wrap: wrap; padding: 22px 0; }
+  .strip-inner span { font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: #6f8aa3; font-weight: 600; }
+  .strip-inner b { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: #aebfcf; letter-spacing: -.01em; }
+
+  /* ---------- FEATURES ---------- */
+  .features { background: var(--surface-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 54px; }
+  .feat-card {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px;
+    box-shadow: var(--shadow-sm); transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .feat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--teal-tint-2); }
+  .feat-card .ic {
+    width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; font-size: 24px;
+    background: linear-gradient(155deg, var(--teal-tint), #fff); border: 1px solid var(--teal-tint-2); margin-bottom: 18px;
+  }
+  .feat-card h3 { font-size: 1.18rem; }
+  .feat-card p { font-size: 15px; color: var(--ink-2); margin-top: 9px; }
+
+  /* ---------- WORKFLOW / SCREENS ---------- */
+  .flow-grid { display: grid; grid-template-columns: .92fr 1.08fr; gap: 56px; align-items: center; margin-top: 56px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; }
+  .step {
+    display: grid; grid-template-columns: auto 1fr; gap: 18px; padding: 20px; border-radius: var(--radius);
+    border: 1px solid var(--line); background: #fff; cursor: default; transition: border-color .2s, box-shadow .2s, transform .2s;
+  }
+  .step:hover { border-color: var(--teal-tint-2); box-shadow: var(--shadow-sm); transform: translateX(3px); }
+  .step .num {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex: none;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+    background: linear-gradient(150deg, var(--navy-700), var(--navy-900));
+  }
+  .step:nth-child(odd) .num { background: linear-gradient(150deg, var(--teal), var(--teal-dark)); }
+  .step h3 { font-size: 1.12rem; }
+  .step p { font-size: 14.5px; color: var(--ink-2); margin-top: 5px; }
+  .step .pagetag { display: inline-block; margin-top: 9px; font-size: 11.5px; font-weight: 600; color: var(--teal-dark); background: var(--teal-tint); border: 1px solid var(--teal-tint-2); padding: 3px 9px; border-radius: 999px; font-family: 'Space Grotesk', sans-serif; }
+
+  /* faux screen card */
+  .screen-stack { position: relative; }
+  .screen {
+    background: linear-gradient(180deg, var(--navy-850), var(--navy-900)); border: 1px solid rgba(255,255,255,.1);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .screen .bar { display: flex; align-items: center; gap: 8px; padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .screen .bar .dots { display: flex; gap: 6px; }
+  .screen .bar .dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .screen .bar .crumb { margin-left: 8px; font-size: 12.5px; color: var(--muted-2); font-family: 'IBM Plex Mono', monospace; }
+  .screen .body { padding: 20px; }
+  .agent-head { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .agent-head .pic { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(150deg, var(--teal-bright), var(--teal-dark)); display: grid; place-items: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--navy-900); font-size: 18px; }
+  .agent-head h4 { color: #fff; font-size: 1.1rem; }
+  .agent-head span { font-size: 12.5px; color: var(--muted-2); }
+  .agent-head .pill { margin-left: auto; }
+  .mini-kpis { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 18px 0; }
+  .mini-kpis .m { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 12px; }
+  .mini-kpis .m span { font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted-2); font-weight: 600; }
+  .mini-kpis .m b { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 1.25rem; color: #fff; margin-top: 5px; }
+  .chart { display: flex; align-items: flex-end; gap: 7px; height: 96px; padding: 14px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); border-radius: 13px; }
+  .chart .col { flex: 1; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, var(--teal-bright), var(--teal-dark)); opacity: .85; }
+  .chart .col.peak { background: linear-gradient(180deg, var(--green-bright), var(--green-dark)); }
+  .chart-cap { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--muted-2); font-family: 'IBM Plex Mono', monospace; }
+
+  /* ---------- ROLES ---------- */
+  .roles { background: var(--navy-900); color: #eaf2f8; position: relative; overflow: hidden; }
+  .roles::before { content: ""; position: absolute; inset: 0; background: radial-gradient(800px 420px at 88% -10%, rgba(22,181,174,.2), transparent 60%); }
+  .roles .sec-head h2 { color: #fff; }
+  .roles .sec-head p { color: #b7cadb; }
+  .role-grid { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 52px; }
+  .role-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 26px; transition: border-color .2s, background .2s, transform .2s; }
+  .role-card:hover { border-color: rgba(43,217,207,.4); background: rgba(255,255,255,.06); transform: translateY(-3px); }
+  .role-card .rtop { display: flex; align-items: center; gap: 13px; }
+  .role-card .ic { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; background: rgba(43,217,207,.12); border: 1px solid rgba(43,217,207,.26); flex: none; }
+  .role-card h3 { color: #fff; font-size: 1.18rem; }
+  .role-card .tag { font-size: 12px; color: var(--teal-bright); font-weight: 600; letter-spacing: .02em; }
+  .role-card p { font-size: 14.5px; color: #b7cadb; margin-top: 14px; }
+  .role-card ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .role-card li { display: flex; gap: 9px; font-size: 14px; color: #cbd9e6; }
+  .role-card li svg { flex: none; margin-top: 4px; color: var(--green-bright); }
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band { padding: 88px 0; }
+  .cta-inner {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg); padding: 60px 56px; text-align: center;
+    background:
+      radial-gradient(700px 360px at 16% -30%, rgba(44,224,111,.22), transparent 60%),
+      radial-gradient(700px 380px at 88% 130%, rgba(22,181,174,.32), transparent 60%),
+      linear-gradient(150deg, var(--navy-800), var(--navy-950));
+    border: 1px solid rgba(255,255,255,.1); box-shadow: var(--shadow-lg);
+  }
+  .cta-inner h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); color: #fff; }
+  .cta-inner p { font-size: 1.15rem; color: #b7cadb; margin: 16px auto 0; max-width: 560px; }
+  .cta-inner .hero-cta { justify-content: center; margin-top: 30px; }
+  .cta-note { margin-top: 18px; font-size: 13px; color: var(--muted-2); }
+
+  /* ---------- FOOTER ---------- */
+  footer { background: var(--navy-950); color: #aebfcf; padding: 64px 0 30px; border-top: 1px solid rgba(255,255,255,.06); }
+  .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+  .foot-brand .brand { margin-bottom: 16px; }
+  .foot-brand p { font-size: 14px; color: #7f97ad; max-width: 300px; }
+  .foot-col h4 { font-family: 'Space Grotesk', sans-serif; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: #6f8aa3; margin-bottom: 16px; }
+  .foot-col a { display: block; font-size: 14.5px; color: #aebfcf; padding: 6px 0; transition: color .15s; }
+  .foot-col a:hover { color: var(--teal-bright); }
+  .foot-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; color: #6f8aa3; }
+  .foot-bottom .made { display: flex; gap: 18px; flex-wrap: wrap; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 64px; padding: 56px 0 76px; }
+    .flow-grid { grid-template-columns: 1fr; gap: 44px; }
+    .feat-grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .nav-links, .nav-cta .signin, .nav-cta .btn:not(.nav-demo) { display: none; }
+    .nav-toggle { display: inline-flex; }
+    .mobile-menu.open { display: block; background: var(--navy-900); border-bottom: 1px solid rgba(255,255,255,.1); padding: 14px 0 22px; }
+    .mobile-menu.open .wrap { display: flex; flex-direction: column; gap: 4px; }
+    .mobile-menu a { color: #c4d4e2; font-size: 16px; font-weight: 500; padding: 12px 8px; border-radius: 10px; }
+    .mobile-menu a:hover { background: rgba(255,255,255,.06); }
+    .mobile-menu .btn { margin-top: 10px; }
+    .sec-pad { padding: 70px 0; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .role-grid { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .cta-inner { padding: 44px 26px; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .float-badge { display: none; }
+    .hero-trust { gap: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="PulseDesk home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#06222b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2.5-7 4 16 3-9 1.5 3H21"/></svg>
+      </span>
+      <span>PulseDesk<small>Contact Center Performance Analytics</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="navlink" href="#features">Platform</a>
+      <a class="navlink" href="#workflow">How it works</a>
+      <a class="navlink" href="#screens">Screens</a>
+      <a class="navlink" href="#roles">For teams</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="signin" href="#cta">Sign in</a>
+      <a class="btn btn-primary btn-sm nav-demo" href="#cta">Request a demo</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="wrap">
+      <a href="#features">Platform</a>
+      <a href="#workflow">How it works</a>
+      <a href="#screens">Screens</a>
+      <a href="#roles">For teams</a>
+      <a href="#cta">Sign in</a>
+      <a class="btn btn-primary" href="#cta">Request a demo</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow on-dark"><span class="dot"></span> Live queue &amp; SLA intelligence</span>
+      <h1>Run the floor on <span class="accent">live numbers</span>, not gut feel.</h1>
+      <p class="lede">PulseDesk puts live queue volume, handle time, first-contact resolution, SLA compliance, and per-agent CSAT on one calm board — then flags at-risk agents and routes them into a logged coaching workflow.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#cta">Request a demo
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="link-arrow on-dark" href="#workflow">See how coaching works
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="t"><b>94.2%</b><span>SLA compliance, live</span></div>
+        <div class="t"><b>&lt;5s</b><span>board refresh interval</span></div>
+        <div class="t"><b>4 roles</b><span>scoped, role-based views</span></div>
+      </div>
+    </div>
+
+    <!-- Live queue board preview -->
+    <div style="position:relative">
+      <div class="float-badge fb-1">
+        <span class="ic" style="background:var(--green-tint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16823f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <span class="tx"><b>FCR 78.4%</b><span>+2.1 pts vs target</span></span>
+      </div>
+      <div class="float-badge fb-2">
+        <span class="ic" style="background:var(--rose-tint)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c33950" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        </span>
+        <span class="tx"><b>2 agents flagged</b><span>routed to coaching</span></span>
+      </div>
+
+      <div class="board" role="img" aria-label="Live queue board preview showing KPI tiles and a team scorecard">
+        <div class="board-top">
+          <div class="title"><span class="live-dot"></span> Live Queue Board — North America</div>
+          <div class="clock mono">Updated 0:03s ago</div>
+        </div>
+        <div class="kpis">
+          <div class="kpi accent">
+            <div class="lbl">Live volume</div>
+            <div class="val">38</div>
+            <div class="delta up">▲ 6 in queue</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Longest wait</div>
+            <div class="val">4:12</div>
+            <div class="delta down">▲ over 4:00 SLA</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Avail. agents</div>
+            <div class="val">17</div>
+            <div class="delta flat">of 24 on shift</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Avg handle</div>
+            <div class="val">5:48</div>
+            <div class="delta up">▼ 12s faster</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">SLA today</div>
+            <div class="val">94.2%</div>
+            <div class="delta up">▲ above 92%</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">CSAT</div>
+            <div class="val">4.6</div>
+            <div class="delta up">▲ 0.2 wk</div>
+          </div>
+        </div>
+        <div class="board-scores">
+          <div class="sc-head"><span>Team scorecard</span><span>SLA · CSAT</span></div>
+          <div class="sc-row">
+            <div class="team"><span class="av" style="background:var(--teal-bright)">VS</span> Voice — Sunrise</div>
+            <div class="metric">96.1%</div>
+            <div class="metric">4.7</div>
+            <span class="pill ok">On target</span>
+          </div>
+          <div class="sc-row">
+            <div class="team"><span class="av" style="background:var(--green-bright)">CN</span> Chat — Nimbus</div>
+            <div class="metric">93.4%</div>
+            <div class="metric">4.5</div>
+            <span class="pill warn">Watch</span>
+          </div>
+          <div class="sc-row">
+            <div class="team"><span class="av" style="background:#f3a85a">VT</span> Voice — Tideline</div>
+            <div class="metric">88.9%</div>
+            <div class="metric">4.2</div>
+            <span class="pill risk">Breaching</span>
+          </div>
+        </div>
+        <div class="board-foot">
+          <span class="flag" aria-hidden="true">🚩</span>
+          <p><b>Tideline</b> breached its 4:00 SLA target — 11 contacts missed. Drill in to coach.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUSTED STRIP ===== -->
+<div class="strip">
+  <div class="wrap strip-inner">
+    <span>Built for the operations stack you already run</span>
+    <b>Voice</b><b>Live chat</b><b>WFM</b><b>QA &amp; coaching</b><b>SLA reporting</b>
+  </div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="features sec-pad" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">The platform</span>
+      <h2>Everything a support floor measures, in one operational view.</h2>
+      <p>From the live queue to the post-contact survey, PulseDesk computes the metrics that matter and turns threshold breaches into action — color-coded, scoped to your role, and exportable.</p>
+    </div>
+    <div class="feat-grid">
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">📡</div>
+        <h3>Live queue board</h3>
+        <p>Auto-refreshing view of queue volume, longest wait, and available agents across every voice and chat queue.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">📊</div>
+        <h3>Core KPI engine</h3>
+        <p>Average handle time, first-contact resolution, and SLA compliance computed continuously and recomputed on every filter.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">🎯</div>
+        <h3>Color-coded scorecards</h3>
+        <p>Per-agent and per-team scorecards measured against targets, with on-target, watch, and breaching status at a glance.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">🕐</div>
+        <h3>Shift comparison</h3>
+        <p>Shift-based aggregation that lets you put morning, swing, and overnight scorecards side by side to spot coverage gaps.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">⭐</div>
+        <h3>CSAT rollup</h3>
+        <p>Capture post-contact survey scores and roll them up into agent and team averages automatically — no spreadsheet stitching.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">🚩</div>
+        <h3>Automatic flagging</h3>
+        <p>Agents who breach a metric threshold are raised into the coaching queue the moment the numbers cross the line.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">📝</div>
+        <h3>Coaching workflow</h3>
+        <p>Open a review straight from a flag, log a summary and action items, set a follow-up date, and track it to closure.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">🔎</div>
+        <h3>SLA breach drill-down</h3>
+        <p>Click any SLA breach to see the exact contacts that missed the threshold — the wait, the handle time, the agent.</p>
+      </article>
+      <article class="feat-card">
+        <div class="ic" aria-hidden="true">📤</div>
+        <h3>CSV export</h3>
+        <p>Export scorecards and SLA reports to CSV for QBRs, payroll calibration, and workforce planning in seconds.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WORKFLOW ===== -->
+<section class="sec-pad" id="workflow">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From a live spike to a logged coaching review.</h2>
+      <p>PulseDesk follows the way a real support floor runs its day — watch the queue, measure the team, find the breach, coach the agent, report the result.</p>
+    </div>
+    <div class="flow-grid">
+      <div class="steps">
+        <div class="step">
+          <span class="num">1</span>
+          <div>
+            <h3>Watch the live queue</h3>
+            <p>Open the live queue dashboard to see volume, longest wait, and SLA tiles refresh in near real time.</p>
+            <span class="pagetag">Live queue dashboard</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">2</span>
+          <div>
+            <h3>Measure teams &amp; agents</h3>
+            <p>Read the team scorecard grid and agent detail trends — handle time, FCR, CSAT, and SLA against every target.</p>
+            <span class="pagetag">Team scorecard · Agent detail</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">3</span>
+          <div>
+            <h3>Drill into the breach</h3>
+            <p>When SLA dips, open the compliance report and drill down to the underlying contacts that missed the threshold.</p>
+            <span class="pagetag">SLA compliance report</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">4</span>
+          <div>
+            <h3>Flag &amp; coach</h3>
+            <p>Flagged agents land in the coaching queue. Open a review, record action items, and set a follow-up date.</p>
+            <span class="pagetag">Coaching queue · Review log</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="num">5</span>
+          <div>
+            <h3>Report &amp; export</h3>
+            <p>Roll the week up across shifts and CSAT surveys, then export scorecards and SLA reports to CSV for your QBR.</p>
+            <span class="pagetag">Shift scorecard · CSAT explorer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent detail screen mockup -->
+      <div class="screen-stack" id="screens">
+        <div class="screen">
+          <div class="bar">
+            <div class="dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+            <span class="crumb">pulsedesk.app / agents / m-okafor</span>
+          </div>
+          <div class="body">
+            <div class="agent-head">
+              <div class="pic">MO</div>
+              <div>
+                <h4>Maya Okafor</h4>
+                <span>Voice — Sunrise · Swing shift · Agent #A-0427</span>
+              </div>
+              <span class="pill warn">Watch</span>
+            </div>
+            <div class="mini-kpis">
+              <div class="m"><span>Handle time</span><b>6:31</b></div>
+              <div class="m"><span>FCR</span><b>71%</b></div>
+              <div class="m"><span>CSAT</span><b>4.3</b></div>
+            </div>
+            <div class="chart" aria-hidden="true">
+              <span class="col" style="height:46%"></span>
+              <span class="col" style="height:60%"></span>
+              <span class="col" style="height:38%"></span>
+              <span class="col" style="height:72%"></span>
+              <span class="col" style="height:55%"></span>
+              <span class="col peak" style="height:88%"></span>
+              <span class="col" style="height:64%"></span>
+              <span class="col" style="height:50%"></span>
+              <span class="col" style="height:78%"></span>
+              <span class="col peak" style="height:94%"></span>
+            </div>
+            <div class="chart-cap"><span>14-day CSAT trend</span><span>Target 4.5</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROLES ===== -->
+<section class="roles sec-pad" id="roles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow on-dark">Built for the whole floor</span>
+      <h2>One source of truth, scoped to each role.</h2>
+      <p>Role-based access means every person sees the metrics and actions they own — and nothing they shouldn't. Menus, pages, and data are scoped to the signed-in user.</p>
+    </div>
+    <div class="role-grid">
+      <article class="role-card">
+        <div class="rtop">
+          <span class="ic" aria-hidden="true">🛰️</span>
+          <div><h3>Contact Center Manager</h3><span class="tag">Full floor visibility</span></div>
+        </div>
+        <p>Monitor live queues, review every scorecard, and run the coaching workflow end to end.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Watch every queue and team in one board</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Open and close performance reviews</li>
+        </ul>
+      </article>
+      <article class="role-card">
+        <div class="rtop">
+          <span class="ic" aria-hidden="true">🧭</span>
+          <div><h3>Team Lead</h3><span class="tag">Team SLA &amp; coaching</span></div>
+        </div>
+        <p>Track your team's SLA and agent metrics, and log coaching notes against flagged agents.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Scoped to your team's scorecards</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Record action items and follow-ups</li>
+        </ul>
+      </article>
+      <article class="role-card">
+        <div class="rtop">
+          <span class="ic" aria-hidden="true">📈</span>
+          <div><h3>WFM Analyst</h3><span class="tag">Reporting &amp; trends</span></div>
+        </div>
+        <p>Build reports and analyze shift and queue trends to plan staffing with confidence.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Side-by-side shift comparison</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Export SLA &amp; scorecard CSVs</li>
+        </ul>
+      </article>
+      <article class="role-card">
+        <div class="rtop">
+          <span class="ic" aria-hidden="true">🎧</span>
+          <div><h3>Agent</h3><span class="tag">Personal view</span></div>
+        </div>
+        <p>See your own metrics and coaching feedback — know exactly where you stand and what to improve.</p>
+        <ul>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Personal handle time, FCR, and CSAT</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Action items from each review</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA BAND ===== -->
+<section class="cta-band" id="cta">
+  <div class="wrap">
+    <div class="cta-inner">
+      <span class="eyebrow on-dark"><span class="dot"></span> Ready when your floor is</span>
+      <h2>Put your queue, your SLAs, and your coaching on one board.</h2>
+      <p>Spin up PulseDesk on demo data in minutes — four teams, a dozen agents, live queues, and seeded coaching reviews — then connect your own contact stream when you're ready.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#top">Request a demo
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-light" href="#features">Explore the platform</a>
+      </div>
+      <p class="cta-note">Runs locally on seed data — no paid API keys required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#06222b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2.5-7 4 16 3-9 1.5 3H21"/></svg>
+          </span>
+          <span>PulseDesk<small>Contact Center Performance Analytics</small></span>
+        </a>
+        <p>Live queue, SLA, and coaching analytics for support and call-center operations — one calm, operational view for managers, leads, analysts, and agents.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#features">Live queue board</a>
+        <a href="#features">KPI engine</a>
+        <a href="#features">Scorecards</a>
+        <a href="#features">CSV export</a>
+      </div>
+      <div class="foot-col">
+        <h4>Workflow</h4>
+        <a href="#workflow">How it works</a>
+        <a href="#screens">Agent detail</a>
+        <a href="#workflow">Coaching queue</a>
+        <a href="#workflow">SLA drill-down</a>
+      </div>
+      <div class="foot-col">
+        <h4>Teams</h4>
+        <a href="#roles">Center Managers</a>
+        <a href="#roles">Team Leads</a>
+        <a href="#roles">WFM Analysts</a>
+        <a href="#roles">Agents</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 PulseDesk Contact Center Performance Analytics Dashboard. All rights reserved.</span>
+      <div class="made">
+        <a href="#features">Privacy</a>
+        <a href="#features">Security</a>
+        <a href="#cta">Sign in</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var toggle = document.getElementById('navToggle');
+    var menu = document.getElementById('mobileMenu');
+    if (toggle && menu) {
+      toggle.addEventListener('click', function () {
+        var open = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+      menu.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+  })();
+</script>
+</body>
+</html>

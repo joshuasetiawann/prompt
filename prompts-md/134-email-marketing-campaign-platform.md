@@ -60,6 +60,8 @@
 8. Public subscription preferences and unsubscribe page
 9. Auth (sign in / register)
 10. Admin: team, sending settings, and templates
+11. Public hosted signup-form landing page (capture form plus the double opt-in confirmation result screen)
+12. Subscriber detail page with an engagement timeline of that contact's opens, clicks, sends, and unsubscribe events
 
 ## Required features
 
@@ -72,6 +74,8 @@
 - Unsubscribe handling with a public preferences page and suppression list
 - Per-campaign analytics for open rate, click rate, unsubscribe rate, and bounces
 - A/B subject-line testing on a sample before the full send
+- Hosted, embeddable subscriber signup form that captures new contacts into a list and runs them through double opt-in confirmation before they become subscribed
+- CSV export of a list or saved segment, plus a downloadable per-campaign analytics report (opens, clicks, unsubscribes, bounces)
 
 ## Database models
 
@@ -82,13 +86,13 @@
 - Standalone model (no outbound foreign keys)
 
 ### ContactList
-**Fields:** `id`, `name`, `description`, `defaultFromName`, `createdAt`, `updatedAt`
+**Fields:** `id`, `name`, `description`, `defaultFromName`, `defaultFromEmail`, `doubleOptInEnabled`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - Standalone model (no outbound foreign keys)
 
 ### Subscriber
-**Fields:** `id`, `listId`, `email`, `name`, `status`, `source`, `subscribedAt`, `createdAt`, `updatedAt`
+**Fields:** `id`, `listId`, `email`, `name`, `status`, `source`, `subscribedAt`, `tags`, `attributes`, `country`, `lastOpenedAt`, `lastClickedAt`, `confirmToken`, `confirmedAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - listId -> references the related record
@@ -100,7 +104,7 @@
 - listId -> references the related record
 
 ### Campaign
-**Fields:** `id`, `listId`, `segmentId`, `name`, `subject`, `fromName`, `htmlContent`, `status`, `scheduledAt`, `sentAt`, `createdAt`, `updatedAt`
+**Fields:** `id`, `listId`, `segmentId`, `name`, `subject`, `fromName`, `htmlContent`, `status`, `scheduledAt`, `sentAt`, `fromEmail`, `replyToEmail`, `abTestEnabled`, `subjectVariantB`, `abSamplePercent`, `abWinnerVariant`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - listId -> references the related record
@@ -120,6 +124,12 @@
 - automationId -> references the related record
 - subscriberId -> references the related record
 
+### Template
+**Fields:** `id`, `createdById`, `name`, `description`, `category`, `htmlContent`, `blocks`, `thumbnailUrl`, `isShared`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- createdById -> references the related record
+
 ## Backend logic
 
 - Import subscribers into a list with deduplication and double opt-in status
@@ -129,6 +139,8 @@
 - Run drip automations by advancing subscribers through steps on triggers and delays
 - Process unsubscribes through the preferences page and maintain a suppression list
 - Aggregate per-campaign open, click, unsubscribe, and bounce rates for analytics
+- Handle public signup-form submissions: create a pending subscriber, issue a double opt-in confirmation token, and only mark them subscribed when the confirmation link is followed
+- Run an A/B subject-line test by sending each variant to a sample slice, selecting the higher open-rate subject after a test window, and sending the winner to the remaining audience
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -182,6 +194,8 @@
 - [ ] A segment's live count updates as its rules change, and a campaign sends only to the matching audience
 - [ ] Mock sends generate open, click, and unsubscribe events that roll up into per-campaign open, click, and unsubscribe rates
 - [ ] Unsubscribing through the public preferences page adds the contact to the suppression list and excludes them from future sends
+- [ ] An A/B subject-line test sends variants to a sample of the audience, picks the higher open-rate subject, and sends only the winning subject to the remaining recipients
+- [ ] A public signup-form submission creates a pending subscriber that becomes 'subscribed' only after the double opt-in confirmation link is followed, recording the list and source
 
 ## Ready-to-use prompt
 
@@ -200,7 +214,7 @@ Target users: marketing managers who build segmented lists and run campaigns and
 Business goal: Let teams build subscriber lists, segment audiences with rules, design and send campaigns, and run drip automations with open, click, and unsubscribe analytics.
 
 BRAND & DESIGN
-Brand style: friendly, energetic, modern. Colors: electric coral, ink navy, off-white. A campaign workspace with a drag-and-drop email designer, an audience segment builder, and an analytics panel of opens and clicks. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: friendly, energetic, modern. Colors: electric coral #FF5A45, ink navy #0E1B2E, off-white cream #FBF7F1, with mint #14B17F and amber #E89324 status accents. Signature layout: a split campaign workspace pairing a drag-and-drop email canvas with a live segment-count sidebar and rounded analytics KPI cards; pair Plus Jakarta Sans for headings/UI with IBM Plex Mono for stats, rates, and counts. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -220,6 +234,8 @@ PAGES / SCREENS
 8. Public subscription preferences and unsubscribe page
 9. Auth (sign in / register)
 10. Admin: team, sending settings, and templates
+11. Public hosted signup-form landing page (capture form plus the double opt-in confirmation result screen)
+12. Subscriber detail page with an engagement timeline of that contact's opens, clicks, sends, and unsubscribe events
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -240,15 +256,18 @@ CORE FEATURES
 - Unsubscribe handling with a public preferences page and suppression list
 - Per-campaign analytics for open rate, click rate, unsubscribe rate, and bounces
 - A/B subject-line testing on a sample before the full send
+- Hosted, embeddable subscriber signup form that captures new contacts into a list and runs them through double opt-in confirmation before they become subscribed
+- CSV export of a list or saved segment, plus a downloadable per-campaign analytics report (opens, clicks, unsubscribes, bounces)
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
-- ContactList: id, name, description, defaultFromName, createdAt, updatedAt
-- Subscriber: id, listId, email, name, status, source, subscribedAt, createdAt, updatedAt
+- ContactList: id, name, description, defaultFromName, defaultFromEmail, doubleOptInEnabled, createdAt, updatedAt
+- Subscriber: id, listId, email, name, status, source, subscribedAt, tags, attributes, country, lastOpenedAt, lastClickedAt, confirmToken, confirmedAt, createdAt, updatedAt
 - Segment: id, listId, name, rules, createdAt, updatedAt
-- Campaign: id, listId, segmentId, name, subject, fromName, htmlContent, status, scheduledAt, sentAt, createdAt, updatedAt
+- Campaign: id, listId, segmentId, name, subject, fromName, htmlContent, status, scheduledAt, sentAt, fromEmail, replyToEmail, abTestEnabled, subjectVariantB, abSamplePercent, abWinnerVariant, createdAt, updatedAt
 - Automation: id, listId, name, triggerType, steps, status, createdAt, updatedAt
 - EmailEvent: id, campaignId, automationId, subscriberId, type, linkUrl, occurredAt, createdAt, updatedAt
+- Template: id, createdById, name, description, category, htmlContent, blocks, thumbnailUrl, isShared, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -259,6 +278,8 @@ BACKEND / API LOGIC
 - Run drip automations by advancing subscribers through steps on triggers and delays
 - Process unsubscribes through the preferences page and maintain a suppression list
 - Aggregate per-campaign open, click, unsubscribe, and bounce rates for analytics
+- Handle public signup-form submissions: create a pending subscriber, issue a double opt-in confirmation token, and only mark them subscribed when the confirmation link is followed
+- Run an A/B subject-line test by sending each variant to a sample slice, selecting the higher open-rate subject after a test window, and sending the winner to the remaining audience
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES
