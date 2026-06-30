@@ -1,14 +1,18 @@
 prompt_id: '24'
 title: Employee Attendance App
 slug: employee-attendance-app
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: ClockWise Employee Attendance App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building attendance and time-tracking tools for small and mid-size teams.
 target_user: Employee; Manager/Admin
+target_users: employees logging hours and managers tracking attendance, shifts, and leave
+role_line: You are a senior full-stack engineer who builds HR attendance and time-tracking tools
 business_goal: Record clock-ins and outs, manage shifts and leave requests, and report on attendance
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, reliable, workplace-friendly. Colors: teal, slate, white. Clean, modern, simple clock screen and clear attendance tables.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -185,6 +189,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Employee — clock in/out and request leave
+- Manager/Admin — manage employees, approve leave, view reports
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~15 employees, shifts, attendance history with some late entries, leave requests, 1 admin/manager and 2 employees. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
@@ -257,9 +267,9 @@ ready_to_use_prompt: |-
   5. Employees list and detail
   6. Shifts/schedule
   7. Leave approvals
-  8. Reports and export
-  9. Timesheets and approvals
-  10. Leave balances
+  8. Timesheets and approvals
+  9. Leave balances
+  10. Reports and export
 
   NAVIGATION
   - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.

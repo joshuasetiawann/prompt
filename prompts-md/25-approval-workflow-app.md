@@ -7,7 +7,8 @@
 | **Prompt ID** | 25 |
 | **Title** | Approval Workflow App |
 | **Slug** | approval-workflow-app |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Requester; Approver; Admin |
@@ -66,6 +67,8 @@
 - Status: pending, approved, rejected, with a visible timeline
 - Configurable workflow steps per request type
 - Audit log of every action and approver
+- File attachments on requests with safe upload handling
+- Comment threads and in-app notifications on each request
 - Reports: approval times and outcomes; export concept
 
 ## Database models
@@ -103,6 +106,27 @@
 - requestId -> references the related record
 - actorId -> references the related record
 
+### Attachment
+**Fields:** `id`, `requestId`, `uploadedById`, `fileName`, `fileUrl`, `fileType`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- requestId -> references the related record
+- uploadedById -> references the related record
+
+### Comment
+**Fields:** `id`, `requestId`, `authorId`, `content`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- requestId -> references the related record
+- authorId -> references the related record
+
+### Notification
+**Fields:** `id`, `userId`, `requestId`, `channel`, `message`, `isRead`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- requestId -> references the related record
+
 ## Backend logic
 
 - Request creation that generates ordered approval steps
@@ -110,6 +134,7 @@
 - Audit logging on every decision
 - Admin workflow configuration
 - Reporting on cycle time and outcomes
+- Notification dispatch (mock email/SMS log) when steps unlock or decisions are made
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -215,6 +240,8 @@ CORE FEATURES
 - Status: pending, approved, rejected, with a visible timeline
 - Configurable workflow steps per request type
 - Audit log of every action and approver
+- File attachments on requests with safe upload handling
+- Comment threads and in-app notifications on each request
 - Reports: approval times and outcomes; export concept
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -223,6 +250,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Request: id, typeId, requesterId, details, amount, status, createdAt, updatedAt
 - ApprovalStep: id, requestId, stepOrder, approverId, status, comment, decidedAt, createdAt, updatedAt
 - AuditLog: id, requestId, action, actorId, createdAt, updatedAt
+- Attachment: id, requestId, uploadedById, fileName, fileUrl, fileType, createdAt, updatedAt
+- Comment: id, requestId, authorId, content, createdAt, updatedAt
+- Notification: id, userId, requestId, channel, message, isRead, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -231,6 +261,7 @@ BACKEND / API LOGIC
 - Audit logging on every decision
 - Admin workflow configuration
 - Reporting on cycle time and outcomes
+- Notification dispatch (mock email/SMS log) when steps unlock or decisions are made
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

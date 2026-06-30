@@ -7,7 +7,8 @@
 | **Prompt ID** | 21 |
 | **Title** | Inventory Management System |
 | **Slug** | inventory-management-system |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/Manager; Staff |

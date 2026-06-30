@@ -2,13 +2,17 @@ prompt_id: '22'
 title: Finance Dashboard App
 slug: finance-dashboard-app
 category: Analytics & Dashboards
+domain: Analytics & Dashboards
 app_name: FinanceIQ Finance Dashboard App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building finance trackers for freelancers, small businesses, or personal use.
 target_user: Owner/Admin; Viewer
+target_users: small business owners and individuals tracking money across accounts
+role_line: You are a senior full-stack engineer who builds personal and small-business finance dashboards
 business_goal: Record transactions, categorize them, and see cash flow, budgets, and trends clearly
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: trustworthy, clean, finance-grade. Colors: green, slate, white. Clean, modern, KPI cards, charts, and a clean transaction table.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -186,6 +190,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner/Admin — full access
+- Viewer — read-only dashboards (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 accounts, ~12 categories, ~80 transactions across recent months, budgets, 1 owner account. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

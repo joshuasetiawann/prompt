@@ -1,14 +1,18 @@
 prompt_id: '23'
 title: Invoice Generator App
 slug: invoice-generator-app
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: InvoiceMint Invoice Generator App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers and developers building a simple, self-hosted invoicing tool.
 target_user: Owner/Admin; Staff
+target_users: freelancers and small businesses billing clients and tracking payments
+role_line: You are a senior full-stack engineer who builds invoicing and billing tools for freelancers and SMBs
 business_goal: Create professional invoices, track their status, and record payments
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clean, professional, business-ready. Colors: blue, white, slate. Clean, modern, clear invoice builder and a status-driven invoice list.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -155,6 +159,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Owner/Admin — manage clients, invoices, and payments
+- Staff — create and manage invoices (optional)
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: business profile, ~10 clients, ~20 invoices across statuses, payments, 1 owner account. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

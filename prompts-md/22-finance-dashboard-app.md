@@ -8,6 +8,7 @@
 | **Title** | Finance Dashboard App |
 | **Slug** | finance-dashboard-app |
 | **Category** | Analytics & Dashboards |
+| **Domain** | Analytics & Dashboards |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Owner/Admin; Viewer |
@@ -67,6 +68,9 @@
 - Top-categories and monthly trend views
 - Filtering by date range and category
 - Reports and CSV export concept
+- Payees/vendors linked to transactions for spend-by-payee insights
+- Recurring transactions with frequency and next-run scheduling
+- Savings goals tracking target vs current amount toward a deadline
 
 ## Database models
 
@@ -101,11 +105,34 @@
 **Relationships:**
 - categoryId -> references the related record
 
+### Payee
+**Fields:** `id`, `userId`, `name`, `type`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### RecurringTransaction
+**Fields:** `id`, `accountId`, `categoryId`, `payeeId`, `name`, `amount`, `frequency`, `nextDate`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- accountId -> references the related record
+- categoryId -> references the related record
+- payeeId -> references the related record
+
+### SavingsGoal
+**Fields:** `id`, `userId`, `accountId`, `name`, `targetAmount`, `currentAmount`, `deadline`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- accountId -> references the related record
+
 ## Backend logic
 
 - Transaction CRUD updating account balances
 - Budget vs actual calculation per category and month
 - Dashboard aggregations and chart data
+- Recurring-transaction scheduling that posts entries on their next-run date
+- Savings-goal progress calculation of current vs target amount
 - Date-range filtering and export
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
@@ -212,6 +239,9 @@ CORE FEATURES
 - Top-categories and monthly trend views
 - Filtering by date range and category
 - Reports and CSV export concept
+- Payees/vendors linked to transactions for spend-by-payee insights
+- Recurring transactions with frequency and next-run scheduling
+- Savings goals tracking target vs current amount toward a deadline
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -219,12 +249,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Category: id, userId, name, type, createdAt, updatedAt
 - Transaction: id, accountId, categoryId, type, amount, date, note, createdAt, updatedAt
 - Budget: id, categoryId, month, limit, createdAt, updatedAt
+- Payee: id, userId, name, type, notes, createdAt, updatedAt
+- RecurringTransaction: id, accountId, categoryId, payeeId, name, amount, frequency, nextDate, isActive, createdAt, updatedAt
+- SavingsGoal: id, userId, accountId, name, targetAmount, currentAmount, deadline, status, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Transaction CRUD updating account balances
 - Budget vs actual calculation per category and month
 - Dashboard aggregations and chart data
+- Recurring-transaction scheduling that posts entries on their next-run date
+- Savings-goal progress calculation of current vs target amount
 - Date-range filtering and export
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 

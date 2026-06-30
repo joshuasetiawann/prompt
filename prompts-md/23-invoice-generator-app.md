@@ -7,7 +7,8 @@
 | **Prompt ID** | 23 |
 | **Title** | Invoice Generator App |
 | **Slug** | invoice-generator-app |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Owner/Admin; Staff |

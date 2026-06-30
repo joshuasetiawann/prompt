@@ -1,14 +1,18 @@
 prompt_id: '21'
 title: Inventory Management System
 slug: inventory-management-system
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: StockPilot Inventory Management System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building stock-control tools for shops, warehouses, and small distributors.
 target_user: Admin/Manager; Staff
+target_users: warehouse and retail staff managing stock and managers monitoring levels
+role_line: You are a senior full-stack engineer who builds inventory and stock-control systems
 business_goal: Track stock in and out, manage suppliers and purchase orders, and flag low stock
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: utilitarian, clear, operations-focused. Colors: amber, slate, white. Clean, modern, data-dense tables, quick filters, and clear stock indicators.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -169,6 +173,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/Manager — full access and reports
+- Staff — record stock movements and view products
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 5 categories, ~40 products, stock movements, suppliers, a purchase order, audit entries, 1 admin and 1 staff. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

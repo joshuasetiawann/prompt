@@ -7,7 +7,8 @@
 | **Prompt ID** | 24 |
 | **Title** | Employee Attendance App |
 | **Slug** | employee-attendance-app |
-| **Category** | Business & Operations |
+| **Category** | Business Operations |
+| **Domain** | Business & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Employee; Manager/Admin |
@@ -56,7 +57,9 @@
 5. Employees list and detail
 6. Shifts/schedule
 7. Leave approvals
-8. Reports and export
+8. Timesheets and approvals
+9. Leave balances
+10. Reports and export
 
 ## Required features
 
@@ -65,6 +68,9 @@
 - Shifts and expected hours; late/absent flags
 - Leave requests with approve/reject flow
 - Manager live view of who's in/late/on leave
+- Shift assignment scheduling for employees by date
+- Leave balance tracking per employee and leave type
+- Timesheet generation and manager approval per pay period
 - Reports: hours, lateness, leave; CSV export concept
 
 ## Database models
@@ -100,12 +106,35 @@
 **Relationships:**
 - employeeId -> references the related record
 
+### ShiftAssignment
+**Fields:** `id`, `employeeId`, `shiftId`, `date`, `status`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- employeeId -> references the related record
+- shiftId -> references the related record
+
+### LeaveBalance
+**Fields:** `id`, `employeeId`, `type`, `allocatedDays`, `usedDays`, `remainingDays`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- employeeId -> references the related record
+
+### Timesheet
+**Fields:** `id`, `employeeId`, `approverId`, `periodStart`, `periodEnd`, `totalHours`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- employeeId -> references the related record
+- approverId -> references the related record
+
 ## Backend logic
 
 - Clock in/out recording and hours calculation
 - Late/absent detection against shift times
 - Leave request submission and approval workflow
 - Manager aggregations and export
+- Shift assignment scheduling and conflict checks
+- Timesheet generation from attendance with manager approval
+- Leave balance accrual and deduction on approved leave
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -194,7 +223,9 @@ PAGES / SCREENS
 5. Employees list and detail
 6. Shifts/schedule
 7. Leave approvals
-8. Reports and export
+8. Timesheets and approvals
+9. Leave balances
+10. Reports and export
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -209,6 +240,9 @@ CORE FEATURES
 - Shifts and expected hours; late/absent flags
 - Leave requests with approve/reject flow
 - Manager live view of who's in/late/on leave
+- Shift assignment scheduling for employees by date
+- Leave balance tracking per employee and leave type
+- Timesheet generation and manager approval per pay period
 - Reports: hours, lateness, leave; CSV export concept
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -217,6 +251,9 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Shift: id, name, startTime, endTime, createdAt, updatedAt
 - Attendance: id, employeeId, clockIn, clockOut, hoursWorked, createdAt, updatedAt
 - LeaveRequest: id, employeeId, type, startDate, endDate, status, reason, createdAt, updatedAt
+- ShiftAssignment: id, employeeId, shiftId, date, status, notes, createdAt, updatedAt
+- LeaveBalance: id, employeeId, type, allocatedDays, usedDays, remainingDays, createdAt, updatedAt
+- Timesheet: id, employeeId, approverId, periodStart, periodEnd, totalHours, status, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -224,6 +261,9 @@ BACKEND / API LOGIC
 - Late/absent detection against shift times
 - Leave request submission and approval workflow
 - Manager aggregations and export
+- Shift assignment scheduling and conflict checks
+- Timesheet generation from attendance with manager approval
+- Leave balance accrual and deduction on approved leave
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES
