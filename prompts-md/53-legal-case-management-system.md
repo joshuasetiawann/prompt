@@ -7,7 +7,8 @@
 | **Prompt ID** | 53 |
 | **Title** | Legal Case Management System |
 | **Slug** | legal-case-management-system |
-| **Category** | Legal & Case Management |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Legal & Case Management |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/Partner; Lawyer/Paralegal; Client |

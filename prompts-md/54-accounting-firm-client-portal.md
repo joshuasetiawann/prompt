@@ -7,7 +7,8 @@
 | **Prompt ID** | 54 |
 | **Title** | Accounting Firm Client Portal |
 | **Slug** | accounting-firm-client-portal |
-| **Category** | Client Portal & Accounting |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Client Portal & Accounting |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Accountant/Admin; Client |

@@ -7,7 +7,8 @@
 | **Prompt ID** | 52 |
 | **Title** | Wedding Planner Client Portal |
 | **Slug** | wedding-planner-client-portal |
-| **Category** | Client Portal & Planning |
+| **Category** | Business Operations |
+| **Domain** | Client Portal & Planning |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Couple/Client; Planner/Admin |

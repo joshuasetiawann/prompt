@@ -7,7 +7,8 @@
 | **Prompt ID** | 51 |
 | **Title** | Pet Grooming & Veterinary Care Scheduler |
 | **Slug** | pet-grooming-veterinary-care-scheduler |
-| **Category** | Service Booking & Operations |
+| **Category** | Booking & Reservations |
+| **Domain** | Service Booking & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Pet Owner; Staff (groomer/vet); Admin |

@@ -1,14 +1,18 @@
 prompt_id: '54'
 title: Accounting Firm Client Portal
 slug: accounting-firm-client-portal
-category: Client Portal & Accounting
+category: Finance, Legal & HR
+domain: Client Portal & Accounting
 app_name: LedgerLink Accounting Firm Client Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building client portals for accounting, bookkeeping, and tax firms.
 target_user: Accountant/Admin; Client
+target_users: accountants managing client work and business clients submitting documents and paying invoices
+role_line: You are a senior full-stack engineer who builds secure client portals for accounting and bookkeeping firms
 business_goal: Streamline document collection, task tracking, messaging, and invoicing between a firm and its clients
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: trustworthy, clean, finance-grade. Colors: green, slate, white. Clean, modern, organized portal with request lists and clear statuses.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -171,6 +175,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Accountant/Admin — manage clients, requests, tasks, invoices
+- Client — upload documents, view tasks and invoices
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~8 client orgs, document requests and uploads, tasks, invoices, messages, 1 admin, 2 accountants, 2 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

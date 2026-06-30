@@ -7,7 +7,8 @@
 | **Prompt ID** | 55 |
 | **Title** | Construction Project Tracker |
 | **Slug** | construction-project-tracker |
-| **Category** | Construction & Project Ops |
+| **Category** | Business Operations |
+| **Domain** | Construction & Project Ops |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Admin/PM; Foreman; Client |

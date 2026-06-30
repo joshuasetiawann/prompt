@@ -1,14 +1,18 @@
 prompt_id: '51'
 title: Pet Grooming & Veterinary Care Scheduler
 slug: pet-grooming-veterinary-care-scheduler
-category: Service Booking & Operations
+category: Booking & Reservations
+domain: Service Booking & Operations
 app_name: PawCare Pro Pet Grooming & Veterinary Care Scheduler
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building scheduling and records tools for pet groomers, vet clinics, and animal care centers.
 target_user: Pet Owner; Staff (groomer/vet); Admin
+target_users: pet owners booking care, and groomers, veterinarians, and front-desk staff managing schedules and records
+role_line: You are a senior full-stack engineer who builds scheduling and client-record software for pet care and veterinary businesses
 business_goal: Let owners book grooming or veterinary appointments for their pets while staff manage availability, pet records, and reminders
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: friendly, caring, clean veterinary. Colors: soft teal, warm coral accent, white. Clean, modern, pet-friendly cards with clear service and slot pickers.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -177,6 +181,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Pet Owner — manage pets and book appointments
+- Staff (groomer/vet) — view schedule and visit notes
+- Admin — manage providers, services, and all bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 6 services, 3 providers, ~12 pets across owners, sample appointments and reminders, 1 admin, 1 staff, 2 owners. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

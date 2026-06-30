@@ -1,14 +1,18 @@
 prompt_id: '55'
 title: Construction Project Tracker
 slug: construction-project-tracker
-category: Construction & Project Ops
+category: Business Operations
+domain: Construction & Project Ops
 app_name: BuildTrack Construction Project Tracker
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building site-tracking tools for contractors and construction firms.
 target_user: Admin/PM; Foreman; Client
+target_users: project managers, foremen, and clients tracking construction progress on site
+role_line: You are a senior full-stack engineer who builds field and project tracking software for construction teams
 business_goal: Track project phases, daily logs, materials, crews, and budget, with a client-facing progress view
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: rugged, clear, industrial. Colors: safety orange, charcoal, white. Clean, modern, practical layout with phase boards, logs, and photo grids.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -181,6 +185,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/PM — manage projects, budgets, and crews
+- Foreman — add daily logs and update progress
+- Client — view progress, photos, and milestones
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 projects with phases, daily logs, photos, materials, crews, and costs, 1 admin/PM, 1 foreman, 1 client. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

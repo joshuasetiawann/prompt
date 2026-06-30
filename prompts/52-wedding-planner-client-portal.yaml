@@ -1,14 +1,18 @@
 prompt_id: '52'
 title: Wedding Planner Client Portal
 slug: wedding-planner-client-portal
-category: Client Portal & Planning
+category: Business Operations
+domain: Client Portal & Planning
 app_name: Knot & Co Wedding Planner Client Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building client portals for wedding and event planners.
 target_user: Couple/Client; Planner/Admin
+target_users: wedding planners coordinating events and couples tracking their wedding plans
+role_line: You are a senior full-stack engineer who builds client-collaboration portals for event and wedding planners
 business_goal: Give planners and couples one place to manage the wedding timeline, budget, vendors, guests, and documents
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: elegant, romantic, refined. Colors: blush, sage accent, ivory. Clean, modern, soft editorial layout with checklists and a clear timeline.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -172,6 +176,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Couple/Client — view and update their wedding plan
+- Planner/Admin — manage weddings, tasks, vendors, and clients
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 weddings with timelines, budgets, vendors, and guest lists, 1 planner/admin and 3 couple accounts. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
