@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PayCadence — Payroll &amp; Payslip Management System</title>
+<meta name="description" content="PayCadence lets payroll teams run pay cycles end to end — calculate gross-to-net with tax and statutory deductions, route runs for approval, generate downloadable payslips, and give employees a self-service pay history portal." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand palette: deep teal, slate grey, crisp white */
+    --teal-900: #093C3A;
+    --teal-800: #0C504D;
+    --teal-700: #0F6B66;   /* deep teal — primary */
+    --teal-600: #138481;
+    --teal-500: #189D98;
+    --teal-400: #36B4AE;
+    --teal-tint: #E1F0EE;
+    --teal-tint-2: #C4E4E0;
+
+    --slate-950: #0A151D;
+    --slate-900: #102130;
+    --slate-850: #16293A;
+    --slate-800: #1E3447;
+    --slate-700: #2F485C;
+    --slate-600: #455D72;
+
+    --ink: #14222E;
+    --ink-2: #3C5163;
+    --muted: #647888;
+    --muted-2: #8A9AA9;
+    --line: #DFE7EC;
+    --line-2: #ECF1F4;
+
+    --bg: #F4F7F9;
+    --bg-2: #EDF2F5;
+    --bg-3: #E5EDF1;
+    --surface: #ffffff;
+
+    /* functional accents for the gross-to-net + workflow story */
+    --green: #1A9E6A;
+    --green-bright: #25B97E;
+    --green-tint: #E1F4EB;
+    --amber: #BC7C12;
+    --amber-tint: #FAEFD6;
+    --rose: #C24A40;
+    --rose-tint: #FAE7E4;
+
+    --shadow-sm: 0 1px 2px rgba(16,33,48,.06), 0 2px 8px rgba(16,33,48,.05);
+    --shadow-md: 0 16px 38px -18px rgba(16,33,48,.32), 0 5px 14px rgba(16,33,48,.06);
+    --shadow-lg: 0 44px 96px -38px rgba(10,21,29,.52);
+    --shadow-teal: 0 16px 34px -14px rgba(12,80,77,.55);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --radius-lg: 26px;
+    --maxw: 1180px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.62;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { line-height: 1.08; letter-spacing: -0.025em; color: var(--ink); font-weight: 800; }
+  a { color: inherit; text-decoration: none; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  ::selection { background: var(--teal-700); color: #fff; }
+  img { max-width: 100%; display: block; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--teal-800); background: var(--teal-tint); border: 1px solid var(--teal-tint-2);
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .eyebrow.on-dark { color: var(--teal-400); background: rgba(24,157,152,.12); border-color: rgba(24,157,152,.28); }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal-600); box-shadow: 0 0 0 0 rgba(19,132,129,.5); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 0 rgba(19,132,129,.45);} 50%{ box-shadow: 0 0 0 7px rgba(19,132,129,0);} }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: inherit; font-weight: 700; font-size: 15.5px;
+    padding: 14px 24px; border-radius: 12px; cursor: pointer; border: 1.5px solid transparent;
+    transition: transform .15s ease, box-shadow .22s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--teal-600), var(--teal-800)); color: #fff; box-shadow: var(--shadow-teal); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 22px 40px -14px rgba(12,80,77,.62); }
+  .btn-primary:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 3px; }
+  .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--teal-600); color: var(--teal-800); transform: translateY(-2px); }
+  .btn-ghost:focus-visible { outline: 3px solid var(--teal-500); outline-offset: 3px; }
+  .btn-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.30); }
+  .btn-light:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+  .btn-light:focus-visible { outline: 3px solid var(--teal-400); outline-offset: 3px; }
+  .btn-sm { padding: 10px 18px; font-size: 14px; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--teal-800); }
+  .link-arrow.on-dark { color: var(--teal-400); }
+  .link-arrow svg { transition: transform .2s ease; }
+  .link-arrow:hover svg { transform: translateX(4px); }
+
+  /* ---------- NAV ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 60;
+    background: rgba(244,247,249,.84);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    border-bottom: 1px solid var(--line-2);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px; letter-spacing: -.03em; color: var(--ink); }
+  .brand .mark {
+    width: 40px; height: 40px; border-radius: 12px; flex: none; position: relative;
+    background: linear-gradient(150deg, var(--teal-600), var(--teal-800));
+    display: grid; place-items: center; box-shadow: 0 8px 18px -7px rgba(12,80,77,.7);
+  }
+  .brand .mark svg { width: 22px; height: 22px; }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a { font-size: 15px; font-weight: 600; color: var(--ink-2); padding: 9px 14px; border-radius: 9px; transition: background .18s ease, color .18s ease; }
+  .nav-links a:hover { color: var(--ink); background: var(--bg-3); }
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+  .nav-cta .signin { font-size: 15px; font-weight: 600; color: var(--ink-2); padding: 9px 14px; border-radius: 9px; }
+  .nav-cta .signin:hover { color: var(--teal-800); }
+  .nav-toggle { display: none; background: #fff; border: 1.5px solid var(--line); border-radius: 10px; width: 44px; height: 44px; cursor: pointer; align-items: center; justify-content: center; }
+  .nav-toggle svg { width: 22px; height: 22px; color: var(--ink); }
+  #mobile-menu { display: none; }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; overflow: hidden; padding: 76px 0 92px; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(720px 460px at 88% -6%, rgba(19,132,129,.16), transparent 62%),
+      radial-gradient(620px 460px at -8% 14%, rgba(15,107,102,.10), transparent 60%);
+  }
+  .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.02fr 1.18fr; gap: 54px; align-items: center; }
+  .hero h1 { font-size: clamp(38px, 5vw, 60px); letter-spacing: -.035em; }
+  .hero h1 .hl { color: var(--teal-700); position: relative; white-space: nowrap; }
+  .hero h1 .hl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 12px; background: var(--teal-tint-2); z-index: -1; border-radius: 3px; }
+  .hero .sub { font-size: 19px; color: var(--ink-2); margin-top: 22px; max-width: 545px; line-height: 1.6; }
+  .hero-cta { display: flex; align-items: center; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+  .trust { margin-top: 30px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: 14.5px; font-weight: 600; }
+  .trust .avatars { display: flex; }
+  .trust .avatars span { width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid var(--bg); margin-left: -10px; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: #fff; }
+  .trust .avatars span:first-child { margin-left: 0; }
+  .stars { color: var(--amber); letter-spacing: 2px; font-size: 15px; }
+
+  /* Hero pay-run console mockup */
+  .console { position: relative; }
+  .cs-window { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+  .cs-top { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line-2); background: var(--bg); }
+  .cs-dots { display: flex; gap: 7px; }
+  .cs-dots i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .cs-url { margin-left: 8px; font-size: 12px; color: var(--muted); font-weight: 600; background: #fff; border: 1px solid var(--line-2); border-radius: 8px; padding: 5px 12px; }
+  .cs-tag { margin-left: auto; font-size: 11.5px; font-weight: 700; color: var(--teal-700); background: var(--teal-tint); border-radius: 999px; padding: 4px 11px; }
+  .cs-body { display: grid; grid-template-columns: 1.32fr 1fr; }
+  .cs-main { padding: 18px; border-right: 1px solid var(--line-2); background: linear-gradient(180deg, #fff, var(--bg)); }
+  .cs-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
+  .cs-label::before { content: ""; width: 6px; height: 6px; border-radius: 2px; background: var(--teal-600); }
+
+  /* gross-to-net breakdown table */
+  .gtn { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); }
+  .gtn-emp { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line-2); background: var(--bg); }
+  .gtn-emp .av { width: 32px; height: 32px; border-radius: 9px; flex: none; display: grid; place-items: center; font-size: 12.5px; font-weight: 700; color: #fff; background: linear-gradient(140deg, var(--teal-500), var(--teal-800)); }
+  .gtn-emp .nm { font-size: 13.5px; font-weight: 800; letter-spacing: -.01em; }
+  .gtn-emp .mt { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .gtn-emp .per { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--teal-800); background: var(--teal-tint); border-radius: 7px; padding: 4px 9px; }
+  .gtn-sec { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 10px 14px 4px; }
+  .gtn-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 14px; font-size: 13px; }
+  .gtn-row .l { color: var(--ink-2); font-weight: 600; }
+  .gtn-row .a { font-weight: 700; color: var(--ink); }
+  .gtn-row .a.minus { color: var(--rose); }
+  .gtn-div { height: 1px; background: var(--line-2); margin: 6px 0; }
+  .gtn-sub { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; font-size: 12.5px; }
+  .gtn-sub .l { font-weight: 700; color: var(--ink); }
+  .gtn-sub .a { font-weight: 800; }
+  .gtn-net { display: flex; align-items: center; justify-content: space-between; padding: 13px 14px; background: linear-gradient(135deg, var(--teal-800), var(--teal-900)); }
+  .gtn-net .l { color: #cdeeeb; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .gtn-net .a { color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+
+  /* payslip preview panel */
+  .cs-side { padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--surface); }
+  .slip { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); }
+  .slip-hd { background: linear-gradient(135deg, var(--teal-700), var(--teal-900)); padding: 13px 14px; }
+  .slip-hd .co { color: #fff; font-size: 13px; font-weight: 800; letter-spacing: -.01em; }
+  .slip-hd .doc { color: #b8e6e2; font-size: 11px; font-weight: 600; }
+  .slip-bd { padding: 13px 14px; }
+  .slip-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 4px 0; }
+  .slip-row .k { color: var(--muted); font-weight: 600; }
+  .slip-row .v { color: var(--ink-2); font-weight: 700; }
+  .slip-net { margin-top: 10px; padding-top: 11px; border-top: 1px dashed var(--line); }
+  .slip-net .l { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .slip-net .n { font-size: 25px; font-weight: 800; letter-spacing: -.02em; color: var(--teal-800); margin-top: 2px; }
+  .slip-dl { margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: var(--teal-tint); color: var(--teal-800); font-size: 12.5px; font-weight: 700; padding: 9px; border-radius: 9px; border: 1px solid var(--teal-tint-2); }
+  .slip-dl svg { width: 15px; height: 15px; }
+
+  .run-meta { border: 1px solid var(--line); border-radius: 13px; padding: 13px; background: var(--bg); }
+  .run-meta .rm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .run-meta .rm-top b { font-size: 12.5px; }
+  .run-meta .rm-top .pillok { font-size: 10.5px; font-weight: 700; color: var(--green); background: var(--green-tint); border-radius: 999px; padding: 3px 9px; }
+  .rm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .rm-cell { background: #fff; border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 10px; }
+  .rm-cell .l { font-size: 9.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .rm-cell .n { font-size: 15px; font-weight: 800; letter-spacing: -.02em; margin-top: 1px; }
+
+  .float-badge {
+    position: absolute; z-index: 3; background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow-md); padding: 11px 14px; display: flex; align-items: center; gap: 11px;
+  }
+  .float-badge .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; flex: none; }
+  .float-badge .t b { display: block; font-size: 14px; letter-spacing: -.01em; }
+  .float-badge .t span { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .float-1 { top: -22px; left: -26px; }
+  .float-2 { bottom: -24px; right: -22px; }
+
+  /* logos strip */
+  .logos { border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); background: var(--bg-2); }
+  .logos-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 0; flex-wrap: wrap; }
+  .logos .cap { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .logos .row { display: flex; align-items: center; gap: 34px; flex-wrap: wrap; }
+  .logos .row b { font-size: 18px; font-weight: 800; color: var(--slate-700); opacity: .56; letter-spacing: -.02em; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section { position: relative; }
+  .sec-pad { padding: 92px 0; }
+  .sec-head { max-width: 680px; margin: 0 auto 54px; text-align: center; }
+  .sec-head h2 { font-size: clamp(30px, 3.7vw, 44px); letter-spacing: -.03em; }
+  .sec-head p { font-size: 18px; color: var(--ink-2); margin-top: 16px; }
+
+  /* ---------- WORKFLOW STRIP ---------- */
+  .flowstrip { background: var(--surface); border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); }
+  .flowstrip-in { padding: 30px 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .fstep { display: flex; align-items: center; gap: 11px; }
+  .fstep .badge { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 700; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; }
+  .fstep .badge i { width: 9px; height: 9px; border-radius: 50%; }
+  .fstep .badge.draft i { background: var(--muted-2); }
+  .fstep .badge.pending i { background: var(--amber); }
+  .fstep .badge.approved i { background: var(--green); }
+  .fstep .badge.paid i { background: var(--teal-600); }
+  .fstep .arr { color: var(--muted-2); }
+  .fstep .arr svg { width: 20px; height: 20px; display: block; }
+
+  /* ---------- FEATURES ---------- */
+  .features { background: var(--bg); border-top: 1px solid var(--line-2); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 26px 24px; transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--teal-tint-2); }
+  .feat .ic { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; font-size: 24px; margin-bottom: 18px; background: var(--teal-tint); border: 1px solid var(--teal-tint-2); }
+  .feat h3 { font-size: 18.5px; letter-spacing: -.02em; }
+  .feat p { font-size: 15px; color: var(--muted); margin-top: 9px; line-height: 1.55; }
+  .feat .tag { display: inline-block; margin-top: 14px; font-size: 11.5px; font-weight: 700; color: var(--teal-800); background: var(--teal-tint); border-radius: 999px; padding: 4px 11px; }
+
+  /* ---------- HOW IT WORKS / SCREENS ---------- */
+  .works { background: linear-gradient(180deg, var(--bg), var(--bg-2)); border-top: 1px solid var(--line-2); }
+  .step-row { display: grid; grid-template-columns: 1fr 1.15fr; gap: 56px; align-items: center; margin-bottom: 84px; }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-row.rev { grid-template-columns: 1.15fr 1fr; }
+  .step-row.rev .step-txt { order: 2; }
+  .step-num { display: inline-flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-800); margin-bottom: 16px; }
+  .step-num span { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--teal-700); color: #fff; font-size: 14px; }
+  .step-txt h3 { font-size: 27px; letter-spacing: -.025em; }
+  .step-txt p { font-size: 16.5px; color: var(--ink-2); margin-top: 13px; }
+  .step-txt ul { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 11px; }
+  .step-txt li { display: flex; align-items: flex-start; gap: 11px; font-size: 15px; color: var(--ink-2); font-weight: 500; }
+  .step-txt li svg { flex: none; margin-top: 3px; color: var(--green); }
+
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+  .panel-bar { display: flex; align-items: center; gap: 9px; padding: 13px 16px; border-bottom: 1px solid var(--line-2); background: var(--bg); }
+  .panel-bar .d { width: 10px; height: 10px; border-radius: 50%; }
+  .panel-bar .ttl { margin-left: 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+  .panel-bar .pill { margin-left: auto; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .panel-in { padding: 20px; }
+
+  /* wizard panel */
+  .wiz-steps { display: flex; gap: 8px; margin-bottom: 16px; }
+  .wiz-step { flex: 1; border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; background: var(--bg); }
+  .wiz-step.active { border-color: var(--teal-600); background: var(--teal-tint); }
+  .wiz-step .s { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .wiz-step.active .s { color: var(--teal-800); }
+  .wiz-step .t { font-size: 13px; font-weight: 700; margin-top: 2px; color: var(--ink); }
+  .wiz-meta { display: flex; gap: 8px; margin-bottom: 14px; }
+  .wiz-field { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: #fff; }
+  .wiz-field .l { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .wiz-field .v { font-size: 14px; font-weight: 800; color: var(--ink); margin-top: 1px; }
+  .emp-list { display: flex; flex-direction: column; gap: 8px; }
+  .emp-row { display: flex; align-items: center; gap: 11px; border: 1px solid var(--line-2); border-radius: 11px; padding: 10px 12px; background: #fff; }
+  .emp-row .ck { width: 20px; height: 20px; border-radius: 6px; background: var(--teal-700); display: grid; place-items: center; flex: none; }
+  .emp-row .ck svg { width: 13px; height: 13px; }
+  .emp-row .av { width: 30px; height: 30px; border-radius: 8px; flex: none; display: grid; place-items: center; font-size: 11.5px; font-weight: 700; color: #fff; }
+  .emp-row .nm { font-size: 13.5px; font-weight: 700; flex: 1; }
+  .emp-row .nm small { display: block; font-size: 11px; color: var(--muted); font-weight: 600; }
+  .emp-row .sal { font-size: 12.5px; font-weight: 700; color: var(--ink-2); }
+  .wiz-foot { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed var(--line); padding-top: 13px; }
+  .wiz-foot .cnt { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .wiz-foot .cnt b { color: var(--ink); }
+  .wiz-foot .go { font-size: 12.5px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--teal-600), var(--teal-800)); border-radius: 9px; padding: 9px 15px; }
+
+  /* register / review table panel */
+  .reg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .reg-head .ttl { font-size: 14px; font-weight: 800; }
+  .reg-head .sub { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .reg-table { border: 1px solid var(--line); border-radius: 13px; overflow: hidden; }
+  .reg-tr { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; align-items: center; padding: 10px 14px; font-size: 12.5px; border-bottom: 1px solid var(--line-2); }
+  .reg-tr:last-child { border-bottom: none; }
+  .reg-tr.h { background: var(--bg); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .reg-tr .emp { display: flex; align-items: center; gap: 9px; font-weight: 700; }
+  .reg-tr .emp .av { width: 26px; height: 26px; border-radius: 7px; flex: none; display: grid; place-items: center; font-size: 10.5px; font-weight: 700; color: #fff; }
+  .reg-tr .num { text-align: right; font-weight: 700; }
+  .reg-tr .num.gross { color: var(--ink); }
+  .reg-tr .num.ded { color: var(--rose); }
+  .reg-tr .num.net { color: var(--teal-800); font-weight: 800; }
+  .reg-tot { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; align-items: center; padding: 13px 14px; background: var(--slate-900); color: #fff; }
+  .reg-tot .l { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: #9fb6c4; }
+  .reg-tot .num { text-align: right; font-weight: 800; font-size: 13.5px; }
+  .reg-tot .num.net { color: var(--teal-400); }
+
+  /* approval queue panel */
+  .aq-list { display: flex; flex-direction: column; gap: 10px; }
+  .aq-row { border: 1px solid var(--line); border-radius: 13px; padding: 13px 14px; background: #fff; }
+  .aq-top { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+  .aq-top .nm { font-size: 13.5px; font-weight: 800; }
+  .aq-top .meta { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .aq-top .st { margin-left: auto; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .st.pending { color: var(--amber); background: var(--amber-tint); }
+  .st.approved { color: var(--green); background: var(--green-tint); }
+  .st.paid { color: var(--teal-800); background: var(--teal-tint); }
+  .aq-bot { display: flex; align-items: center; gap: 18px; }
+  .aq-bot .fig { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .aq-bot .fig b { display: block; font-size: 15px; color: var(--ink); font-weight: 800; letter-spacing: -.01em; }
+  .aq-act { margin-left: auto; display: flex; gap: 8px; }
+  .aq-act .b { font-size: 12px; font-weight: 700; border-radius: 8px; padding: 7px 13px; }
+  .aq-act .approve { color: #fff; background: var(--green); }
+  .aq-act .reject { color: var(--rose); background: var(--rose-tint); border: 1px solid #f1cfca; }
+
+  /* employee portal panel */
+  .ep-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .ep-cell { border: 1px solid var(--line); border-radius: 12px; padding: 13px; background: var(--bg); }
+  .ep-cell .l { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+  .ep-cell .n { font-size: 21px; font-weight: 800; letter-spacing: -.02em; margin-top: 3px; }
+  .ep-cell .n.teal { color: var(--teal-800); }
+  .ep-hist { display: flex; flex-direction: column; gap: 8px; }
+  .ep-row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line-2); border-radius: 11px; padding: 11px 13px; background: #fff; }
+  .ep-row .pic { width: 36px; height: 36px; border-radius: 9px; flex: none; display: grid; place-items: center; background: var(--teal-tint); color: var(--teal-800); }
+  .ep-row .pic svg { width: 18px; height: 18px; }
+  .ep-row .info { flex: 1; }
+  .ep-row .info b { font-size: 13.5px; font-weight: 800; display: block; }
+  .ep-row .info span { font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .ep-row .amt { font-size: 13.5px; font-weight: 800; color: var(--ink); }
+  .ep-row .dl { font-size: 11.5px; font-weight: 700; color: var(--teal-800); background: var(--teal-tint); border: 1px solid var(--teal-tint-2); border-radius: 8px; padding: 7px 11px; display: inline-flex; align-items: center; gap: 6px; }
+  .ep-row .dl svg { width: 13px; height: 13px; }
+
+  /* ---------- WHO IT'S FOR ---------- */
+  .roles { background: var(--surface); border-top: 1px solid var(--line-2); }
+  .roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .role {
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 22px; background: var(--bg);
+    transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+  }
+  .role:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--teal-tint-2); }
+  .role .ic { width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center; font-size: 22px; margin-bottom: 16px; background: #fff; border: 1px solid var(--line); }
+  .role h3 { font-size: 17px; letter-spacing: -.02em; }
+  .role .tagrole { font-size: 11px; font-weight: 700; color: var(--teal-800); letter-spacing: .03em; text-transform: uppercase; margin-top: 4px; display: block; }
+  .role p { font-size: 14px; color: var(--muted); margin-top: 10px; line-height: 1.55; }
+  .role ul { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .role li { font-size: 13px; color: var(--ink-2); font-weight: 600; display: flex; gap: 8px; align-items: flex-start; }
+  .role li::before { content: ""; width: 6px; height: 6px; border-radius: 2px; background: var(--teal-600); margin-top: 7px; flex: none; }
+
+  /* ---------- FINAL CTA ---------- */
+  .cta-band { padding: 96px 0; background: var(--bg-2); }
+  .cta-card {
+    position: relative; overflow: hidden; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--slate-900), var(--teal-900) 62%, var(--teal-800));
+    padding: 64px 56px; box-shadow: var(--shadow-lg); text-align: center;
+  }
+  .cta-card::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(560px 300px at 84% -10%, rgba(24,157,152,.34), transparent 60%), radial-gradient(460px 320px at 4% 120%, rgba(15,107,102,.30), transparent 60%); }
+  .cta-card > * { position: relative; z-index: 1; }
+  .cta-card h2 { color: #fff; font-size: clamp(30px, 4vw, 46px); letter-spacing: -.03em; }
+  .cta-card p { color: #cfe4e2; font-size: 18px; margin-top: 18px; max-width: 580px; margin-left: auto; margin-right: auto; }
+  .cta-card .hero-cta { justify-content: center; margin-top: 32px; }
+  .cta-note { margin-top: 20px; font-size: 13.5px; color: #93b1ad; font-weight: 600; }
+
+  /* ---------- FOOTER ---------- */
+  footer { background: var(--slate-950); color: #aebccb; padding: 64px 0 34px; }
+  .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 36px; }
+  .foot-brand .brand { color: #fff; margin-bottom: 16px; }
+  .foot-brand p { font-size: 14.5px; color: #8195a8; max-width: 300px; line-height: 1.6; }
+  .foot-col h4 { color: #fff; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px; font-weight: 700; }
+  .foot-col a { display: block; font-size: 14.5px; color: #9fb0c1; padding: 6px 0; transition: color .18s ease; }
+  .foot-col a:hover { color: var(--teal-400); }
+  .foot-bot { margin-top: 46px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.09); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: #7c8ea0; }
+  .foot-bot .socials { display: flex; gap: 10px; }
+  .foot-bot .socials a { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); transition: background .18s ease, border-color .18s; }
+  .foot-bot .socials a:hover { background: rgba(24,157,152,.18); border-color: rgba(24,157,152,.4); }
+  .foot-bot .socials svg { width: 18px; height: 18px; color: #cbd6e1; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .hero { padding: 56px 0 76px; }
+    .hero .sub { max-width: none; }
+    .feat-grid { grid-template-columns: repeat(2, 1fr); }
+    .roles-grid { grid-template-columns: repeat(2, 1fr); }
+    .step-row, .step-row.rev { grid-template-columns: 1fr; gap: 30px; }
+    .step-row.rev .step-txt { order: 0; }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+    .float-1 { left: 0; } .float-2 { right: 0; }
+  }
+  @media (max-width: 680px) {
+    body { font-size: 16px; }
+    .nav-links, .nav-cta .signin, .nav-cta .btn-ghost { display: none; }
+    .nav-toggle { display: flex; }
+    #mobile-menu.open { display: block; border-top: 1px solid var(--line-2); background: var(--bg); }
+    #mobile-menu .mwrap { display: flex; flex-direction: column; gap: 4px; padding: 14px 24px 20px; }
+    #mobile-menu a { font-size: 16px; font-weight: 600; color: var(--ink-2); padding: 12px 14px; border-radius: 10px; }
+    #mobile-menu a:hover { background: var(--bg-3); color: var(--ink); }
+    #mobile-menu .btn { margin-top: 8px; }
+    .sec-pad { padding: 64px 0; }
+    .cta-band { padding: 64px 0; }
+    .cta-card { padding: 44px 26px; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .roles-grid { grid-template-columns: 1fr; }
+    .cs-body { grid-template-columns: 1fr; }
+    .cs-main { border-right: none; border-bottom: 1px solid var(--line-2); }
+    .hero-cta .btn { width: 100%; }
+    .hero-cta { gap: 12px; }
+    .float-badge { display: none; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .flowstrip-in { gap: 8px; }
+    .fstep .badge { font-size: 12.5px; padding: 7px 12px; }
+    .reg-tr, .reg-tot { grid-template-columns: 1.4fr 1fr 1fr; }
+    .reg-tr .num.gross, .reg-tot .num.gross { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="PayCadence home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="17.5" cy="16.5" r="3.2" stroke="#fff" stroke-width="2"/></svg>
+      </span>
+      PayCadence
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#workflow">How it works</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#review">Pay run</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#top" class="signin">Sign in</a>
+      <a href="#cta" class="btn btn-ghost btn-sm">Book a demo</a>
+      <a href="#cta" class="btn btn-primary btn-sm">Start free</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-menu">
+    <div class="mwrap">
+      <a href="#features">Features</a>
+      <a href="#workflow">How it works</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#review">Pay run</a>
+      <a href="#top">Sign in</a>
+      <a href="#cta" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-txt">
+      <span class="eyebrow"><span class="dot"></span> Gross-to-net · Approvals · Payslips</span>
+      <h1 style="margin-top:20px;">Run every pay cycle from draft to <span class="hl">paid</span>, with confidence.</h1>
+      <p class="sub">PayCadence gives payroll teams one console to calculate gross-to-net with tax and statutory deductions, route each run for approval, generate downloadable payslips, and hand employees a self-service pay history portal.</p>
+      <div class="hero-cta">
+        <a href="#cta" class="btn btn-primary">Start a pay run free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#workflow" class="link-arrow">See the pay-run console
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="trust">
+        <div class="avatars" aria-hidden="true">
+          <span style="background:#0F6B66;">AO</span>
+          <span style="background:#1A9E6A;">DM</span>
+          <span style="background:#2F485C;">RC</span>
+          <span style="background:#BC7C12;">PT</span>
+        </div>
+        <div><span class="stars">★★★★★</span><br><strong style="color:var(--ink-2);">Trusted by 380+</strong> payroll teams &amp; bureaus</div>
+      </div>
+    </div>
+
+    <div class="console">
+      <div class="float-badge float-1">
+        <span class="ic" style="background:var(--green-tint);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#1A9E6A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="t"><b>Run approved</b><span>Routed by R. Chen · 2 min ago</span></div>
+      </div>
+      <div class="float-badge float-2">
+        <span class="ic" style="background:var(--teal-tint);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke="#0F6B66" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6M9 17h6" stroke="#0F6B66" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+        <div class="t"><b>15 payslips generated</b><span>June 2026 · ready to download</span></div>
+      </div>
+
+      <div class="cs-window">
+        <div class="cs-top">
+          <div class="cs-dots"><i style="background:#E8675C;"></i><i style="background:#E9B53D;"></i><i style="background:#2FB57F;"></i></div>
+          <span class="cs-url">app.paycadence.io / pay-runs / 2026-06 · monthly</span>
+          <span class="cs-tag">● Gross-to-net</span>
+        </div>
+        <div class="cs-body">
+          <div class="cs-main">
+            <div class="cs-label">Gross-to-net breakdown</div>
+            <div class="gtn">
+              <div class="gtn-emp">
+                <span class="av">AO</span>
+                <div>
+                  <div class="nm">Amara Okeke</div>
+                  <div class="mt">EMP-0042 · Senior Analyst</div>
+                </div>
+                <span class="per">Jun 2026</span>
+              </div>
+              <div class="gtn-sec">Earnings</div>
+              <div class="gtn-row"><span class="l">Base salary</span><span class="a mono">6,250.00</span></div>
+              <div class="gtn-row"><span class="l">Housing allowance</span><span class="a mono">750.00</span></div>
+              <div class="gtn-row"><span class="l">Transport allowance</span><span class="a mono">300.00</span></div>
+              <div class="gtn-sub"><span class="l">Gross pay</span><span class="a mono">7,300.00</span></div>
+              <div class="gtn-div"></div>
+              <div class="gtn-sec">Deductions</div>
+              <div class="gtn-row"><span class="l">PAYE income tax</span><span class="a minus mono">−1,184.00</span></div>
+              <div class="gtn-row"><span class="l">Pension (5%)</span><span class="a minus mono">−365.00</span></div>
+              <div class="gtn-row"><span class="l">Health insurance</span><span class="a minus mono">−145.00</span></div>
+              <div class="gtn-sub"><span class="l">Total deductions</span><span class="a minus mono">−1,694.00</span></div>
+              <div class="gtn-net"><span class="l">Net pay</span><span class="a mono">5,606.00</span></div>
+            </div>
+          </div>
+          <div class="cs-side">
+            <div>
+              <div class="cs-label">Payslip preview</div>
+              <div class="slip">
+                <div class="slip-hd">
+                  <div class="co">Northwind Logistics Ltd</div>
+                  <div class="doc">Payslip · June 2026</div>
+                </div>
+                <div class="slip-bd">
+                  <div class="slip-row"><span class="k">Employee</span><span class="v">Amara Okeke</span></div>
+                  <div class="slip-row"><span class="k">Pay date</span><span class="v">30 Jun 2026</span></div>
+                  <div class="slip-row"><span class="k">Tax code</span><span class="v">1257L</span></div>
+                  <div class="slip-net">
+                    <div class="l">Net pay this period</div>
+                    <div class="n mono">5,606.00</div>
+                  </div>
+                  <div class="slip-dl">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    Download PDF
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="run-meta">
+              <div class="rm-top"><b>June 2026 run</b><span class="pillok">Approved</span></div>
+              <div class="rm-grid">
+                <div class="rm-cell"><div class="l">Employees</div><div class="n">15</div></div>
+                <div class="rm-cell"><div class="l">Pay date</div><div class="n">30 Jun</div></div>
+                <div class="rm-cell"><div class="l">Total gross</div><div class="n mono">98,400</div></div>
+                <div class="rm-cell"><div class="l">Total net</div><div class="n mono" style="color:var(--teal-800);">74,910</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORKFLOW STRIP ============ -->
+<div class="flowstrip">
+  <div class="wrap flowstrip-in">
+    <div class="fstep"><span class="badge draft"><i></i> Draft</span></div>
+    <span class="arr"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="fstep"><span class="badge pending"><i></i> Pending approval</span></div>
+    <span class="arr"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="fstep"><span class="badge approved"><i></i> Approved</span></div>
+    <span class="arr"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="fstep"><span class="badge paid"><i></i> Paid</span></div>
+  </div>
+</div>
+
+<!-- ============ FEATURES ============ -->
+<section class="features sec-pad" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">A dedicated payroll engine</span>
+      <h2 style="margin-top:16px;">Everything a pay cycle needs, in one place</h2>
+      <p>PayCadence is built for the run itself — compensation, calculation, approval, payslips, and statutory reporting — not bolted onto a broad HR suite.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic">👤</div>
+        <h3>Compensation profiles</h3>
+        <p>Hold each employee's base salary, recurring allowances, and deductions so every run starts from the right numbers.</p>
+        <span class="tag">Salary · allowances · deductions</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🗓️</div>
+        <h3>Pay cycle creation</h3>
+        <p>Open a run for any period and choose exactly which employees to include — full headcount or a subset.</p>
+        <span class="tag">Per-period employee selection</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🧮</div>
+        <h3>Gross-to-net engine</h3>
+        <p>Apply earnings, tax brackets, and statutory deductions to compute total deductions and net pay for every employee.</p>
+        <span class="tag">Tax brackets &amp; statutory</span>
+      </div>
+      <div class="feat">
+        <div class="ic">⚙️</div>
+        <h3>Configurable components</h3>
+        <p>Define your own earning and deduction components and tax tables — by amount, rate, or percentage, taxable or not.</p>
+        <span class="tag">Components &amp; tax tables</span>
+      </div>
+      <div class="feat">
+        <div class="ic">✅</div>
+        <h3>Approval workflow</h3>
+        <p>Route each run through draft, pending, approved, and paid — with an enforced gate so nothing is paid before sign-off.</p>
+        <span class="tag">Draft → pending → approved → paid</span>
+      </div>
+      <div class="feat">
+        <div class="ic">📄</div>
+        <h3>Payslip generation</h3>
+        <p>Produce an itemized, downloadable PDF payslip per employee per period the moment a run is approved.</p>
+        <span class="tag">Downloadable PDF per employee</span>
+      </div>
+      <div class="feat">
+        <div class="ic">💸</div>
+        <h3>Off-cycle adjustments</h3>
+        <p>Add one-time bonuses or deductions and off-cycle adjustments within a run, without breaking the recurring profile.</p>
+        <span class="tag">Bonuses &amp; one-time lines</span>
+      </div>
+      <div class="feat">
+        <div class="ic">🔐</div>
+        <h3>Employee self-service</h3>
+        <p>Each employee signs in to a portal that shows only their own pay history and lets them download every payslip.</p>
+        <span class="tag">Pay history portal</span>
+      </div>
+      <div class="feat">
+        <div class="ic">📊</div>
+        <h3>Register &amp; statutory reports</h3>
+        <p>Roll up the payroll register and statutory deduction totals per period, ready for finance and filing.</p>
+        <span class="tag">Per-period reporting</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS / SCREENS ============ -->
+<section class="works sec-pad" id="workflow">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How PayCadence works</span>
+      <h2 style="margin-top:16px;">From a draft run to paid, in four screens</h2>
+      <p>Every page moves a pay cycle forward — assemble it, check the math, route it for sign-off, and let employees collect their payslips.</p>
+    </div>
+
+    <!-- Step 1: Pay run wizard -->
+    <div class="step-row">
+      <div class="step-txt">
+        <div class="step-num"><span>1</span> Pay run wizard</div>
+        <h3>Assemble the run for the period</h3>
+        <p>Pick the pay period and pay date, then select which employees to include. PayCadence pulls each person's compensation profile so the run is ready to calculate.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Choose period and pay date for the cycle</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Select the employees to include in this run</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Pull base salary and recurring components automatically</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#E8675C;"></span><span class="d" style="background:#E9B53D;"></span><span class="d" style="background:#2FB57F;"></span><span class="ttl">New pay run</span><span class="pill" style="color:var(--amber);background:var(--amber-tint);">Draft</span></div>
+        <div class="panel-in">
+          <div class="wiz-steps">
+            <div class="wiz-step"><div class="s">Step 1</div><div class="t">Period</div></div>
+            <div class="wiz-step active"><div class="s">Step 2</div><div class="t">Employees</div></div>
+            <div class="wiz-step"><div class="s">Step 3</div><div class="t">Calculate</div></div>
+          </div>
+          <div class="wiz-meta">
+            <div class="wiz-field"><div class="l">Pay period</div><div class="v">June 2026</div></div>
+            <div class="wiz-field"><div class="l">Pay date</div><div class="v">30 Jun 2026</div></div>
+            <div class="wiz-field"><div class="l">Frequency</div><div class="v">Monthly</div></div>
+          </div>
+          <div class="emp-list">
+            <div class="emp-row">
+              <span class="ck"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="av" style="background:#0F6B66;">AO</span>
+              <span class="nm">Amara Okeke<small>EMP-0042 · Senior Analyst</small></span>
+              <span class="sal mono">6,250</span>
+            </div>
+            <div class="emp-row">
+              <span class="ck"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="av" style="background:#1A9E6A;">DM</span>
+              <span class="nm">Daniel Mensah<small>EMP-0043 · Operations Lead</small></span>
+              <span class="sal mono">5,400</span>
+            </div>
+            <div class="emp-row">
+              <span class="ck"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="av" style="background:#2F485C;">PT</span>
+              <span class="nm">Priya Thomas<small>EMP-0044 · Warehouse Supervisor</small></span>
+              <span class="sal mono">4,100</span>
+            </div>
+          </div>
+          <div class="wiz-foot">
+            <span class="cnt"><b>15 of 15</b> employees selected</span>
+            <span class="go">Calculate gross-to-net →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Pay run review -->
+    <div class="step-row rev" id="review">
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#E8675C;"></span><span class="d" style="background:#E9B53D;"></span><span class="d" style="background:#2FB57F;"></span><span class="ttl">Pay run review · June 2026</span><span class="pill" style="color:var(--teal-800);background:var(--teal-tint);">Calculated</span></div>
+        <div class="panel-in">
+          <div class="reg-head">
+            <div><div class="ttl">Gross-to-net by employee</div><div class="sub">Payroll register · 15 employees</div></div>
+          </div>
+          <div class="reg-table">
+            <div class="reg-tr h"><span>Employee</span><span class="num">Gross</span><span class="num">Deductions</span><span class="num">Net</span></div>
+            <div class="reg-tr">
+              <span class="emp"><span class="av" style="background:#0F6B66;">AO</span> Amara Okeke</span>
+              <span class="num gross mono">7,300</span><span class="num ded mono">−1,694</span><span class="num net mono">5,606</span>
+            </div>
+            <div class="reg-tr">
+              <span class="emp"><span class="av" style="background:#1A9E6A;">DM</span> Daniel Mensah</span>
+              <span class="num gross mono">6,150</span><span class="num ded mono">−1,402</span><span class="num net mono">4,748</span>
+            </div>
+            <div class="reg-tr">
+              <span class="emp"><span class="av" style="background:#2F485C;">PT</span> Priya Thomas</span>
+              <span class="num gross mono">4,720</span><span class="num ded mono">−986</span><span class="num net mono">3,734</span>
+            </div>
+            <div class="reg-tr">
+              <span class="emp"><span class="av" style="background:#BC7C12;">RC</span> Rosa Carvalho</span>
+              <span class="num gross mono">5,480</span><span class="num ded mono">−1,208</span><span class="num net mono">4,272</span>
+            </div>
+          </div>
+          <div class="reg-tot">
+            <span class="l">Run totals</span>
+            <span class="num gross mono">98,400</span><span class="num ded mono">−23,490</span><span class="num net mono">74,910</span>
+          </div>
+        </div>
+      </div>
+      <div class="step-txt">
+        <div class="step-num"><span>2</span> Pay run review</div>
+        <h3>Check the math before anyone signs off</h3>
+        <p>See gross, total deductions, and net for every employee in one register, with run totals at the bottom. Tax brackets and statutory deductions are applied line by line, so the net is the net.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Per-employee gross-to-net with itemized lines</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Run-level totals for gross, deductions, and net</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Add off-cycle bonuses or one-time deductions inline</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Step 3: Approval queue -->
+    <div class="step-row">
+      <div class="step-txt">
+        <div class="step-num"><span>3</span> Approval queue</div>
+        <h3>Route the run, hold the line on sign-off</h3>
+        <p>Approvers see every run awaiting a decision with its totals in plain view. A run can't be marked paid until it's approved — the gate is enforced in the workflow, not just the UI.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Approve or reject with run totals in context</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Paid state is blocked until approval is recorded</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Audit trail of who approved each run and when</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#E8675C;"></span><span class="d" style="background:#E9B53D;"></span><span class="d" style="background:#2FB57F;"></span><span class="ttl">Approval queue</span><span class="pill" style="color:var(--amber);background:var(--amber-tint);">2 awaiting you</span></div>
+        <div class="panel-in">
+          <div class="aq-list">
+            <div class="aq-row">
+              <div class="aq-top"><span class="nm">June 2026 · Monthly</span><span class="meta">· 15 employees</span><span class="st pending">Pending</span></div>
+              <div class="aq-bot">
+                <div class="fig">Gross<b class="mono">98,400</b></div>
+                <div class="fig">Net<b class="mono">74,910</b></div>
+                <div class="aq-act"><span class="b reject">Reject</span><span class="b approve">Approve run</span></div>
+              </div>
+            </div>
+            <div class="aq-row">
+              <div class="aq-top"><span class="nm">June 2026 · Off-cycle bonus</span><span class="meta">· 3 employees</span><span class="st pending">Pending</span></div>
+              <div class="aq-bot">
+                <div class="fig">Gross<b class="mono">7,500</b></div>
+                <div class="fig">Net<b class="mono">5,910</b></div>
+                <div class="aq-act"><span class="b reject">Reject</span><span class="b approve">Approve run</span></div>
+              </div>
+            </div>
+            <div class="aq-row">
+              <div class="aq-top"><span class="nm">May 2026 · Monthly</span><span class="meta">· 15 employees</span><span class="st paid">Paid</span></div>
+              <div class="aq-bot">
+                <div class="fig">Gross<b class="mono">96,200</b></div>
+                <div class="fig">Net<b class="mono">73,180</b></div>
+                <div class="aq-act"><span class="b" style="color:var(--green);background:var(--green-tint);">Approved · R. Chen</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Employee portal -->
+    <div class="step-row rev">
+      <div class="panel">
+        <div class="panel-bar"><span class="d" style="background:#E8675C;"></span><span class="d" style="background:#E9B53D;"></span><span class="d" style="background:#2FB57F;"></span><span class="ttl">My pay · Amara Okeke</span><span class="pill" style="color:var(--teal-800);background:var(--teal-tint);">Employee portal</span></div>
+        <div class="panel-in">
+          <div class="ep-sum">
+            <div class="ep-cell"><div class="l">Latest net pay</div><div class="n teal mono">5,606.00</div></div>
+            <div class="ep-cell"><div class="l">Payslips on file</div><div class="n">14</div></div>
+          </div>
+          <div class="ep-hist">
+            <div class="ep-row">
+              <span class="pic"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6M9 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="info"><b>June 2026</b><span>Paid 30 Jun · Monthly</span></span>
+              <span class="amt mono">5,606.00</span>
+              <span class="dl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>PDF</span>
+            </div>
+            <div class="ep-row">
+              <span class="pic"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6M9 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="info"><b>May 2026</b><span>Paid 31 May · Monthly</span></span>
+              <span class="amt mono">5,606.00</span>
+              <span class="dl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>PDF</span>
+            </div>
+            <div class="ep-row">
+              <span class="pic"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13h6M9 17h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="info"><b>April 2026</b><span>Paid 30 Apr · Monthly</span></span>
+              <span class="amt mono">5,540.00</span>
+              <span class="dl"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>PDF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-txt">
+        <div class="step-num"><span>4</span> Employee portal</div>
+        <h3>Employees collect their own payslips</h3>
+        <p>Every employee signs in to a portal scoped to just their records — full pay history and a PDF download for each period. No more email requests to the payroll team for last month's slip.</p>
+        <ul>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Pay history across every period worked</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> One-tap PDF payslip download per period</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> Scoped access — each employee sees only their own pay</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO IT'S FOR ============ -->
+<section class="roles sec-pad" id="roles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Built for the whole pay cycle</span>
+      <h2 style="margin-top:16px;">The right view for every role</h2>
+      <p>PayCadence gives each person exactly what they need — and role-based access keeps approvals, configuration, and employee data in the right hands.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role">
+        <div class="ic">🧾</div>
+        <h3>Payroll Administrator</h3>
+        <span class="tagrole">Runs the cycle</span>
+        <p>Owns the run from setup to payslips, with the full pay-run console at hand.</p>
+        <ul>
+          <li>Set up employees and compensation</li>
+          <li>Create and calculate pay runs</li>
+          <li>Generate payslips for the period</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">🛡️</div>
+        <h3>Approver</h3>
+        <span class="tagrole">Holds the gate</span>
+        <p>Reviews each run's totals and decides before any money moves.</p>
+        <ul>
+          <li>Review gross-to-net before disbursement</li>
+          <li>Approve or reject pending runs</li>
+          <li>Leave an audit trail on every decision</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">👥</div>
+        <h3>Employee</h3>
+        <span class="tagrole">Self-service</span>
+        <p>Signs in to see their pay and pull payslips whenever they need them.</p>
+        <ul>
+          <li>View personal pay history</li>
+          <li>Download payslip PDFs</li>
+          <li>See only their own records</li>
+        </ul>
+      </div>
+      <div class="role">
+        <div class="ic">⚙️</div>
+        <h3>Admin</h3>
+        <span class="tagrole">Configures it all</span>
+        <p>Keeps users, pay components, and tax tables accurate and current.</p>
+        <ul>
+          <li>Manage users and roles</li>
+          <li>Configure pay components</li>
+          <li>Maintain tax tables and reports</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta-band" id="cta">
+  <div class="wrap">
+    <div class="cta-card">
+      <span class="eyebrow on-dark"><span class="dot"></span> Run it locally. Approve with confidence.</span>
+      <h2 style="margin-top:18px;">Your next pay run is one console away</h2>
+      <p>Spin up PayCadence locally on seed data — one company, 15 employees, configured components and tax brackets, completed runs, and a draft awaiting approval — with no paid keys. Add a real provider when you're ready to disburse.</p>
+      <div class="hero-cta">
+        <a href="#top" class="btn btn-primary">Start a pay run free
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#workflow" class="btn btn-light">Book a 20-min demo</a>
+      </div>
+      <p class="cta-note">No credit card · Runs locally in mock mode · Vercel &amp; Docker ready</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="17.5" cy="16.5" r="3.2" stroke="#fff" stroke-width="2"/></svg>
+          </span>
+          PayCadence
+        </a>
+        <p>The payroll &amp; payslip management system for teams and bureaus who run gross-to-net, route approvals, and own their pay cycle.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#workflow">How it works</a>
+        <a href="#review">Pay run review</a>
+        <a href="#roles">For teams</a>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#features">Gross-to-net engine</a>
+        <a href="#workflow">Approval workflow</a>
+        <a href="#features">Payslip PDFs</a>
+        <a href="#features">Statutory reports</a>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <a href="#top">Sign in</a>
+        <a href="#cta">Start free</a>
+        <a href="#cta">Book a demo</a>
+        <a href="#roles">Employee portal</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 PayCadence. A dedicated payroll engine for SMBs and payroll bureaus.</span>
+      <div class="socials" aria-label="Social links">
+        <a href="#top" aria-label="X (Twitter)"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>
+        <a href="#top" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a1.94 1.94 0 11-3.88 0 1.94 1.94 0 013.88 0zM3.5 8.5h3.5V20H3.5V8.5zm6 0H13v1.6c.5-.9 1.7-1.9 3.5-1.9 3 0 4 1.9 4 5V20h-3.5v-5.4c0-1.3-.5-2.2-1.7-2.2-1 0-1.6.7-1.8 1.4-.1.2-.1.6-.1.9V20H10V8.5z"/></svg></a>
+        <a href="#top" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.3-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var t = document.getElementById('navToggle');
+    var m = document.getElementById('mobile-menu');
+    if (!t || !m) return;
+    t.addEventListener('click', function () {
+      var open = m.classList.toggle('open');
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    m.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { m.classList.remove('open'); t.setAttribute('aria-expanded', 'false'); }
+    });
+  })();
+</script>
+
+</body>
+</html>

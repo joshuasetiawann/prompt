@@ -12,7 +12,7 @@ target_users: payroll administrators and finance teams who run pay cycles, route
 role_line: You are a senior full-stack engineer who builds payroll and compensation products
 business_goal: Let payroll teams run pay cycles end to end by calculating gross-to-net with tax and statutory deductions, routing runs for approval, generating downloadable payslips, and giving employees a self-service pay history portal
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-brand_design: 'Brand style: precise, professional, reassuring. Colors: deep teal, slate grey, crisp white. A pay-run console with a gross-to-net breakdown table and a payslip preview panel.'
+brand_design: 'Brand style: precise, professional, reassuring. Colors: deep teal #0F6B66, deep-teal ink #093C3A, slate grey #2F485C, crisp white #FFFFFF on soft mist #F4F7F9, with success green #1A9E6A, caution amber #BC7C12, and reject rose #C24A40 status accents. Signature layout: a two-pane pay-run console pairing a gross-to-net breakdown table with a live payslip preview, plus status pills and a draft-to-pending-to-approved-to-paid workflow strip; pair Plus Jakarta Sans for UI with IBM Plex Mono tabular numerals for every currency figure.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -72,6 +72,7 @@ required_pages:
 - Pay components and tax table configuration
 - Auth (sign in / register)
 - 'Admin: users, components, and payroll reports'
+- 'Employee year-end summary: per-employee annual statement showing YTD gross, tax, and net across the calendar year with a downloadable year-end document'
 required_features:
 - Employee compensation profiles with base salary, recurring allowances, and deductions
 - Pay cycle creation per period with selection of which employees to include
@@ -82,6 +83,9 @@ required_features:
 - Off-cycle adjustments and one-time bonuses or deductions within a run
 - Employee self-service portal with pay history and payslip downloads
 - Payroll register and statutory deduction reports per period
+- 'Exports for an approved pay run: download the payroll register and statutory deduction report as CSV/Excel and a bank disbursement (payment) file for the included employees'
+- 'Notifications via the mock notification log: alert approvers when a run enters pending approval and notify employees when a new payslip is available to download'
+- Year-to-date totals on every payslip plus a per-employee year-end summary (annual gross, tax, and net) with a downloadable year-end document
 database_models:
 - name: User
   fields:
@@ -103,6 +107,10 @@ database_models:
   - payFrequency
   - taxCode
   - status
+  - jobTitle
+  - department
+  - bankAccountNumber
+  - bankRoutingNumber
   - createdAt
   - updatedAt
   relationships:
@@ -129,10 +137,15 @@ database_models:
   - approvedAt
   - totalGross
   - totalNet
+  - runType
+  - paidAt
+  - rejectedById
+  - rejectionReason
   - createdAt
   - updatedAt
   relationships:
   - approvedById -> references the related record
+  - rejectedById -> references the related record
 - name: Payslip
   fields:
   - id
@@ -142,6 +155,10 @@ database_models:
   - totalDeductions
   - netPay
   - status
+  - pdfUrl
+  - ytdGross
+  - ytdTax
+  - ytdNet
   - createdAt
   - updatedAt
   relationships:
@@ -171,6 +188,20 @@ database_models:
   - updatedAt
   relationships:
   - Standalone model (no outbound foreign keys)
+- name: EmployeeComponent
+  fields:
+  - id
+  - employeeId
+  - componentId
+  - amount
+  - active
+  - effectiveFrom
+  - effectiveTo
+  - createdAt
+  - updatedAt
+  relationships:
+  - employeeId -> references the related record
+  - componentId -> references the related record
 backend_logic:
 - Assemble a pay run for a period by collecting included employees and their compensation profiles
 - Calculate gross pay from base salary and earnings components for each employee
@@ -179,6 +210,8 @@ backend_logic:
 - Route pay runs through draft, pending approval, approved, and paid states with approver actions
 - Render and store downloadable payslip PDFs once a run is approved
 - Aggregate payroll register and statutory deduction totals per pay run for reporting
+- 'Generate downloadable exports for an approved pay run: a payroll register CSV, a statutory deduction report, and a bank disbursement file listing each employee''s net pay and account details'
+- Compute year-to-date gross, tax, and net per employee across the calendar year for payslip YTD lines and the year-end summary
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -232,6 +265,8 @@ acceptance_checklist:
 - A pay run computes gross-to-net per employee, with tax and statutory deductions reducing gross to the correct net pay
 - A pay run cannot be marked paid until it has been approved, and that approval gate is enforced in the workflow
 - An employee sees only their own payslips and can download a payslip PDF for each pay period
+- A payslip's itemized lines are drawn from the employee's configured recurring components plus any one-time run adjustments, and the amounts sum exactly to the shown gross pay, total deductions, and net pay
+- Exporting an approved pay run produces a payroll register CSV and a bank disbursement file in which each employee's net pay and the run total reconcile to the figures shown in the pay run review
 ready_to_use_prompt: |-
   You are a senior full-stack engineer who builds payroll and compensation products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -245,7 +280,7 @@ ready_to_use_prompt: |-
   Business goal: Let payroll teams run pay cycles end to end by calculating gross-to-net with tax and statutory deductions, routing runs for approval, generating downloadable payslips, and giving employees a self-service pay history portal.
 
   BRAND & DESIGN
-  Brand style: precise, professional, reassuring. Colors: deep teal, slate grey, crisp white. A pay-run console with a gross-to-net breakdown table and a payslip preview panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+  Brand style: precise, professional, reassuring. Colors: deep teal #0F6B66, deep-teal ink #093C3A, slate grey #2F485C, crisp white #FFFFFF on soft mist #F4F7F9, with success green #1A9E6A, caution amber #BC7C12, and reject rose #C24A40 status accents. Signature layout: a two-pane pay-run console pairing a gross-to-net breakdown table with a live payslip preview, plus status pills and a draft-to-pending-to-approved-to-paid workflow strip; pair Plus Jakarta Sans for UI with IBM Plex Mono tabular numerals for every currency figure. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
   TECH STACK
   - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -265,6 +300,7 @@ ready_to_use_prompt: |-
   8. Pay components and tax table configuration
   9. Auth (sign in / register)
   10. Admin: users, components, and payroll reports
+  11. Employee year-end summary: per-employee annual statement showing YTD gross, tax, and net across the calendar year with a downloadable year-end document
 
   NAVIGATION
   - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -285,15 +321,19 @@ ready_to_use_prompt: |-
   - Off-cycle adjustments and one-time bonuses or deductions within a run
   - Employee self-service portal with pay history and payslip downloads
   - Payroll register and statutory deduction reports per period
+  - Exports for an approved pay run: download the payroll register and statutory deduction report as CSV/Excel and a bank disbursement (payment) file for the included employees
+  - Notifications via the mock notification log: alert approvers when a run enters pending approval and notify employees when a new payslip is available to download
+  - Year-to-date totals on every payslip plus a per-employee year-end summary (annual gross, tax, and net) with a downloadable year-end document
 
   DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
   - User: id, email, passwordHash, name, role, createdAt, updatedAt
-  - Employee: id, userId, employeeNumber, baseSalary, payFrequency, taxCode, status, createdAt, updatedAt
+  - Employee: id, userId, employeeNumber, baseSalary, payFrequency, taxCode, status, jobTitle, department, bankAccountNumber, bankRoutingNumber, createdAt, updatedAt
   - PayComponent: id, name, type, calcMethod, rate, taxable, createdAt, updatedAt
-  - PayRun: id, period, payDate, status, approvedById, approvedAt, totalGross, totalNet, createdAt, updatedAt
-  - Payslip: id, payRunId, employeeId, grossPay, totalDeductions, netPay, status, createdAt, updatedAt
+  - PayRun: id, period, payDate, status, approvedById, approvedAt, totalGross, totalNet, runType, paidAt, rejectedById, rejectionReason, createdAt, updatedAt
+  - Payslip: id, payRunId, employeeId, grossPay, totalDeductions, netPay, status, pdfUrl, ytdGross, ytdTax, ytdNet, createdAt, updatedAt
   - PayslipLine: id, payslipId, componentId, label, amount, kind, createdAt, updatedAt
   - TaxBracket: id, name, lowerBound, upperBound, rate, createdAt, updatedAt
+  - EmployeeComponent: id, employeeId, componentId, amount, active, effectiveFrom, effectiveTo, createdAt, updatedAt
   - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
   BACKEND / API LOGIC
@@ -304,6 +344,8 @@ ready_to_use_prompt: |-
   - Route pay runs through draft, pending approval, approved, and paid states with approver actions
   - Render and store downloadable payslip PDFs once a run is approved
   - Aggregate payroll register and statutory deduction totals per pay run for reporting
+  - Generate downloadable exports for an approved pay run: a payroll register CSV, a statutory deduction report, and a bank disbursement file listing each employee's net pay and account details
+  - Compute year-to-date gross, tax, and net per employee across the calendar year for payslip YTD lines and the year-end summary
   - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
   ENVIRONMENT & MODES

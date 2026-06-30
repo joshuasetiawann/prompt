@@ -60,6 +60,8 @@
 8. Notebook sharing and collaborator management
 9. Auth (sign in / register)
 10. Settings (profile and preferences)
+11. Trash / recently deleted page listing soft-deleted notes with restore and permanent-delete actions.
+12. Note revision history page that lists past revisions, diffs two versions, and restores an earlier one.
 
 ## Required features
 
@@ -72,6 +74,9 @@
 - Notebook sharing by invite with viewer or editor roles
 - Link autocomplete and automatic creation of linked-but-empty notes
 - Per-note revision history
+- Export a single note, a notebook, or the entire vault to a downloadable Markdown ZIP that preserves [[wiki-links]] and #tags so users own their data.
+- Soft-delete notes into a Trash view with one-click restore and a permanent-delete option, so accidental deletions are recoverable.
+- An 'unlinked mentions' panel that surfaces notes referencing a note's title in plain text and lets you convert each into a real [[wiki-link]].
 
 ## Database models
 
@@ -88,7 +93,7 @@
 - ownerId -> references the related record
 
 ### Note
-**Fields:** `id`, `notebookId`, `ownerId`, `title`, `body`, `noteDate`, `createdAt`, `updatedAt`
+**Fields:** `id`, `notebookId`, `ownerId`, `title`, `body`, `noteDate`, `deletedAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - notebookId -> references the related record
@@ -122,6 +127,13 @@
 - notebookId -> references the related record
 - userId -> references the related record
 
+### NoteRevision
+**Fields:** `id`, `noteId`, `authorId`, `title`, `body`, `revisionNumber`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- noteId -> references the related record
+- authorId -> references the related record
+
 ## Backend logic
 
 - Parse [[wiki-links]] in note bodies and maintain forward-link and backlink records
@@ -131,6 +143,8 @@
 - Build the note graph from link records for the graph view
 - Invite collaborators to a notebook as viewer or editor and enforce that role on note access
 - Record a note revision on each save for history
+- Generate a Markdown export bundle (ZIP, one file per note) for a note, notebook, or full vault, preserving wiki-link syntax and tag annotations.
+- Scan accessible note bodies for plain-text occurrences of a target note's title and return them as unlinked mentions.
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -184,6 +198,8 @@
 - [ ] Typing a [[wiki-link]] in one note creates a backlink that appears on the target note
 - [ ] A notebook shared as viewer is read-only for that collaborator while an editor can modify its notes
 - [ ] Full-text search returns matching notes and respects which notebooks the current user can access
+- [ ] Exporting a notebook downloads a ZIP whose Markdown files contain the original [[wiki-links]] and #tags, one file per note.
+- [ ] Deleting a note moves it to Trash and removes it from search, the graph, and backlinks; restoring it brings the note back with its links and tags intact.
 
 ## Ready-to-use prompt
 
@@ -202,7 +218,7 @@ Target users: knowledge workers and students who capture notes in a personal sec
 Business goal: Let users capture notes with bidirectional links, daily notes, nested tags, and full-text search, and share notebooks with collaborators invited as viewers or editors.
 
 BRAND & DESIGN
-Brand style: focused, calm, cerebral. Colors: ink black, paper cream, soft indigo. A two-pane markdown editor with a backlinks panel beside a graph of linked notes and a nested tag tree. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: focused, calm, cerebral. Colors: ink black (#18181F), paper cream (#F7F2E6), soft indigo (#565CD9), warm amber accent (#C4892A). Two-pane markdown editor with a live backlinks panel beside an interactive note graph and nested tag tree; pair Fraunces serif headings with Inter body text and JetBrains Mono for [[wiki-links]] and tags. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -222,6 +238,8 @@ PAGES / SCREENS
 8. Notebook sharing and collaborator management
 9. Auth (sign in / register)
 10. Settings (profile and preferences)
+11. Trash / recently deleted page listing soft-deleted notes with restore and permanent-delete actions.
+12. Note revision history page that lists past revisions, diffs two versions, and restores an earlier one.
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -241,15 +259,19 @@ CORE FEATURES
 - Notebook sharing by invite with viewer or editor roles
 - Link autocomplete and automatic creation of linked-but-empty notes
 - Per-note revision history
+- Export a single note, a notebook, or the entire vault to a downloadable Markdown ZIP that preserves [[wiki-links]] and #tags so users own their data.
+- Soft-delete notes into a Trash view with one-click restore and a permanent-delete option, so accidental deletions are recoverable.
+- An 'unlinked mentions' panel that surfaces notes referencing a note's title in plain text and lets you convert each into a real [[wiki-link]].
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, createdAt, updatedAt
 - Notebook: id, ownerId, title, description, isDailyJournal, createdAt, updatedAt
-- Note: id, notebookId, ownerId, title, body, noteDate, createdAt, updatedAt
+- Note: id, notebookId, ownerId, title, body, noteDate, deletedAt, createdAt, updatedAt
 - NoteLink: id, sourceNoteId, targetNoteId, createdAt, updatedAt
 - Tag: id, ownerId, name, parentId, createdAt, updatedAt
 - NoteTag: id, noteId, tagId, createdAt, updatedAt
 - NotebookShare: id, notebookId, userId, role, invitedAt, createdAt, updatedAt
+- NoteRevision: id, noteId, authorId, title, body, revisionNumber, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -260,6 +282,8 @@ BACKEND / API LOGIC
 - Build the note graph from link records for the graph view
 - Invite collaborators to a notebook as viewer or editor and enforce that role on note access
 - Record a note revision on each save for history
+- Generate a Markdown export bundle (ZIP, one file per note) for a note, notebook, or full vault, preserving wiki-link syntax and tag annotations.
+- Scan accessible note bodies for plain-text occurrences of a target note's title and return them as unlinked mentions.
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

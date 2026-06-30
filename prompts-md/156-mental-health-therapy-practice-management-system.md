@@ -60,6 +60,7 @@
 8. Billing and invoices (sliding-scale rates, recurring charges, mock payment)
 9. Auth (sign in / register)
 10. Admin: users, fee schedule, sliding-scale rules, and reports
+11. Client portal home for the Client role: upcoming appointments, intake/assessment forms still to complete, and downloadable invoices and superbills.
 
 ## Required features
 
@@ -72,6 +73,8 @@
 - Assessment score trends charted over the course of care
 - Caseload dashboard surfacing unsigned notes, upcoming sessions, and overdue plan reviews
 - Secure document storage for signed consents and uploaded client records
+- Automated appointment reminders sent to clients ahead of each scheduled session via the mock email/SMS notification log, helping reduce the no-shows the app already tracks.
+- Insurance superbill generation: produce a downloadable superbill for a date range listing each kept session with its fee, diagnosis, and procedure code so out-of-network clients can claim reimbursement.
 
 ## Database models
 
@@ -82,13 +85,13 @@
 - Standalone model (no outbound foreign keys)
 
 ### Client
-**Fields:** `id`, `therapistId`, `fullName`, `dateOfBirth`, `contactEmail`, `status`, `incomeBand`, `slidingScaleRate`, `createdAt`, `updatedAt`
+**Fields:** `id`, `therapistId`, `fullName`, `dateOfBirth`, `contactEmail`, `status`, `incomeBand`, `slidingScaleRate`, `phone`, `diagnosisCode`, `balance`, `reminderOptIn`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - therapistId -> references the related record
 
 ### Appointment
-**Fields:** `id`, `clientId`, `therapistId`, `startsAt`, `endsAt`, `recurrenceRule`, `status`, `fee`, `createdAt`, `updatedAt`
+**Fields:** `id`, `clientId`, `therapistId`, `startsAt`, `endsAt`, `recurrenceRule`, `status`, `fee`, `cptCode`, `reminderSentAt`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - clientId -> references the related record
@@ -122,6 +125,13 @@
 - clientId -> references the related record
 - appointmentId -> references the related record
 
+### Superbill
+**Fields:** `id`, `clientId`, `therapistId`, `periodStart`, `periodEnd`, `diagnosisCode`, `totalAmount`, `status`, `issuedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- clientId -> references the related record
+- therapistId -> references the related record
+
 ## Backend logic
 
 - Score standardized assessments (PHQ-9, GAD-7) on submission and classify severity bands
@@ -131,6 +141,8 @@
 - Lock and sign progress notes, preventing edits after signing while keeping a dated amendment trail
 - Surface caseload alerts for unsigned notes, overdue treatment-plan reviews, and upcoming sessions
 - Chart assessment score trends across a course of care per client
+- Queue and send appointment reminders through the notification provider a configurable lead time before each scheduled session, recording the send on the appointment and writing to the mock notification log without duplicating.
+- Aggregate a client's kept sessions across a date range into a superbill, summing each session's resolved sliding-scale fee into a total with per-session line items (date, procedure code, fee).
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -184,6 +196,8 @@
 - [ ] Submitting a PHQ-9 or GAD-7 assessment computes the correct total score and severity band and adds a point to the client's trend chart
 - [ ] A signed progress note becomes read-only and any change is recorded as a dated amendment rather than overwriting the original
 - [ ] A client's session fee follows their sliding-scale income band and each recurring kept session generates a matching invoice
+- [ ] Generating a superbill for a client over a date range lists every kept session in that range with its resolved sliding-scale fee and a total equal to the sum of the line items.
+- [ ] Each upcoming scheduled session produces exactly one reminder entry in the mock notification log at the configured lead time, and re-running the reminder job does not create a duplicate.
 
 ## Ready-to-use prompt
 
@@ -202,7 +216,7 @@ Target users: therapists who manage their caseload, clinical documentation, and 
 Business goal: Let therapists manage clients, run intake and assessments, write structured progress notes and treatment plans, and bill recurring sessions including sliding-scale rates.
 
 BRAND & DESIGN
-Brand style: calm, trustworthy, clinical. Colors: soft teal, warm sand, slate grey. A two-pane client workspace with a session timeline on the left and structured note and treatment-plan editors on the right. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: calm, trustworthy, clinical. Colors: soft teal #1c6b62, warm sand #f5ecda, slate grey #202a33 on off-white #fbf9f3 surfaces. Signature two-pane client workspace (session timeline left, structured SOAP/DAP note and treatment-plan editors right) with rounded cards, accessible contrast, and Fraunces display headings paired with Inter for UI and body. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -222,6 +236,7 @@ PAGES / SCREENS
 8. Billing and invoices (sliding-scale rates, recurring charges, mock payment)
 9. Auth (sign in / register)
 10. Admin: users, fee schedule, sliding-scale rules, and reports
+11. Client portal home for the Client role: upcoming appointments, intake/assessment forms still to complete, and downloadable invoices and superbills.
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -241,15 +256,18 @@ CORE FEATURES
 - Assessment score trends charted over the course of care
 - Caseload dashboard surfacing unsigned notes, upcoming sessions, and overdue plan reviews
 - Secure document storage for signed consents and uploaded client records
+- Automated appointment reminders sent to clients ahead of each scheduled session via the mock email/SMS notification log, helping reduce the no-shows the app already tracks.
+- Insurance superbill generation: produce a downloadable superbill for a date range listing each kept session with its fee, diagnosis, and procedure code so out-of-network clients can claim reimbursement.
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
-- Client: id, therapistId, fullName, dateOfBirth, contactEmail, status, incomeBand, slidingScaleRate, createdAt, updatedAt
-- Appointment: id, clientId, therapistId, startsAt, endsAt, recurrenceRule, status, fee, createdAt, updatedAt
+- Client: id, therapistId, fullName, dateOfBirth, contactEmail, status, incomeBand, slidingScaleRate, phone, diagnosisCode, balance, reminderOptIn, createdAt, updatedAt
+- Appointment: id, clientId, therapistId, startsAt, endsAt, recurrenceRule, status, fee, cptCode, reminderSentAt, createdAt, updatedAt
 - ProgressNote: id, appointmentId, clientId, therapistId, format, content, signedAt, createdAt, updatedAt
 - Assessment: id, clientId, type, responsesJson, score, severity, administeredAt, createdAt, updatedAt
 - TreatmentPlan: id, clientId, therapistId, goalsJson, interventionsJson, reviewDate, status, createdAt, updatedAt
 - Invoice: id, clientId, appointmentId, amount, status, paidAt, createdAt, updatedAt
+- Superbill: id, clientId, therapistId, periodStart, periodEnd, diagnosisCode, totalAmount, status, issuedAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -260,6 +278,8 @@ BACKEND / API LOGIC
 - Lock and sign progress notes, preventing edits after signing while keeping a dated amendment trail
 - Surface caseload alerts for unsigned notes, overdue treatment-plan reviews, and upcoming sessions
 - Chart assessment score trends across a course of care per client
+- Queue and send appointment reminders through the notification provider a configurable lead time before each scheduled session, recording the send on the appointment and writing to the mock notification log without duplicating.
+- Aggregate a client's kept sessions across a date range into a superbill, summing each session's resolved sliding-scale fee into a total with per-session line items (date, procedure code, fee).
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

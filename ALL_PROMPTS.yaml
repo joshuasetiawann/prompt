@@ -3663,7 +3663,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds sports facility booking products
   business_goal: Let players find open courts, book single or recurring time slots at the right member or casual rate, and let operators manage venue schedules, pricing, and revenue
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: energetic, sporty, clean. Colors: court green, slate, white. A grid-style time-slot board with per-court columns and tap-to-book peak and off-peak cells.'
+  brand_design: 'Brand style: energetic, sporty, clean. Colors: court green #138043, bright green #1fb866, slate ink #0f1d2e, peak orange #e8852b, white #ffffff. Signature per-court time-slot grid with green off-peak and orange peak tap-to-book cells; pair bold Sora headings with Inter body text.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -3723,6 +3723,8 @@ prompts:
   - Auth (sign in / register)
   - 'Operator: court and schedule management'
   - 'Operator: bookings, occupancy, and revenue dashboard'
+  - 'Membership plans page: compare casual vs member tiers (rates and earlier booking window), then join or upgrade a plan'
+  - 'Booking confirmation and receipt page: post-checkout summary with slot, rate breakdown, receipt number, and downloadable receipt'
   required_features:
   - Multi-court, multi-sport venue catalog with availability search
   - Interactive time-slot board showing peak and off-peak rates
@@ -3733,6 +3735,8 @@ prompts:
   - Mock payment and booking confirmation with a downloadable receipt
   - Operator schedule blocking for maintenance and tournaments
   - Occupancy and revenue dashboard by court, sport, and time band
+  - 'Waitlist for fully-booked slots: players join a waitlist on a booked court/time, and are notified when the slot frees up'
+  - Add a confirmed booking to a personal calendar via downloadable .ics file or Google Calendar link, plus export of the player's full upcoming schedule
   database_models:
   - name: User
     fields:
@@ -3754,6 +3758,11 @@ prompts:
     - address
     - sports
     - openingHours
+    - amenities
+    - description
+    - cancellationCutoffHours
+    - memberBookingWindowDays
+    - casualBookingWindowDays
     - createdAt
     - updatedAt
     relationships:
@@ -3806,6 +3815,9 @@ prompts:
     - recurrenceRule
     - status
     - totalPrice
+    - receiptNumber
+    - cancelledAt
+    - cancellationReason
     - createdAt
     - updatedAt
     relationships:
@@ -3822,6 +3834,20 @@ prompts:
     - updatedAt
     relationships:
     - bookingId -> references the related record
+  - name: WaitlistEntry
+    fields:
+    - id
+    - courtId
+    - userId
+    - requestedStartTime
+    - requestedEndTime
+    - status
+    - notifiedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - courtId -> references the related record
+    - userId -> references the related record
   backend_logic:
   - Compute court availability for a date by overlaying bookings, blocks, and opening hours
   - Resolve the applicable rate from pricing rules using member status and the peak/off-peak time band
@@ -3830,6 +3856,8 @@ prompts:
   - Apply cancellation and reschedule rules against the venue cutoff window
   - Aggregate occupancy and revenue by court, sport, and time band for the operator dashboard
   - Record mock payments and update booking status on successful checkout
+  - Generate a downloadable .ics calendar file (and Google Calendar add-link) for a single confirmed booking and for a player's full set of upcoming bookings
+  - On cancellation of a fully-booked slot, notify the first eligible waitlist entry and hold the freed slot for them for a short claim window before reopening it to everyone
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -3883,6 +3911,8 @@ prompts:
   - Overlapping court bookings for the same time slot are rejected
   - Member and casual rates resolve correctly for peak and off-peak slots
   - A recurring weekly booking creates individual slots and skips maintenance blocks
+  - A member can reserve a slot during the member-only advance booking window while a casual player is blocked from that slot until the casual window opens
+  - Joining the waitlist on a fully-booked slot succeeds, and cancelling that booking notifies the first waitlisted player for the freed slot
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds sports facility booking products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -3896,7 +3926,7 @@ prompts:
     Business goal: Let players find open courts, book single or recurring time slots at the right member or casual rate, and let operators manage venue schedules, pricing, and revenue.
 
     BRAND & DESIGN
-    Brand style: energetic, sporty, clean. Colors: court green, slate, white. A grid-style time-slot board with per-court columns and tap-to-book peak and off-peak cells. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: energetic, sporty, clean. Colors: court green #138043, bright green #1fb866, slate ink #0f1d2e, peak orange #e8852b, white #ffffff. Signature per-court time-slot grid with green off-peak and orange peak tap-to-book cells; pair bold Sora headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -3916,6 +3946,8 @@ prompts:
     8. Auth (sign in / register)
     9. Operator: court and schedule management
     10. Operator: bookings, occupancy, and revenue dashboard
+    11. Membership plans page: compare casual vs member tiers (rates and earlier booking window), then join or upgrade a plan
+    12. Booking confirmation and receipt page: post-checkout summary with slot, rate breakdown, receipt number, and downloadable receipt
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -3936,15 +3968,18 @@ prompts:
     - Mock payment and booking confirmation with a downloadable receipt
     - Operator schedule blocking for maintenance and tournaments
     - Occupancy and revenue dashboard by court, sport, and time band
+    - Waitlist for fully-booked slots: players join a waitlist on a booked court/time, and are notified when the slot frees up
+    - Add a confirmed booking to a personal calendar via downloadable .ics file or Google Calendar link, plus export of the player's full upcoming schedule
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, phone, createdAt, updatedAt
-    - Venue: id, ownerId, name, address, sports, openingHours, createdAt, updatedAt
+    - Venue: id, ownerId, name, address, sports, openingHours, amenities, description, cancellationCutoffHours, memberBookingWindowDays, casualBookingWindowDays, createdAt, updatedAt
     - Court: id, venueId, name, sport, surface, status, createdAt, updatedAt
     - Membership: id, userId, plan, status, startsAt, expiresAt, createdAt, updatedAt
     - PricingRule: id, courtId, dayType, startTime, endTime, memberRate, casualRate, createdAt, updatedAt
-    - Booking: id, courtId, userId, startTime, endTime, rateType, recurrenceRule, status, totalPrice, createdAt, updatedAt
+    - Booking: id, courtId, userId, startTime, endTime, rateType, recurrenceRule, status, totalPrice, receiptNumber, cancelledAt, cancellationReason, createdAt, updatedAt
     - Payment: id, bookingId, amount, status, method, createdAt, updatedAt
+    - WaitlistEntry: id, courtId, userId, requestedStartTime, requestedEndTime, status, notifiedAt, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -3955,6 +3990,8 @@ prompts:
     - Apply cancellation and reschedule rules against the venue cutoff window
     - Aggregate occupancy and revenue by court, sport, and time band for the operator dashboard
     - Record mock payments and update booking status on successful checkout
+    - Generate a downloadable .ics calendar file (and Google Calendar add-link) for a single confirmed booking and for a player's full set of upcoming bookings
+    - On cancellation of a fully-booked slot, notify the first eligible waitlist entry and hold the freed slot for them for a short claim window before reopening it to everyone
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -5375,7 +5412,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds print-on-demand commerce products
   business_goal: Let shoppers upload artwork and place it on blank products with a live mockup designer to buy custom merch, while the owner manages the catalog and paid orders auto-route to print partners for fulfillment and tracking
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: creative, bold, maker-friendly. Colors: ink black, electric magenta, paper white. A live mockup designer canvas with a product picker rail and a real-time merch preview.'
+  brand_design: 'Brand style: creative, bold, maker-friendly. Colors: ink black (#0E0E10), electric magenta (#FF1F9C) with deep magenta (#C8056F) for accents/links, paper white (#FBF8F2). Signature layout is a dark live mockup-designer canvas with a left product-picker rail and a real-time merch preview, pairing Space Grotesk display headings with Inter body text.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -5435,6 +5472,7 @@ prompts:
   - 'Owner: blank product, design, and pricing management'
   - 'Print Partner: assigned orders and fulfillment queue'
   - 'Admin: orders, routing, and revenue reports'
+  - Public creator storefront page listing a single creator's published designs/products (the home page links to 'creator stores' but no such page exists).
   required_features:
   - Live mockup designer to upload artwork and place it on blank products with real-time preview
   - Blank product catalog with size/color variants and defined print areas
@@ -5445,6 +5483,8 @@ prompts:
   - Print partner queue with accept, in-production, and shipped status updates
   - Per-product base cost, print options, and creator markup pricing
   - Owner reports on sales, fulfillment time, and partner performance
+  - 'Order status notifications: when an order item advances to in-production or shipped, send a mock email/SMS (logged locally) to the customer surfacing the new status and tracking number.'
+  - One-click reorder from a past order that re-snapshots the saved design, placement, and variant into a fresh cart.
   database_models:
   - name: User
     fields:
@@ -5466,6 +5506,8 @@ prompts:
     - variants
     - printAreas
     - status
+    - category
+    - printOptions
     - createdAt
     - updatedAt
     relationships:
@@ -5479,6 +5521,7 @@ prompts:
     - artworkUrl
     - placement
     - retailPrice
+    - markup
     - createdAt
     - updatedAt
     relationships:
@@ -5506,6 +5549,10 @@ prompts:
     - printPartnerId
     - fulfillmentStatus
     - trackingNumber
+    - acceptedAt
+    - shippedAt
+    - carrier
+    - trackingUrl
     - createdAt
     - updatedAt
     relationships:
@@ -5534,6 +5581,22 @@ prompts:
     - updatedAt
     relationships:
     - orderId -> references the related record
+  - name: Notification
+    fields:
+    - id
+    - userId
+    - orderItemId
+    - channel
+    - type
+    - subject
+    - body
+    - status
+    - sentAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - userId -> references the related record
+    - orderItemId -> references the related record
   backend_logic:
   - Render a live product mockup by compositing uploaded artwork onto a blank product's print areas
   - Validate uploaded artwork dimensions and resolution against each product's print area
@@ -5542,6 +5605,8 @@ prompts:
   - Route each paid order item to a print partner that supports its product type and shipping region
   - Advance fulfillment status from received to in-production to shipped and attach tracking numbers
   - Aggregate sales, fulfillment time, and partner performance for owner reports
+  - On each fulfillment status change, generate and persist a mock customer notification recording the new status and tracking number.
+  - When no print partner supports an order item's product type and region, mark the item unassigned and queue it for manual routing instead of failing the order.
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -5595,6 +5660,8 @@ prompts:
   - Uploading artwork updates the live mockup preview in real time and is saved with the order
   - A paid order auto-routes each item to a print partner that supports its product type and region
   - Fulfillment status and tracking-number updates appear on the customer's order tracking page
+  - When no print partner matches an item's product type and region, the item is marked unassigned and appears in the admin routing view for manual assignment while the order still completes.
+  - Advancing an order item to shipped records a mock customer notification containing the tracking number that is viewable on the customer's order tracking page.
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds print-on-demand commerce products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -5608,7 +5675,7 @@ prompts:
     Business goal: Let shoppers upload artwork and place it on blank products with a live mockup designer to buy custom merch, while the owner manages the catalog and paid orders auto-route to print partners for fulfillment and tracking.
 
     BRAND & DESIGN
-    Brand style: creative, bold, maker-friendly. Colors: ink black, electric magenta, paper white. A live mockup designer canvas with a product picker rail and a real-time merch preview. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: creative, bold, maker-friendly. Colors: ink black (#0E0E10), electric magenta (#FF1F9C) with deep magenta (#C8056F) for accents/links, paper white (#FBF8F2). Signature layout is a dark live mockup-designer canvas with a left product-picker rail and a real-time merch preview, pairing Space Grotesk display headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -5628,6 +5695,7 @@ prompts:
     8. Owner: blank product, design, and pricing management
     9. Print Partner: assigned orders and fulfillment queue
     10. Admin: orders, routing, and revenue reports
+    11. Public creator storefront page listing a single creator's published designs/products (the home page links to 'creator stores' but no such page exists).
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -5648,15 +5716,18 @@ prompts:
     - Print partner queue with accept, in-production, and shipped status updates
     - Per-product base cost, print options, and creator markup pricing
     - Owner reports on sales, fulfillment time, and partner performance
+    - Order status notifications: when an order item advances to in-production or shipped, send a mock email/SMS (logged locally) to the customer surfacing the new status and tracking number.
+    - One-click reorder from a past order that re-snapshots the saved design, placement, and variant into a fresh cart.
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, createdAt, updatedAt
-    - BlankProduct: id, name, productType, basePrice, variants, printAreas, status, createdAt, updatedAt
-    - Design: id, ownerId, blankProductId, name, artworkUrl, placement, retailPrice, createdAt, updatedAt
+    - BlankProduct: id, name, productType, basePrice, variants, printAreas, status, category, printOptions, createdAt, updatedAt
+    - Design: id, ownerId, blankProductId, name, artworkUrl, placement, retailPrice, markup, createdAt, updatedAt
     - Order: id, customerId, total, status, shippingAddress, createdAt, updatedAt
-    - OrderItem: id, orderId, designId, variant, qty, lineTotal, printPartnerId, fulfillmentStatus, trackingNumber, createdAt, updatedAt
+    - OrderItem: id, orderId, designId, variant, qty, lineTotal, printPartnerId, fulfillmentStatus, trackingNumber, acceptedAt, shippedAt, carrier, trackingUrl, createdAt, updatedAt
     - PrintPartner: id, name, capabilities, regions, status, createdAt, updatedAt
     - Payment: id, orderId, amount, status, method, createdAt, updatedAt
+    - Notification: id, userId, orderItemId, channel, type, subject, body, status, sentAt, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -5667,6 +5738,8 @@ prompts:
     - Route each paid order item to a print partner that supports its product type and shipping region
     - Advance fulfillment status from received to in-production to shipped and attach tracking numbers
     - Aggregate sales, fulfillment time, and partner performance for owner reports
+    - On each fulfillment status change, generate and persist a mock customer notification recording the new status and tracking number.
+    - When no print partner supports an order item's product type and region, mark the item unassigned and queue it for manual routing instead of failing the order.
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -13319,7 +13392,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds meeting-intelligence and productivity products
   business_goal: Let teams upload or record meetings, get AI transcripts, summaries, and auto-extracted action items assigned to owners with due dates, and track those items to completion across workspaces
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: smart, calm, productive. Colors: midnight blue, teal, warm white. A meeting timeline with a synced transcript pane, a summary card, and an action-item checklist sidebar.'
+  brand_design: 'Brand style: smart, calm, productive. Colors: midnight blue (#0C1A3C), teal (#0FB6A2), warm white (#FBF7EF), with bright teal accent (#2DD4BF) and amber/rose due-date chips (#E9A23B / #E5687E). Signature layout: a synced meeting timeline with a transcript pane beside a summary card and an action-item checklist sidebar; pair Space Grotesk headings with Inter body text.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -13379,6 +13452,7 @@ prompts:
   - Auth (sign in / register)
   - 'Admin: workspaces, members, and integration settings'
   - 'Settings: notification and processing preferences'
+  - 'Notifications inbox: a per-member list of assigned, upcoming, and overdue action-item alerts with an unread badge and mark-as-read controls (surfaces the mock notification log to users).'
   required_features:
   - Audio upload and in-browser recording with a processing queue and status
   - AI transcription producing a speaker-labeled, timestamped transcript
@@ -13389,6 +13463,7 @@ prompts:
   - Full-text search across transcripts, summaries, and action items
   - Per-workspace data isolation with member roles
   - Overdue and upcoming action-item notifications (mock email log)
+  - Export and share a meeting's full notes (speaker-labeled transcript, summary with decisions and highlights, and all action items with owners and due dates) as a downloadable PDF or Markdown file.
   database_models:
   - name: User
     fields:
@@ -13466,11 +13541,30 @@ prompts:
     - dueDate
     - status
     - sourceTimestamp
+    - completedAt
+    - priority
     - createdAt
     - updatedAt
     relationships:
     - meetingId -> references the related record
     - assigneeId -> references the related record
+  - name: Notification
+    fields:
+    - id
+    - workspaceId
+    - userId
+    - actionItemId
+    - type
+    - channel
+    - message
+    - readAt
+    - sentAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - workspaceId -> references the related record
+    - userId -> references the related record
+    - actionItemId -> references the related record
   backend_logic:
   - Accept uploaded or recorded audio, enqueue it, and track processing status through to completion
   - Transcribe meeting audio into a speaker-labeled, timestamped transcript via the AI provider
@@ -13479,6 +13573,8 @@ prompts:
   - Assign action items to workspace members and advance their status to completion
   - Provide full-text search across transcripts, summaries, and action items within a workspace
   - Send mock notifications for newly assigned, upcoming, and overdue action items
+  - Render a downloadable export (PDF or Markdown) of a meeting's transcript, summary, and action items on demand.
+  - Generate notification records when an action item is assigned, becomes due soon, or goes overdue, and mark them read; de-duplicate so each member is alerted once per state change.
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -13531,6 +13627,8 @@ prompts:
   - A processed meeting produces a timestamped transcript, a summary, and at least one extracted action item
   - Extracted action items can be assigned to a member and tracked to done, updating that member's task list
   - With no AI key set, transcription, summary, and extraction use a deterministic mock so the full flow runs locally
+  - Exporting a processed meeting produces a file containing the speaker-labeled transcript, the summary's decisions and highlights, and every action item with its owner and due date.
+  - When an action item is assigned or becomes overdue, a notification appears in the assignee's notifications inbox with an unread indicator that clears once marked read.
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds meeting-intelligence and productivity products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -13544,7 +13642,7 @@ prompts:
     Business goal: Let teams upload or record meetings, get AI transcripts, summaries, and auto-extracted action items assigned to owners with due dates, and track those items to completion across workspaces.
 
     BRAND & DESIGN
-    Brand style: smart, calm, productive. Colors: midnight blue, teal, warm white. A meeting timeline with a synced transcript pane, a summary card, and an action-item checklist sidebar. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: smart, calm, productive. Colors: midnight blue (#0C1A3C), teal (#0FB6A2), warm white (#FBF7EF), with bright teal accent (#2DD4BF) and amber/rose due-date chips (#E9A23B / #E5687E). Signature layout: a synced meeting timeline with a transcript pane beside a summary card and an action-item checklist sidebar; pair Space Grotesk headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -13564,6 +13662,7 @@ prompts:
     8. Auth (sign in / register)
     9. Admin: workspaces, members, and integration settings
     10. Settings: notification and processing preferences
+    11. Notifications inbox: a per-member list of assigned, upcoming, and overdue action-item alerts with an unread badge and mark-as-read controls (surfaces the mock notification log to users).
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -13583,6 +13682,7 @@ prompts:
     - Full-text search across transcripts, summaries, and action items
     - Per-workspace data isolation with member roles
     - Overdue and upcoming action-item notifications (mock email log)
+    - Export and share a meeting's full notes (speaker-labeled transcript, summary with decisions and highlights, and all action items with owners and due dates) as a downloadable PDF or Markdown file.
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -13591,7 +13691,8 @@ prompts:
     - Meeting: id, workspaceId, organizerId, title, audioUrl, durationSeconds, status, meetingDate, createdAt, updatedAt
     - Transcript: id, meetingId, language, segments, createdAt, updatedAt
     - Summary: id, meetingId, overview, decisions, highlights, createdAt, updatedAt
-    - ActionItem: id, meetingId, assigneeId, title, dueDate, status, sourceTimestamp, createdAt, updatedAt
+    - ActionItem: id, meetingId, assigneeId, title, dueDate, status, sourceTimestamp, completedAt, priority, createdAt, updatedAt
+    - Notification: id, workspaceId, userId, actionItemId, type, channel, message, readAt, sentAt, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -13602,6 +13703,8 @@ prompts:
     - Assign action items to workspace members and advance their status to completion
     - Provide full-text search across transcripts, summaries, and action items within a workspace
     - Send mock notifications for newly assigned, upcoming, and overdue action items
+    - Render a downloadable export (PDF or Markdown) of a meeting's transcript, summary, and action items on demand.
+    - Generate notification records when an action item is assigned, becomes due soon, or goes overdue, and mark them read; de-duplicate so each member is alerted once per state change.
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -14994,7 +15097,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds contact-center performance and workforce analytics products
   business_goal: Let support managers monitor live queue volume, handle time, first-contact resolution, SLA compliance, and per-agent CSAT, and run a coaching workflow that flags agents and logs performance reviews
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: operational, data-dense, calm. Colors: midnight navy, teal, signal green. A live queue board with KPI tiles, a team scorecard grid, and an agent coaching panel.'
+  brand_design: 'Brand style: operational, data-dense, calm. Colors: midnight navy #08182b, teal #16b5ae and signal green #1fae5a, with amber #e0922b and rose #e1556b for on-target/watch/breaching status on white #ffffff surfaces. Signature layout: a dark live-queue board of monospaced KPI tiles above a color-coded team scorecard grid and an agent coaching panel; pair Space Grotesk headings with Inter body and IBM Plex Mono tabular numerals for metrics.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -15054,6 +15157,7 @@ prompts:
   - Performance review log and review detail
   - Auth (sign in / register)
   - 'Admin: teams, agents, queues, SLA targets, and CSAT survey config'
+  - Notifications / alerts center listing SLA-breach and coaching alerts with severity, source link (team, agent, or flag), timestamp, and read/unread filtering.
   required_features:
   - Live queue view with auto-refresh showing volume, longest wait, and available agents
   - KPI computation for average handle time, first-contact resolution, and SLA compliance
@@ -15064,6 +15168,8 @@ prompts:
   - Coaching workflow that logs performance reviews with action items and follow-up dates
   - SLA breach drill-down to the underlying contacts that missed the threshold
   - Report export to CSV for scorecards and SLA reports
+  - Real-time alerting that pushes SLA-breach and agent-flag events to an in-app notification feed and the mock email/SMS log so the responsible manager or team lead is notified instead of having to watch the board, with read/unread state and an unread badge.
+  - CSAT verbatim explorer that surfaces the free-text survey comment alongside each score, filterable by score band and queue, so the survey results page shows the 'why' behind the number, not only rollup averages.
   database_models:
   - name: User
     fields:
@@ -15111,6 +15217,8 @@ prompts:
     - firstContactResolution
     - csatScore
     - occurredAt
+    - csatComment
+    - csatRespondedAt
     - createdAt
     - updatedAt
     relationships:
@@ -15138,6 +15246,7 @@ prompts:
     - actualValue
     - status
     - raisedAt
+    - notifiedAt
     - createdAt
     - updatedAt
     relationships:
@@ -15158,6 +15267,29 @@ prompts:
     - flagId -> references the related record
     - agentId -> references the related record
     - reviewerId -> references the related record
+  - name: Notification
+    fields:
+    - id
+    - type
+    - severity
+    - channel
+    - title
+    - body
+    - recipientId
+    - teamId
+    - agentId
+    - flagId
+    - read
+    - readAt
+    - sentAt
+    - status
+    - createdAt
+    - updatedAt
+    relationships:
+    - recipientId -> references the related record
+    - teamId -> references the related record
+    - agentId -> references the related record
+    - flagId -> references the related record
   backend_logic:
   - Compute live queue metrics (volume, longest wait, available agents) from open contacts with periodic refresh
   - Aggregate average handle time, first-contact resolution rate, and SLA compliance per agent, team, and shift
@@ -15166,6 +15298,8 @@ prompts:
   - Drive the coaching workflow by opening a review from a flag, recording action items, and tracking follow-up to closure
   - Drill down an SLA breach to the underlying contacts that missed the threshold
   - Export scorecard and SLA reports as CSV
+  - Evaluate SLA and metric breaches against team and queue targets and generate alert notifications for the responsible manager and team lead, writing to the in-app feed and the mock email/SMS log, and deduplicating repeat breaches for the same agent or team within a configurable window.
+  - Aggregate CSAT verbatim comments by score band, agent, and queue to power the survey explorer alongside the existing numeric rollups.
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -15219,6 +15353,8 @@ prompts:
   - Average handle time, first-contact resolution, and SLA compliance recompute correctly when filtered by team, agent, or shift
   - An agent who breaches a metric threshold is automatically flagged into the coaching queue and can be routed into a logged performance review
   - The live queue view refreshes and reflects current volume, longest wait, and available agents
+  - When a team's SLA compliance or an agent's handle time, FCR, or CSAT crosses its configured target, a notification record is created for the responsible manager/team lead and appears in the notification center and the mock email/SMS log within one refresh cycle.
+  - Opening the CSAT explorer for a contact with a submitted survey shows its verbatim comment and score, and filtering by score band returns only matching survey responses.
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds contact-center performance and workforce analytics products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -15232,7 +15368,7 @@ prompts:
     Business goal: Let support managers monitor live queue volume, handle time, first-contact resolution, SLA compliance, and per-agent CSAT, and run a coaching workflow that flags agents and logs performance reviews.
 
     BRAND & DESIGN
-    Brand style: operational, data-dense, calm. Colors: midnight navy, teal, signal green. A live queue board with KPI tiles, a team scorecard grid, and an agent coaching panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: operational, data-dense, calm. Colors: midnight navy #08182b, teal #16b5ae and signal green #1fae5a, with amber #e0922b and rose #e1556b for on-target/watch/breaching status on white #ffffff surfaces. Signature layout: a dark live-queue board of monospaced KPI tiles above a color-coded team scorecard grid and an agent coaching panel; pair Space Grotesk headings with Inter body and IBM Plex Mono tabular numerals for metrics. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -15252,6 +15388,7 @@ prompts:
     8. Performance review log and review detail
     9. Auth (sign in / register)
     10. Admin: teams, agents, queues, SLA targets, and CSAT survey config
+    11. Notifications / alerts center listing SLA-breach and coaching alerts with severity, source link (team, agent, or flag), timestamp, and read/unread filtering.
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -15272,15 +15409,18 @@ prompts:
     - Coaching workflow that logs performance reviews with action items and follow-up dates
     - SLA breach drill-down to the underlying contacts that missed the threshold
     - Report export to CSV for scorecards and SLA reports
+    - Real-time alerting that pushes SLA-breach and agent-flag events to an in-app notification feed and the mock email/SMS log so the responsible manager or team lead is notified instead of having to watch the board, with read/unread state and an unread badge.
+    - CSAT verbatim explorer that surfaces the free-text survey comment alongside each score, filterable by score band and queue, so the survey results page shows the 'why' behind the number, not only rollup averages.
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, teamId, createdAt, updatedAt
     - Team: id, name, managerId, slaTargetSeconds, csatTarget, createdAt, updatedAt
     - Queue: id, name, channel, slaThresholdSeconds, active, createdAt, updatedAt
-    - Contact: id, queueId, agentId, channel, waitSeconds, handleSeconds, resolved, firstContactResolution, csatScore, occurredAt, createdAt, updatedAt
+    - Contact: id, queueId, agentId, channel, waitSeconds, handleSeconds, resolved, firstContactResolution, csatScore, occurredAt, csatComment, csatRespondedAt, createdAt, updatedAt
     - Shift: id, agentId, teamId, startsAt, endsAt, status, createdAt, updatedAt
-    - CoachingFlag: id, agentId, metric, threshold, actualValue, status, raisedAt, createdAt, updatedAt
+    - CoachingFlag: id, agentId, metric, threshold, actualValue, status, raisedAt, notifiedAt, createdAt, updatedAt
     - PerformanceReview: id, flagId, agentId, reviewerId, summary, actionItems, followUpDate, status, createdAt, updatedAt
+    - Notification: id, type, severity, channel, title, body, recipientId, teamId, agentId, flagId, read, readAt, sentAt, status, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -15291,6 +15431,8 @@ prompts:
     - Drive the coaching workflow by opening a review from a flag, recording action items, and tracking follow-up to closure
     - Drill down an SLA breach to the underlying contacts that missed the threshold
     - Export scorecard and SLA reports as CSV
+    - Evaluate SLA and metric breaches against team and queue targets and generate alert notifications for the responsible manager and team lead, writing to the in-app feed and the mock email/SMS log, and deduplicating repeat breaches for the same agent or team within a configurable window.
+    - Aggregate CSAT verbatim comments by score band, agent, and queue to power the survey explorer alongside the existing numeric rollups.
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -16039,7 +16181,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds email marketing and automation products
   business_goal: Let teams build subscriber lists, segment audiences with rules, design and send campaigns, and run drip automations with open, click, and unsubscribe analytics
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: friendly, energetic, modern. Colors: electric coral, ink navy, off-white. A campaign workspace with a drag-and-drop email designer, an audience segment builder, and an analytics panel of opens and clicks.'
+  brand_design: 'Brand style: friendly, energetic, modern. Colors: electric coral #FF5A45, ink navy #0E1B2E, off-white cream #FBF7F1, with mint #14B17F and amber #E89324 status accents. Signature layout: a split campaign workspace pairing a drag-and-drop email canvas with a live segment-count sidebar and rounded analytics KPI cards; pair Plus Jakarta Sans for headings/UI with IBM Plex Mono for stats, rates, and counts.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -16099,6 +16241,8 @@ prompts:
   - Public subscription preferences and unsubscribe page
   - Auth (sign in / register)
   - 'Admin: team, sending settings, and templates'
+  - Public hosted signup-form landing page (capture form plus the double opt-in confirmation result screen)
+  - Subscriber detail page with an engagement timeline of that contact's opens, clicks, sends, and unsubscribe events
   required_features:
   - Subscriber list management with CSV import and double opt-in handling
   - Rule-based segmentation on fields and behavior with a live count preview
@@ -16109,6 +16253,8 @@ prompts:
   - Unsubscribe handling with a public preferences page and suppression list
   - Per-campaign analytics for open rate, click rate, unsubscribe rate, and bounces
   - A/B subject-line testing on a sample before the full send
+  - Hosted, embeddable subscriber signup form that captures new contacts into a list and runs them through double opt-in confirmation before they become subscribed
+  - CSV export of a list or saved segment, plus a downloadable per-campaign analytics report (opens, clicks, unsubscribes, bounces)
   database_models:
   - name: User
     fields:
@@ -16127,6 +16273,8 @@ prompts:
     - name
     - description
     - defaultFromName
+    - defaultFromEmail
+    - doubleOptInEnabled
     - createdAt
     - updatedAt
     relationships:
@@ -16140,6 +16288,13 @@ prompts:
     - status
     - source
     - subscribedAt
+    - tags
+    - attributes
+    - country
+    - lastOpenedAt
+    - lastClickedAt
+    - confirmToken
+    - confirmedAt
     - createdAt
     - updatedAt
     relationships:
@@ -16166,6 +16321,12 @@ prompts:
     - status
     - scheduledAt
     - sentAt
+    - fromEmail
+    - replyToEmail
+    - abTestEnabled
+    - subjectVariantB
+    - abSamplePercent
+    - abWinnerVariant
     - createdAt
     - updatedAt
     relationships:
@@ -16198,6 +16359,21 @@ prompts:
     - campaignId -> references the related record
     - automationId -> references the related record
     - subscriberId -> references the related record
+  - name: Template
+    fields:
+    - id
+    - createdById
+    - name
+    - description
+    - category
+    - htmlContent
+    - blocks
+    - thumbnailUrl
+    - isShared
+    - createdAt
+    - updatedAt
+    relationships:
+    - createdById -> references the related record
   backend_logic:
   - Import subscribers into a list with deduplication and double opt-in status
   - Evaluate segment rules against subscriber fields and behavior to produce a live audience count
@@ -16206,6 +16382,8 @@ prompts:
   - Run drip automations by advancing subscribers through steps on triggers and delays
   - Process unsubscribes through the preferences page and maintain a suppression list
   - Aggregate per-campaign open, click, unsubscribe, and bounce rates for analytics
+  - 'Handle public signup-form submissions: create a pending subscriber, issue a double opt-in confirmation token, and only mark them subscribed when the confirmation link is followed'
+  - Run an A/B subject-line test by sending each variant to a sample slice, selecting the higher open-rate subject after a test window, and sending the winner to the remaining audience
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -16259,6 +16437,8 @@ prompts:
   - A segment's live count updates as its rules change, and a campaign sends only to the matching audience
   - Mock sends generate open, click, and unsubscribe events that roll up into per-campaign open, click, and unsubscribe rates
   - Unsubscribing through the public preferences page adds the contact to the suppression list and excludes them from future sends
+  - An A/B subject-line test sends variants to a sample of the audience, picks the higher open-rate subject, and sends only the winning subject to the remaining recipients
+  - A public signup-form submission creates a pending subscriber that becomes 'subscribed' only after the double opt-in confirmation link is followed, recording the list and source
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds email marketing and automation products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -16272,7 +16452,7 @@ prompts:
     Business goal: Let teams build subscriber lists, segment audiences with rules, design and send campaigns, and run drip automations with open, click, and unsubscribe analytics.
 
     BRAND & DESIGN
-    Brand style: friendly, energetic, modern. Colors: electric coral, ink navy, off-white. A campaign workspace with a drag-and-drop email designer, an audience segment builder, and an analytics panel of opens and clicks. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: friendly, energetic, modern. Colors: electric coral #FF5A45, ink navy #0E1B2E, off-white cream #FBF7F1, with mint #14B17F and amber #E89324 status accents. Signature layout: a split campaign workspace pairing a drag-and-drop email canvas with a live segment-count sidebar and rounded analytics KPI cards; pair Plus Jakarta Sans for headings/UI with IBM Plex Mono for stats, rates, and counts. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -16292,6 +16472,8 @@ prompts:
     8. Public subscription preferences and unsubscribe page
     9. Auth (sign in / register)
     10. Admin: team, sending settings, and templates
+    11. Public hosted signup-form landing page (capture form plus the double opt-in confirmation result screen)
+    12. Subscriber detail page with an engagement timeline of that contact's opens, clicks, sends, and unsubscribe events
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -16312,15 +16494,18 @@ prompts:
     - Unsubscribe handling with a public preferences page and suppression list
     - Per-campaign analytics for open rate, click rate, unsubscribe rate, and bounces
     - A/B subject-line testing on a sample before the full send
+    - Hosted, embeddable subscriber signup form that captures new contacts into a list and runs them through double opt-in confirmation before they become subscribed
+    - CSV export of a list or saved segment, plus a downloadable per-campaign analytics report (opens, clicks, unsubscribes, bounces)
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, createdAt, updatedAt
-    - ContactList: id, name, description, defaultFromName, createdAt, updatedAt
-    - Subscriber: id, listId, email, name, status, source, subscribedAt, createdAt, updatedAt
+    - ContactList: id, name, description, defaultFromName, defaultFromEmail, doubleOptInEnabled, createdAt, updatedAt
+    - Subscriber: id, listId, email, name, status, source, subscribedAt, tags, attributes, country, lastOpenedAt, lastClickedAt, confirmToken, confirmedAt, createdAt, updatedAt
     - Segment: id, listId, name, rules, createdAt, updatedAt
-    - Campaign: id, listId, segmentId, name, subject, fromName, htmlContent, status, scheduledAt, sentAt, createdAt, updatedAt
+    - Campaign: id, listId, segmentId, name, subject, fromName, htmlContent, status, scheduledAt, sentAt, fromEmail, replyToEmail, abTestEnabled, subjectVariantB, abSamplePercent, abWinnerVariant, createdAt, updatedAt
     - Automation: id, listId, name, triggerType, steps, status, createdAt, updatedAt
     - EmailEvent: id, campaignId, automationId, subscriberId, type, linkUrl, occurredAt, createdAt, updatedAt
+    - Template: id, createdById, name, description, category, htmlContent, blocks, thumbnailUrl, isShared, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -16331,6 +16516,8 @@ prompts:
     - Run drip automations by advancing subscribers through steps on triggers and delays
     - Process unsubscribes through the preferences page and maintain a suppression list
     - Aggregate per-campaign open, click, unsubscribe, and bounce rates for analytics
+    - Handle public signup-form submissions: create a pending subscriber, issue a double opt-in confirmation token, and only mark them subscribed when the confirmation link is followed
+    - Run an A/B subject-line test by sending each variant to a sample slice, selecting the higher open-rate subject after a test window, and sending the winner to the remaining audience
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -20474,7 +20661,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds curriculum planning products
   business_goal: Let teachers assemble standards-aligned units and lesson plans from a reusable objective and resource library, map coverage across a term, and route plans through department-head review and approval
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: scholarly, organized, calm. Colors: deep indigo, chalk white, sage. A unit board with standards-tagged lesson cards and a term coverage matrix.'
+  brand_design: 'Brand style: scholarly, organized, calm. Colors: deep indigo (#2e2870), chalk white (#f8f8f3), sage (#5f7d68), with warm amber (#c98a2b) for in-review accents; pair Fraunces serif headings with Inter sans-serif body. Signature layout: a unit board of standards-tagged lesson cards beside a color-coded standards-vs-units coverage matrix.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -20534,6 +20721,8 @@ prompts:
   - My plans with version history and status
   - Auth (sign in / register)
   - 'Admin: subjects, terms, standard sets, and users'
+  - Notifications inbox / activity feed listing review events with read/unread state and a link to each related plan
+  - Print-ready export preview page that renders an approved lesson plan in a clean, print/PDF-friendly layout
   required_features:
   - Reusable library of learning objectives and teaching resources
   - Standards alignment by tagging objectives and lessons to standard codes
@@ -20544,6 +20733,7 @@ prompts:
   - Plan version history across draft, submitted, approved, and published states
   - Clone-and-reuse of existing units and lessons into a new term
   - Printable export of approved lesson plans (mock PDF)
+  - In-app notification center with an unread badge and mock-email alerts for review events — plan submitted for review, approved, or returned with requested changes
   database_models:
   - name: User
     fields:
@@ -20618,11 +20808,17 @@ prompts:
     - activities
     - assessment
     - status
+    - assignedReviewerId
+    - materials
+    - submittedAt
+    - approvedAt
+    - publishedAt
     - createdAt
     - updatedAt
     relationships:
     - unitId -> references the related record
     - authorId -> references the related record
+    - assignedReviewerId -> references the related record
   - name: Review
     fields:
     - id
@@ -20636,6 +20832,20 @@ prompts:
     relationships:
     - lessonPlanId -> references the related record
     - reviewerId -> references the related record
+  - name: Notification
+    fields:
+    - id
+    - userId
+    - lessonPlanId
+    - type
+    - message
+    - linkUrl
+    - readAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - userId -> references the related record
+    - lessonPlanId -> references the related record
   backend_logic:
   - Map objectives and lessons to standards and aggregate covered standards per unit
   - Compute term coverage and gaps by comparing required standards against unit coverage
@@ -20644,6 +20854,8 @@ prompts:
   - Apply review decisions (approve or request changes) and record reviewer comments
   - Clone an existing unit or lesson into a new term with remapped references
   - Generate a printable export of an approved lesson plan (mock PDF)
+  - Resolve the department-head recipient for a submitted plan from the author's department, set assignedReviewerId, and create a notification plus a mock email for that reviewer
+  - On an approve or request-changes decision, create a notification and mock email for the plan's author including the decision and reviewer comments
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -20697,6 +20909,8 @@ prompts:
   - Tagging a lesson to standards updates the unit's covered-standards rollup and the term coverage map
   - A submitted plan appears in the department head's review queue and an approval changes its status
   - The coverage map highlights standards with no covering unit as gaps
+  - Submitting a plan creates an unread notification for the assigned department head, and an approve or request-changes decision creates an unread notification for the plan's author
+  - Opening a notification marks it read, decrements the unread badge count, and links to the related lesson plan
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds curriculum planning products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -20710,7 +20924,7 @@ prompts:
     Business goal: Let teachers assemble standards-aligned units and lesson plans from a reusable objective and resource library, map coverage across a term, and route plans through department-head review and approval.
 
     BRAND & DESIGN
-    Brand style: scholarly, organized, calm. Colors: deep indigo, chalk white, sage. A unit board with standards-tagged lesson cards and a term coverage matrix. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: scholarly, organized, calm. Colors: deep indigo (#2e2870), chalk white (#f8f8f3), sage (#5f7d68), with warm amber (#c98a2b) for in-review accents; pair Fraunces serif headings with Inter sans-serif body. Signature layout: a unit board of standards-tagged lesson cards beside a color-coded standards-vs-units coverage matrix. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -20730,6 +20944,8 @@ prompts:
     8. My plans with version history and status
     9. Auth (sign in / register)
     10. Admin: subjects, terms, standard sets, and users
+    11. Notifications inbox / activity feed listing review events with read/unread state and a link to each related plan
+    12. Print-ready export preview page that renders an approved lesson plan in a clean, print/PDF-friendly layout
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -20750,6 +20966,7 @@ prompts:
     - Plan version history across draft, submitted, approved, and published states
     - Clone-and-reuse of existing units and lessons into a new term
     - Printable export of approved lesson plans (mock PDF)
+    - In-app notification center with an unread badge and mock-email alerts for review events — plan submitted for review, approved, or returned with requested changes
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, department, createdAt, updatedAt
@@ -20757,8 +20974,9 @@ prompts:
     - Objective: id, ownerId, title, description, subject, standardIds, createdAt, updatedAt
     - Resource: id, ownerId, title, type, url, subject, createdAt, updatedAt
     - Unit: id, ownerId, term, subject, gradeLevel, title, sequence, status, createdAt, updatedAt
-    - LessonPlan: id, unitId, authorId, title, objectiveIds, resourceIds, activities, assessment, status, createdAt, updatedAt
+    - LessonPlan: id, unitId, authorId, title, objectiveIds, resourceIds, activities, assessment, status, assignedReviewerId, materials, submittedAt, approvedAt, publishedAt, createdAt, updatedAt
     - Review: id, lessonPlanId, reviewerId, decision, comments, reviewedAt, createdAt, updatedAt
+    - Notification: id, userId, lessonPlanId, type, message, linkUrl, readAt, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -20769,6 +20987,8 @@ prompts:
     - Apply review decisions (approve or request changes) and record reviewer comments
     - Clone an existing unit or lesson into a new term with remapped references
     - Generate a printable export of an approved lesson plan (mock PDF)
+    - Resolve the department-head recipient for a submitted plan from the author's department, set assignedReviewerId, and create a notification plus a mock email for that reviewer
+    - On an approve or request-changes decision, create a notification and mock email for the plan's author including the decision and reviewer comments
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -24255,7 +24475,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds behavioral-health practice management products
   business_goal: Let therapists manage clients, run intake and assessments, write structured progress notes and treatment plans, and bill recurring sessions including sliding-scale rates
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: calm, trustworthy, clinical. Colors: soft teal, warm sand, slate grey. A two-pane client workspace with a session timeline on the left and structured note and treatment-plan editors on the right.'
+  brand_design: 'Brand style: calm, trustworthy, clinical. Colors: soft teal #1c6b62, warm sand #f5ecda, slate grey #202a33 on off-white #fbf9f3 surfaces. Signature two-pane client workspace (session timeline left, structured SOAP/DAP note and treatment-plan editors right) with rounded cards, accessible contrast, and Fraunces display headings paired with Inter for UI and body.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -24315,6 +24535,7 @@ prompts:
   - Billing and invoices (sliding-scale rates, recurring charges, mock payment)
   - Auth (sign in / register)
   - 'Admin: users, fee schedule, sliding-scale rules, and reports'
+  - 'Client portal home for the Client role: upcoming appointments, intake/assessment forms still to complete, and downloadable invoices and superbills.'
   required_features:
   - Structured intake workflow with consent capture and standardized assessments (PHQ-9, GAD-7) with auto-scoring
   - Progress notes in structured SOAP/DAP formats linked to each session, with sign, lock, and amendment trail
@@ -24325,6 +24546,8 @@ prompts:
   - Assessment score trends charted over the course of care
   - Caseload dashboard surfacing unsigned notes, upcoming sessions, and overdue plan reviews
   - Secure document storage for signed consents and uploaded client records
+  - Automated appointment reminders sent to clients ahead of each scheduled session via the mock email/SMS notification log, helping reduce the no-shows the app already tracks.
+  - 'Insurance superbill generation: produce a downloadable superbill for a date range listing each kept session with its fee, diagnosis, and procedure code so out-of-network clients can claim reimbursement.'
   database_models:
   - name: User
     fields:
@@ -24347,6 +24570,10 @@ prompts:
     - status
     - incomeBand
     - slidingScaleRate
+    - phone
+    - diagnosisCode
+    - balance
+    - reminderOptIn
     - createdAt
     - updatedAt
     relationships:
@@ -24361,6 +24588,8 @@ prompts:
     - recurrenceRule
     - status
     - fee
+    - cptCode
+    - reminderSentAt
     - createdAt
     - updatedAt
     relationships:
@@ -24421,6 +24650,22 @@ prompts:
     relationships:
     - clientId -> references the related record
     - appointmentId -> references the related record
+  - name: Superbill
+    fields:
+    - id
+    - clientId
+    - therapistId
+    - periodStart
+    - periodEnd
+    - diagnosisCode
+    - totalAmount
+    - status
+    - issuedAt
+    - createdAt
+    - updatedAt
+    relationships:
+    - clientId -> references the related record
+    - therapistId -> references the related record
   backend_logic:
   - Score standardized assessments (PHQ-9, GAD-7) on submission and classify severity bands
   - Generate recurring appointments from a recurrence rule and track per-session status (kept, no-show, cancelled)
@@ -24429,6 +24674,8 @@ prompts:
   - Lock and sign progress notes, preventing edits after signing while keeping a dated amendment trail
   - Surface caseload alerts for unsigned notes, overdue treatment-plan reviews, and upcoming sessions
   - Chart assessment score trends across a course of care per client
+  - Queue and send appointment reminders through the notification provider a configurable lead time before each scheduled session, recording the send on the appointment and writing to the mock notification log without duplicating.
+  - Aggregate a client's kept sessions across a date range into a superbill, summing each session's resolved sliding-scale fee into a total with per-session line items (date, procedure code, fee).
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -24481,6 +24728,8 @@ prompts:
   - Submitting a PHQ-9 or GAD-7 assessment computes the correct total score and severity band and adds a point to the client's trend chart
   - A signed progress note becomes read-only and any change is recorded as a dated amendment rather than overwriting the original
   - A client's session fee follows their sliding-scale income band and each recurring kept session generates a matching invoice
+  - Generating a superbill for a client over a date range lists every kept session in that range with its resolved sliding-scale fee and a total equal to the sum of the line items.
+  - Each upcoming scheduled session produces exactly one reminder entry in the mock notification log at the configured lead time, and re-running the reminder job does not create a duplicate.
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds behavioral-health practice management products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -24494,7 +24743,7 @@ prompts:
     Business goal: Let therapists manage clients, run intake and assessments, write structured progress notes and treatment plans, and bill recurring sessions including sliding-scale rates.
 
     BRAND & DESIGN
-    Brand style: calm, trustworthy, clinical. Colors: soft teal, warm sand, slate grey. A two-pane client workspace with a session timeline on the left and structured note and treatment-plan editors on the right. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: calm, trustworthy, clinical. Colors: soft teal #1c6b62, warm sand #f5ecda, slate grey #202a33 on off-white #fbf9f3 surfaces. Signature two-pane client workspace (session timeline left, structured SOAP/DAP note and treatment-plan editors right) with rounded cards, accessible contrast, and Fraunces display headings paired with Inter for UI and body. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -24514,6 +24763,7 @@ prompts:
     8. Billing and invoices (sliding-scale rates, recurring charges, mock payment)
     9. Auth (sign in / register)
     10. Admin: users, fee schedule, sliding-scale rules, and reports
+    11. Client portal home for the Client role: upcoming appointments, intake/assessment forms still to complete, and downloadable invoices and superbills.
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -24533,15 +24783,18 @@ prompts:
     - Assessment score trends charted over the course of care
     - Caseload dashboard surfacing unsigned notes, upcoming sessions, and overdue plan reviews
     - Secure document storage for signed consents and uploaded client records
+    - Automated appointment reminders sent to clients ahead of each scheduled session via the mock email/SMS notification log, helping reduce the no-shows the app already tracks.
+    - Insurance superbill generation: produce a downloadable superbill for a date range listing each kept session with its fee, diagnosis, and procedure code so out-of-network clients can claim reimbursement.
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, createdAt, updatedAt
-    - Client: id, therapistId, fullName, dateOfBirth, contactEmail, status, incomeBand, slidingScaleRate, createdAt, updatedAt
-    - Appointment: id, clientId, therapistId, startsAt, endsAt, recurrenceRule, status, fee, createdAt, updatedAt
+    - Client: id, therapistId, fullName, dateOfBirth, contactEmail, status, incomeBand, slidingScaleRate, phone, diagnosisCode, balance, reminderOptIn, createdAt, updatedAt
+    - Appointment: id, clientId, therapistId, startsAt, endsAt, recurrenceRule, status, fee, cptCode, reminderSentAt, createdAt, updatedAt
     - ProgressNote: id, appointmentId, clientId, therapistId, format, content, signedAt, createdAt, updatedAt
     - Assessment: id, clientId, type, responsesJson, score, severity, administeredAt, createdAt, updatedAt
     - TreatmentPlan: id, clientId, therapistId, goalsJson, interventionsJson, reviewDate, status, createdAt, updatedAt
     - Invoice: id, clientId, appointmentId, amount, status, paidAt, createdAt, updatedAt
+    - Superbill: id, clientId, therapistId, periodStart, periodEnd, diagnosisCode, totalAmount, status, issuedAt, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -24552,6 +24805,8 @@ prompts:
     - Lock and sign progress notes, preventing edits after signing while keeping a dated amendment trail
     - Surface caseload alerts for unsigned notes, overdue treatment-plan reviews, and upcoming sessions
     - Chart assessment score trends across a course of care per client
+    - Queue and send appointment reminders through the notification provider a configurable lead time before each scheduled session, recording the send on the appointment and writing to the mock notification log without duplicating.
+    - Aggregate a client's kept sessions across a date range into a superbill, summing each session's resolved sliding-scale fee into a total with per-session line items (date, procedure code, fee).
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -28745,7 +29000,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds payroll and compensation products
   business_goal: Let payroll teams run pay cycles end to end by calculating gross-to-net with tax and statutory deductions, routing runs for approval, generating downloadable payslips, and giving employees a self-service pay history portal
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: precise, professional, reassuring. Colors: deep teal, slate grey, crisp white. A pay-run console with a gross-to-net breakdown table and a payslip preview panel.'
+  brand_design: 'Brand style: precise, professional, reassuring. Colors: deep teal #0F6B66, deep-teal ink #093C3A, slate grey #2F485C, crisp white #FFFFFF on soft mist #F4F7F9, with success green #1A9E6A, caution amber #BC7C12, and reject rose #C24A40 status accents. Signature layout: a two-pane pay-run console pairing a gross-to-net breakdown table with a live payslip preview, plus status pills and a draft-to-pending-to-approved-to-paid workflow strip; pair Plus Jakarta Sans for UI with IBM Plex Mono tabular numerals for every currency figure.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -28805,6 +29060,7 @@ prompts:
   - Pay components and tax table configuration
   - Auth (sign in / register)
   - 'Admin: users, components, and payroll reports'
+  - 'Employee year-end summary: per-employee annual statement showing YTD gross, tax, and net across the calendar year with a downloadable year-end document'
   required_features:
   - Employee compensation profiles with base salary, recurring allowances, and deductions
   - Pay cycle creation per period with selection of which employees to include
@@ -28815,6 +29071,9 @@ prompts:
   - Off-cycle adjustments and one-time bonuses or deductions within a run
   - Employee self-service portal with pay history and payslip downloads
   - Payroll register and statutory deduction reports per period
+  - 'Exports for an approved pay run: download the payroll register and statutory deduction report as CSV/Excel and a bank disbursement (payment) file for the included employees'
+  - 'Notifications via the mock notification log: alert approvers when a run enters pending approval and notify employees when a new payslip is available to download'
+  - Year-to-date totals on every payslip plus a per-employee year-end summary (annual gross, tax, and net) with a downloadable year-end document
   database_models:
   - name: User
     fields:
@@ -28836,6 +29095,10 @@ prompts:
     - payFrequency
     - taxCode
     - status
+    - jobTitle
+    - department
+    - bankAccountNumber
+    - bankRoutingNumber
     - createdAt
     - updatedAt
     relationships:
@@ -28862,10 +29125,15 @@ prompts:
     - approvedAt
     - totalGross
     - totalNet
+    - runType
+    - paidAt
+    - rejectedById
+    - rejectionReason
     - createdAt
     - updatedAt
     relationships:
     - approvedById -> references the related record
+    - rejectedById -> references the related record
   - name: Payslip
     fields:
     - id
@@ -28875,6 +29143,10 @@ prompts:
     - totalDeductions
     - netPay
     - status
+    - pdfUrl
+    - ytdGross
+    - ytdTax
+    - ytdNet
     - createdAt
     - updatedAt
     relationships:
@@ -28904,6 +29176,20 @@ prompts:
     - updatedAt
     relationships:
     - Standalone model (no outbound foreign keys)
+  - name: EmployeeComponent
+    fields:
+    - id
+    - employeeId
+    - componentId
+    - amount
+    - active
+    - effectiveFrom
+    - effectiveTo
+    - createdAt
+    - updatedAt
+    relationships:
+    - employeeId -> references the related record
+    - componentId -> references the related record
   backend_logic:
   - Assemble a pay run for a period by collecting included employees and their compensation profiles
   - Calculate gross pay from base salary and earnings components for each employee
@@ -28912,6 +29198,8 @@ prompts:
   - Route pay runs through draft, pending approval, approved, and paid states with approver actions
   - Render and store downloadable payslip PDFs once a run is approved
   - Aggregate payroll register and statutory deduction totals per pay run for reporting
+  - 'Generate downloadable exports for an approved pay run: a payroll register CSV, a statutory deduction report, and a bank disbursement file listing each employee''s net pay and account details'
+  - Compute year-to-date gross, tax, and net per employee across the calendar year for payslip YTD lines and the year-end summary
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -28965,6 +29253,8 @@ prompts:
   - A pay run computes gross-to-net per employee, with tax and statutory deductions reducing gross to the correct net pay
   - A pay run cannot be marked paid until it has been approved, and that approval gate is enforced in the workflow
   - An employee sees only their own payslips and can download a payslip PDF for each pay period
+  - A payslip's itemized lines are drawn from the employee's configured recurring components plus any one-time run adjustments, and the amounts sum exactly to the shown gross pay, total deductions, and net pay
+  - Exporting an approved pay run produces a payroll register CSV and a bank disbursement file in which each employee's net pay and the run total reconcile to the figures shown in the pay run review
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds payroll and compensation products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -28978,7 +29268,7 @@ prompts:
     Business goal: Let payroll teams run pay cycles end to end by calculating gross-to-net with tax and statutory deductions, routing runs for approval, generating downloadable payslips, and giving employees a self-service pay history portal.
 
     BRAND & DESIGN
-    Brand style: precise, professional, reassuring. Colors: deep teal, slate grey, crisp white. A pay-run console with a gross-to-net breakdown table and a payslip preview panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: precise, professional, reassuring. Colors: deep teal #0F6B66, deep-teal ink #093C3A, slate grey #2F485C, crisp white #FFFFFF on soft mist #F4F7F9, with success green #1A9E6A, caution amber #BC7C12, and reject rose #C24A40 status accents. Signature layout: a two-pane pay-run console pairing a gross-to-net breakdown table with a live payslip preview, plus status pills and a draft-to-pending-to-approved-to-paid workflow strip; pair Plus Jakarta Sans for UI with IBM Plex Mono tabular numerals for every currency figure. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -28998,6 +29288,7 @@ prompts:
     8. Pay components and tax table configuration
     9. Auth (sign in / register)
     10. Admin: users, components, and payroll reports
+    11. Employee year-end summary: per-employee annual statement showing YTD gross, tax, and net across the calendar year with a downloadable year-end document
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -29018,15 +29309,19 @@ prompts:
     - Off-cycle adjustments and one-time bonuses or deductions within a run
     - Employee self-service portal with pay history and payslip downloads
     - Payroll register and statutory deduction reports per period
+    - Exports for an approved pay run: download the payroll register and statutory deduction report as CSV/Excel and a bank disbursement (payment) file for the included employees
+    - Notifications via the mock notification log: alert approvers when a run enters pending approval and notify employees when a new payslip is available to download
+    - Year-to-date totals on every payslip plus a per-employee year-end summary (annual gross, tax, and net) with a downloadable year-end document
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, role, createdAt, updatedAt
-    - Employee: id, userId, employeeNumber, baseSalary, payFrequency, taxCode, status, createdAt, updatedAt
+    - Employee: id, userId, employeeNumber, baseSalary, payFrequency, taxCode, status, jobTitle, department, bankAccountNumber, bankRoutingNumber, createdAt, updatedAt
     - PayComponent: id, name, type, calcMethod, rate, taxable, createdAt, updatedAt
-    - PayRun: id, period, payDate, status, approvedById, approvedAt, totalGross, totalNet, createdAt, updatedAt
-    - Payslip: id, payRunId, employeeId, grossPay, totalDeductions, netPay, status, createdAt, updatedAt
+    - PayRun: id, period, payDate, status, approvedById, approvedAt, totalGross, totalNet, runType, paidAt, rejectedById, rejectionReason, createdAt, updatedAt
+    - Payslip: id, payRunId, employeeId, grossPay, totalDeductions, netPay, status, pdfUrl, ytdGross, ytdTax, ytdNet, createdAt, updatedAt
     - PayslipLine: id, payslipId, componentId, label, amount, kind, createdAt, updatedAt
     - TaxBracket: id, name, lowerBound, upperBound, rate, createdAt, updatedAt
+    - EmployeeComponent: id, employeeId, componentId, amount, active, effectiveFrom, effectiveTo, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -29037,6 +29332,8 @@ prompts:
     - Route pay runs through draft, pending approval, approved, and paid states with approver actions
     - Render and store downloadable payslip PDFs once a run is approved
     - Aggregate payroll register and statutory deduction totals per pay run for reporting
+    - Generate downloadable exports for an approved pay run: a payroll register CSV, a statutory deduction report, and a bank disbursement file listing each employee's net pay and account details
+    - Compute year-to-date gross, tax, and net per employee across the calendar year for payslip YTD lines and the year-end summary
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES
@@ -36555,7 +36852,7 @@ prompts:
   role_line: You are a senior full-stack engineer who builds personal knowledge management products
   business_goal: Let users capture notes with bidirectional links, daily notes, nested tags, and full-text search, and share notebooks with collaborators invited as viewers or editors
   production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-  brand_design: 'Brand style: focused, calm, cerebral. Colors: ink black, paper cream, soft indigo. A two-pane markdown editor with a backlinks panel beside a graph of linked notes and a nested tag tree.'
+  brand_design: 'Brand style: focused, calm, cerebral. Colors: ink black (#18181F), paper cream (#F7F2E6), soft indigo (#565CD9), warm amber accent (#C4892A). Two-pane markdown editor with a live backlinks panel beside an interactive note graph and nested tag tree; pair Fraunces serif headings with Inter body text and JetBrains Mono for [[wiki-links]] and tags.'
   recommended_tools:
   - Claude Code
   - Cursor
@@ -36615,6 +36912,8 @@ prompts:
   - Notebook sharing and collaborator management
   - Auth (sign in / register)
   - Settings (profile and preferences)
+  - Trash / recently deleted page listing soft-deleted notes with restore and permanent-delete actions.
+  - Note revision history page that lists past revisions, diffs two versions, and restores an earlier one.
   required_features:
   - Markdown note editor with [[wiki-style]] bidirectional links and a backlinks panel
   - Automatic daily notes with a date-based calendar and timeline
@@ -36625,6 +36924,9 @@ prompts:
   - Notebook sharing by invite with viewer or editor roles
   - Link autocomplete and automatic creation of linked-but-empty notes
   - Per-note revision history
+  - 'Export a single note, a notebook, or the entire vault to a downloadable Markdown ZIP that preserves [[wiki-links]] and #tags so users own their data.'
+  - Soft-delete notes into a Trash view with one-click restore and a permanent-delete option, so accidental deletions are recoverable.
+  - An 'unlinked mentions' panel that surfaces notes referencing a note's title in plain text and lets you convert each into a real [[wiki-link]].
   database_models:
   - name: User
     fields:
@@ -36655,6 +36957,7 @@ prompts:
     - title
     - body
     - noteDate
+    - deletedAt
     - createdAt
     - updatedAt
     relationships:
@@ -36703,6 +37006,19 @@ prompts:
     relationships:
     - notebookId -> references the related record
     - userId -> references the related record
+  - name: NoteRevision
+    fields:
+    - id
+    - noteId
+    - authorId
+    - title
+    - body
+    - revisionNumber
+    - createdAt
+    - updatedAt
+    relationships:
+    - noteId -> references the related record
+    - authorId -> references the related record
   backend_logic:
   - Parse [[wiki-links]] in note bodies and maintain forward-link and backlink records
   - Create or open the daily note for a given date automatically
@@ -36711,6 +37027,8 @@ prompts:
   - Build the note graph from link records for the graph view
   - Invite collaborators to a notebook as viewer or editor and enforce that role on note access
   - Record a note revision on each save for history
+  - Generate a Markdown export bundle (ZIP, one file per note) for a note, notebook, or full vault, preserving wiki-link syntax and tag annotations.
+  - Scan accessible note bodies for plain-text occurrences of a target note's title and return them as unlinked mentions.
   - Server-side validation on every mutation with Zod
   - Role-based authorization and protected routes for private pages
   - Scope every query to the current user/tenant (no cross-user data access)
@@ -36763,6 +37081,8 @@ prompts:
   - Typing a [[wiki-link]] in one note creates a backlink that appears on the target note
   - A notebook shared as viewer is read-only for that collaborator while an editor can modify its notes
   - Full-text search returns matching notes and respects which notebooks the current user can access
+  - 'Exporting a notebook downloads a ZIP whose Markdown files contain the original [[wiki-links]] and #tags, one file per note.'
+  - Deleting a note moves it to Trash and removes it from search, the graph, and backlinks; restoring it brings the note back with its links and tags intact.
   ready_to_use_prompt: |-
     You are a senior full-stack engineer who builds personal knowledge management products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -36776,7 +37096,7 @@ prompts:
     Business goal: Let users capture notes with bidirectional links, daily notes, nested tags, and full-text search, and share notebooks with collaborators invited as viewers or editors.
 
     BRAND & DESIGN
-    Brand style: focused, calm, cerebral. Colors: ink black, paper cream, soft indigo. A two-pane markdown editor with a backlinks panel beside a graph of linked notes and a nested tag tree. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+    Brand style: focused, calm, cerebral. Colors: ink black (#18181F), paper cream (#F7F2E6), soft indigo (#565CD9), warm amber accent (#C4892A). Two-pane markdown editor with a live backlinks panel beside an interactive note graph and nested tag tree; pair Fraunces serif headings with Inter body text and JetBrains Mono for [[wiki-links]] and tags. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
     TECH STACK
     - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -36796,6 +37116,8 @@ prompts:
     8. Notebook sharing and collaborator management
     9. Auth (sign in / register)
     10. Settings (profile and preferences)
+    11. Trash / recently deleted page listing soft-deleted notes with restore and permanent-delete actions.
+    12. Note revision history page that lists past revisions, diffs two versions, and restores an earlier one.
 
     NAVIGATION
     - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -36815,15 +37137,19 @@ prompts:
     - Notebook sharing by invite with viewer or editor roles
     - Link autocomplete and automatic creation of linked-but-empty notes
     - Per-note revision history
+    - Export a single note, a notebook, or the entire vault to a downloadable Markdown ZIP that preserves [[wiki-links]] and #tags so users own their data.
+    - Soft-delete notes into a Trash view with one-click restore and a permanent-delete option, so accidental deletions are recoverable.
+    - An 'unlinked mentions' panel that surfaces notes referencing a note's title in plain text and lets you convert each into a real [[wiki-link]].
 
     DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
     - User: id, email, passwordHash, name, createdAt, updatedAt
     - Notebook: id, ownerId, title, description, isDailyJournal, createdAt, updatedAt
-    - Note: id, notebookId, ownerId, title, body, noteDate, createdAt, updatedAt
+    - Note: id, notebookId, ownerId, title, body, noteDate, deletedAt, createdAt, updatedAt
     - NoteLink: id, sourceNoteId, targetNoteId, createdAt, updatedAt
     - Tag: id, ownerId, name, parentId, createdAt, updatedAt
     - NoteTag: id, noteId, tagId, createdAt, updatedAt
     - NotebookShare: id, notebookId, userId, role, invitedAt, createdAt, updatedAt
+    - NoteRevision: id, noteId, authorId, title, body, revisionNumber, createdAt, updatedAt
     - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
     BACKEND / API LOGIC
@@ -36834,6 +37160,8 @@ prompts:
     - Build the note graph from link records for the graph view
     - Invite collaborators to a notebook as viewer or editor and enforce that role on note access
     - Record a note revision on each save for history
+    - Generate a Markdown export bundle (ZIP, one file per note) for a note, notebook, or full vault, preserving wiki-link syntax and tag annotations.
+    - Scan accessible note bodies for plain-text occurrences of a target note's title and return them as unlinked mentions.
     - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
     ENVIRONMENT & MODES

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MindLedger — Therapy Practice Management for Behavioral Health</title>
+<meta name="description" content="MindLedger helps therapists and practice administrators manage caseloads, run intake and assessments, write structured SOAP/DAP notes and treatment plans, and bill recurring sessions including sliding-scale rates." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* Brand palette: soft teal, warm sand, slate grey */
+    --teal-900:#0f3b37;
+    --teal-800:#15534c;
+    --teal-700:#1c6b62;
+    --teal-600:#24887b;
+    --teal-500:#2fa191;
+    --teal-200:#bfe3db;
+    --teal-100:#dbefea;
+    --teal-50:#eef7f4;
+
+    --sand-50:#fbf6ec;
+    --sand-100:#f5ecda;
+    --sand-200:#ecdfc6;
+    --sand-300:#e0cfac;
+
+    --slate-900:#202a33;
+    --slate-800:#2c3845;
+    --slate-700:#3c4855;
+    --slate-500:#5d6875;
+    --slate-400:#828d99;
+    --slate-200:#d6dbe0;
+    --slate-100:#e9ecef;
+
+    --bg:#fbf9f3;
+    --surface:#ffffff;
+    --ink:var(--slate-900);
+    --muted:var(--slate-500);
+    --line:#e7e2d6;
+    --line-soft:#efeadf;
+
+    --primary:var(--teal-700);
+    --primary-hover:var(--teal-800);
+    --accent:var(--teal-500);
+
+    --radius-sm:10px;
+    --radius:16px;
+    --radius-lg:24px;
+    --radius-xl:32px;
+
+    --shadow-sm:0 1px 2px rgba(32,42,51,.06), 0 1px 3px rgba(32,42,51,.05);
+    --shadow:0 6px 18px -6px rgba(28,107,98,.16), 0 10px 32px -12px rgba(32,42,51,.16);
+    --shadow-lg:0 24px 60px -20px rgba(21,83,76,.30), 0 8px 24px -10px rgba(32,42,51,.16);
+
+    --maxw:1180px;
+    --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --font-display:'Fraunces',Georgia,'Times New Roman',serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    font-family:var(--font-sans);
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.6;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:600;line-height:1.08;letter-spacing:-.015em;color:var(--slate-900);}
+  p{margin:0;}
+  ul{margin:0;padding:0;list-style:none;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--teal-700);
+    background:var(--teal-50);
+    border:1px solid var(--teal-100);
+    padding:6px 14px;border-radius:999px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    font-family:var(--font-sans);font-weight:600;font-size:1rem;
+    padding:14px 24px;border-radius:999px;border:1px solid transparent;
+    cursor:pointer;transition:transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space:nowrap;
+  }
+  .btn:focus-visible{outline:3px solid var(--teal-200);outline-offset:2px;}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 8px 20px -8px rgba(21,83,76,.55);}
+  .btn-primary:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:0 14px 28px -10px rgba(21,83,76,.6);}
+  .btn-ghost{background:transparent;color:var(--slate-800);border-color:var(--line);}
+  .btn-ghost:hover{background:#fff;border-color:var(--slate-200);transform:translateY(-2px);box-shadow:var(--shadow-sm);}
+  .btn-light{background:#fff;color:var(--teal-800);}
+  .btn-light:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+  .btn-outline-light{background:transparent;color:#fff;border-color:rgba(255,255,255,.45);}
+  .btn-outline-light:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.8);}
+  .link-arrow{display:inline-flex;align-items:center;gap:7px;font-weight:600;color:var(--teal-800);}
+  .link-arrow svg{transition:transform .2s ease;}
+  .link-arrow:hover svg{transform:translateX(4px);}
+
+  /* ---------- Nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,249,243,.82);
+    backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:74px;}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:1.18rem;color:var(--slate-900);letter-spacing:-.01em;}
+  .brand .mark{
+    width:38px;height:38px;border-radius:11px;
+    background:linear-gradient(150deg,var(--teal-600),var(--teal-800));
+    display:grid;place-items:center;color:#fff;box-shadow:0 6px 14px -6px rgba(21,83,76,.6);
+    flex:0 0 auto;
+  }
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{font-size:.97rem;font-weight:500;color:var(--slate-700);transition:color .2s ease;}
+  .nav-links a:hover{color:var(--teal-800);}
+  .nav-cta{display:flex;align-items:center;gap:14px;}
+  .nav-cta .signin{font-weight:600;font-size:.97rem;color:var(--slate-800);padding:9px 8px;}
+  .nav-cta .signin:hover{color:var(--teal-800);}
+  .nav-toggle{display:none;background:none;border:1px solid var(--line);border-radius:10px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center;color:var(--slate-800);}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;overflow:hidden;padding:72px 0 80px;}
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(900px 520px at 88% -8%, var(--teal-50), transparent 60%),
+      radial-gradient(760px 480px at 6% 4%, var(--sand-100), transparent 55%);
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr 1.12fr;gap:56px;align-items:center;}
+  .hero h1{font-size:clamp(2.5rem,4.6vw,3.85rem);margin:22px 0 0;}
+  .hero h1 .accent{color:var(--teal-700);font-style:italic;}
+  .hero .sub{font-size:1.2rem;color:var(--slate-700);margin-top:22px;max-width:34ch;}
+  .hero-cta{display:flex;align-items:center;gap:18px;margin-top:34px;flex-wrap:wrap;}
+  .hero-meta{display:flex;align-items:center;gap:22px;margin-top:30px;flex-wrap:wrap;}
+  .hero-meta .item{display:flex;align-items:center;gap:9px;font-size:.93rem;color:var(--slate-600);font-weight:500;color:var(--slate-500);}
+  .hero-meta .item svg{color:var(--teal-600);flex:0 0 auto;}
+
+  /* ---------- Workspace preview ---------- */
+  .preview{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-lg);
+    overflow:hidden;
+  }
+  .preview .titlebar{display:flex;align-items:center;gap:8px;padding:13px 16px;background:linear-gradient(180deg,#fff,#fbf8f1);border-bottom:1px solid var(--line-soft);}
+  .preview .dots{display:flex;gap:6px;}
+  .preview .dots i{width:11px;height:11px;border-radius:50%;display:block;}
+  .preview .dots i:nth-child(1){background:#f0c0b0;}
+  .preview .dots i:nth-child(2){background:#f2dcae;}
+  .preview .dots i:nth-child(3){background:#bfe3db;}
+  .preview .crumb{margin-left:10px;font-size:.8rem;color:var(--slate-400);font-weight:500;}
+  .preview .badge-live{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;color:var(--teal-700);background:var(--teal-50);border:1px solid var(--teal-100);padding:4px 10px;border-radius:999px;}
+  .preview .badge-live i{width:6px;height:6px;border-radius:50%;background:var(--teal-500);display:block;}
+
+  .workspace{display:grid;grid-template-columns:.92fr 1.25fr;}
+  /* left: session timeline */
+  .timeline{background:var(--sand-50);border-right:1px solid var(--line-soft);padding:18px 16px;}
+  .ws-client{display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:14px;}
+  .avatar{width:42px;height:42px;border-radius:12px;background:linear-gradient(150deg,var(--teal-500),var(--teal-700));color:#fff;display:grid;place-items:center;font-weight:700;font-size:.95rem;flex:0 0 auto;}
+  .ws-client .nm{font-weight:700;font-size:.95rem;color:var(--slate-900);font-family:var(--font-sans);}
+  .ws-client .sub{font-size:.76rem;color:var(--slate-400);}
+  .tl-label{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--slate-400);margin:4px 0 12px;}
+  .tl{position:relative;padding-left:20px;}
+  .tl::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--teal-100);}
+  .tl-item{position:relative;margin-bottom:16px;}
+  .tl-item::before{content:"";position:absolute;left:-18px;top:4px;width:11px;height:11px;border-radius:50%;background:#fff;border:2.5px solid var(--teal-400,var(--teal-500));}
+  .tl-item.done::before{background:var(--teal-600);border-color:var(--teal-600);}
+  .tl-item.miss::before{background:#fff;border-color:#d9b48a;}
+  .tl-item .dt{font-size:.74rem;color:var(--slate-400);font-weight:600;}
+  .tl-item .tt{font-size:.86rem;color:var(--slate-800);font-weight:600;}
+  .tl-tag{display:inline-block;font-size:.66rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-top:3px;letter-spacing:.02em;}
+  .tag-kept{background:var(--teal-50);color:var(--teal-700);}
+  .tag-noshow{background:#f7e9d6;color:#9a6a32;}
+  .tag-sched{background:var(--slate-100);color:var(--slate-600);}
+
+  /* right: note + plan editor */
+  .editor{padding:18px;background:#fff;}
+  .ed-tabs{display:flex;gap:6px;margin-bottom:14px;}
+  .ed-tabs span{font-size:.78rem;font-weight:600;padding:6px 12px;border-radius:8px;color:var(--slate-500);}
+  .ed-tabs span.on{background:var(--teal-700);color:#fff;}
+  .ed-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .ed-row h4{font-family:var(--font-sans);font-size:.95rem;font-weight:700;}
+  .pill{font-size:.7rem;font-weight:700;padding:4px 10px;border-radius:999px;}
+  .pill-locked{background:var(--teal-50);color:var(--teal-700);border:1px solid var(--teal-100);}
+  .soap{display:grid;gap:9px;margin-bottom:14px;}
+  .soap .field{background:var(--sand-50);border:1px solid var(--line-soft);border-radius:10px;padding:9px 12px;}
+  .soap .field .k{font-size:.66rem;font-weight:700;letter-spacing:.08em;color:var(--teal-700);text-transform:uppercase;}
+  .soap .field .v{font-size:.81rem;color:var(--slate-700);line-height:1.45;margin-top:2px;}
+  .soap .field .bar{height:7px;border-radius:4px;background:var(--slate-100);margin-top:7px;overflow:hidden;}
+  .soap .field .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal-500),var(--teal-700));border-radius:4px;}
+
+  .scorecard{display:flex;align-items:center;gap:14px;background:var(--teal-50);border:1px solid var(--teal-100);border-radius:12px;padding:12px 14px;}
+  .scorecard .big{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--teal-800);line-height:1;}
+  .scorecard .meta{font-size:.74rem;color:var(--slate-500);}
+  .scorecard .meta b{color:var(--slate-800);font-weight:700;}
+  .spark{margin-left:auto;}
+
+  /* ---------- Logos / trust strip ---------- */
+  .trust{padding:30px 0 4px;}
+  .trust .wrap{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;}
+  .trust .lead{font-size:.82rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--slate-400);}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%;margin-top:6px;}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 20px;text-align:left;box-shadow:var(--shadow-sm);}
+  .stat .n{font-family:var(--font-display);font-size:2rem;font-weight:700;color:var(--teal-800);line-height:1;}
+  .stat .l{font-size:.9rem;color:var(--slate-500);margin-top:8px;}
+
+  /* ---------- Sections ---------- */
+  section{scroll-margin-top:90px;}
+  .section{padding:90px 0;}
+  .section-head{max-width:680px;margin:0 auto 54px;text-align:center;}
+  .section-head h2{font-size:clamp(2rem,3.3vw,2.85rem);margin-top:16px;}
+  .section-head p{color:var(--slate-600);font-size:1.12rem;margin-top:16px;color:var(--slate-500);}
+
+  /* Features grid */
+  .features{background:linear-gradient(180deg,var(--bg),#fff 60%);}
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .fcard{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px 26px;box-shadow:var(--shadow-sm);transition:transform .2s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .fcard:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--teal-200);}
+  .fic{width:50px;height:50px;border-radius:13px;display:grid;place-items:center;font-size:1.45rem;background:var(--teal-50);border:1px solid var(--teal-100);margin-bottom:18px;}
+  .fcard h3{font-size:1.16rem;font-family:var(--font-sans);font-weight:700;letter-spacing:-.01em;}
+  .fcard p{color:var(--slate-600);margin-top:9px;font-size:.97rem;color:var(--slate-500);}
+
+  /* How it works */
+  .how{background:#fff;}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:step;}
+  .step{position:relative;padding:26px 22px 24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--sand-50);}
+  .step .num{font-family:var(--font-display);font-size:1rem;font-weight:700;color:#fff;background:var(--teal-700);width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:16px;}
+  .step h3{font-size:1.06rem;font-family:var(--font-sans);font-weight:700;}
+  .step p{color:var(--slate-600);font-size:.93rem;margin-top:8px;color:var(--slate-500);}
+  .step .scr{font-size:.74rem;font-weight:600;color:var(--teal-700);margin-top:14px;display:inline-flex;align-items:center;gap:6px;}
+
+  /* Screens showcase (two-pane emphasis) */
+  .showcase{background:linear-gradient(180deg,#fff,var(--sand-50));}
+  .showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+  .showcase .copy h2{font-size:clamp(1.9rem,3vw,2.5rem);}
+  .showcase .copy p{color:var(--slate-600);margin-top:18px;font-size:1.06rem;color:var(--slate-500);}
+  .checklist{margin-top:24px;display:grid;gap:14px;}
+  .checklist li{display:flex;gap:13px;align-items:flex-start;}
+  .checklist .ck{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:var(--teal-50);border:1px solid var(--teal-100);color:var(--teal-700);display:grid;place-items:center;margin-top:1px;}
+  .checklist b{color:var(--slate-900);font-weight:600;}
+  .checklist span{color:var(--slate-600);}
+  .checklist .t{font-size:.99rem;line-height:1.5;}
+
+  .mini-panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;}
+  .mp-head{padding:16px 20px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between;background:#fff;}
+  .mp-head .t{font-weight:700;font-size:.98rem;}
+  .mp-head .tag{font-size:.72rem;font-weight:700;color:var(--teal-700);background:var(--teal-50);border:1px solid var(--teal-100);padding:4px 10px;border-radius:999px;}
+  .mp-body{padding:18px 20px;display:grid;gap:14px;}
+  .invoice-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--line-soft);border-radius:12px;background:var(--sand-50);}
+  .invoice-row .who{display:flex;align-items:center;gap:11px;}
+  .invoice-row .nm{font-weight:600;font-size:.9rem;}
+  .invoice-row .meta{font-size:.76rem;color:var(--slate-400);}
+  .invoice-row .amt{text-align:right;}
+  .invoice-row .amt .n{font-weight:700;font-size:.95rem;color:var(--slate-900);}
+  .stat-paid{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--teal-50);color:var(--teal-700);}
+  .stat-due{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:6px;background:#f7e9d6;color:#9a6a32;}
+
+  /* Who it's for */
+  .roles{background:#fff;}
+  .role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .role{position:relative;border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px 28px;background:var(--surface);box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .2s ease, box-shadow .25s ease;}
+  .role:hover{transform:translateY(-4px);box-shadow:var(--shadow);}
+  .role::after{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--teal-500),var(--teal-700));}
+  .role .ric{width:54px;height:54px;border-radius:15px;background:var(--teal-50);border:1px solid var(--teal-100);display:grid;place-items:center;font-size:1.5rem;margin-bottom:20px;}
+  .role h3{font-family:var(--font-sans);font-weight:700;font-size:1.28rem;}
+  .role .who{font-size:.86rem;color:var(--teal-700);font-weight:600;margin-top:4px;}
+  .role p{color:var(--slate-600);margin-top:14px;font-size:.97rem;color:var(--slate-500);}
+  .role ul{margin-top:18px;display:grid;gap:10px;}
+  .role li{display:flex;gap:10px;font-size:.92rem;color:var(--slate-700);align-items:flex-start;}
+  .role li svg{flex:0 0 auto;color:var(--teal-600);margin-top:3px;}
+
+  /* Security note */
+  .secure{padding:0 0 90px;}
+  .secure-band{background:var(--slate-900);color:#dfe6ea;border-radius:var(--radius-xl);padding:42px 48px;display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;position:relative;overflow:hidden;}
+  .secure-band::before{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(47,161,145,.28),transparent 65%);}
+  .secure-band h2{color:#fff;font-size:1.9rem;}
+  .secure-band p{margin-top:14px;color:#aebac2;font-size:1.02rem;}
+  .secure-points{display:grid;gap:16px;position:relative;z-index:1;}
+  .secure-points .sp{display:flex;gap:13px;align-items:flex-start;}
+  .secure-points .spic{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:rgba(47,161,145,.18);border:1px solid rgba(47,161,145,.4);color:#7fd3c6;display:grid;place-items:center;}
+  .secure-points b{color:#fff;display:block;font-size:.97rem;}
+  .secure-points span{color:#9fb0b8;font-size:.86rem;}
+
+  /* Final CTA */
+  .cta{padding:0 0 96px;}
+  .cta-band{
+    position:relative;overflow:hidden;text-align:center;
+    background:linear-gradient(135deg,var(--teal-800),var(--teal-600));
+    border-radius:var(--radius-xl);padding:74px 32px;
+    box-shadow:var(--shadow-lg);
+  }
+  .cta-band::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 320px at 50% -20%, rgba(255,255,255,.18), transparent 60%);}
+  .cta-band .eyebrow{position:relative;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#eafaf6;}
+  .cta-band .eyebrow .dot{background:#eafaf6;}
+  .cta-band h2{position:relative;color:#fff;font-size:clamp(2.1rem,3.6vw,3rem);margin-top:18px;}
+  .cta-band p{position:relative;color:#d6f0ea;font-size:1.18rem;margin:18px auto 0;max-width:54ch;}
+  .cta-actions{position:relative;display:flex;gap:16px;justify-content:center;margin-top:34px;flex-wrap:wrap;}
+  .cta-note{position:relative;margin-top:20px;font-size:.88rem;color:#bfe3db;}
+
+  /* Footer */
+  footer{background:var(--slate-900);color:#aebac2;padding:64px 0 34px;}
+  .foot-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;}
+  footer .brand{color:#fff;}
+  footer .brand .mark{box-shadow:none;}
+  .foot-about{margin-top:18px;font-size:.93rem;color:#9fb0b8;max-width:34ch;}
+  .foot-col h4{font-family:var(--font-sans);font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#cdd8dd;margin-bottom:16px;}
+  .foot-col a{display:block;font-size:.93rem;color:#9fb0b8;padding:6px 0;transition:color .2s ease;}
+  .foot-col a:hover{color:#fff;}
+  .foot-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .foot-bottom p{font-size:.86rem;color:#8a97a0;}
+  .foot-bottom .badges{display:flex;gap:10px;flex-wrap:wrap;}
+  .foot-bottom .badges span{font-size:.74rem;font-weight:600;color:#bfe3db;background:rgba(47,161,145,.14);border:1px solid rgba(47,161,145,.3);padding:5px 11px;border-radius:999px;}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1000px){
+    .hero-grid{grid-template-columns:1fr;gap:42px;}
+    .hero .sub{max-width:46ch;}
+    .feature-grid{grid-template-columns:repeat(2,1fr);}
+    .steps{grid-template-columns:repeat(2,1fr);}
+    .showcase-grid{grid-template-columns:1fr;gap:34px;}
+    .secure-band{grid-template-columns:1fr;gap:28px;padding:36px 32px;}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:32px;}
+  }
+  @media (max-width:760px){
+    body{font-size:16px;}
+    .nav-links,.nav-cta .signin{display:none;}
+    .nav-toggle{display:flex;}
+    .nav-cta{gap:8px;}
+    header.nav.open .nav-links{
+      display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+      position:absolute;top:74px;left:0;right:0;
+      background:var(--bg);border-bottom:1px solid var(--line);
+      padding:14px 24px 22px;box-shadow:var(--shadow);
+    }
+    header.nav.open .nav-links a{padding:11px 0;width:100%;border-bottom:1px solid var(--line-soft);}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .feature-grid{grid-template-columns:1fr;}
+    .role-grid{grid-template-columns:1fr;}
+    .workspace{grid-template-columns:1fr;}
+    .timeline{border-right:none;border-bottom:1px solid var(--line-soft);}
+    .section{padding:64px 0;}
+    .hero{padding:48px 0 56px;}
+    .secure-band{padding:30px 24px;}
+    .cta-band{padding:54px 22px;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+    .hero-cta .btn{flex:1 1 auto;}
+  }
+  @media (max-width:460px){
+    .foot-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="MindLedger home">
+      <span class="mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.7-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 3.2C19.5 16.3 12 21 12 21Z"/><path d="M3 12.5h3l1.5-3 2 5 1.5-3h3"/></svg>
+      </span>
+      MindLedger
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#workspace">Workspace</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#security">Security</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="signin" href="#auth">Sign in</a>
+      <a class="btn btn-primary" href="#cta" style="padding:11px 20px;">Start free trial</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="dot"></span> Behavioral health practice management</span>
+        <h1>Run your whole practice from one <span class="accent">calm, clinical</span> workspace.</h1>
+        <p class="sub">MindLedger lets therapists manage clients, run intake and assessments, write structured progress notes and treatment plans, and bill recurring sessions — including sliding-scale rates.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#cta">Start free trial
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </a>
+          <a class="link-arrow" href="#workspace">See the client workspace
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="hero-meta">
+          <span class="item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            PHQ-9 &amp; GAD-7 auto-scoring
+          </span>
+          <span class="item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            Sign &amp; lock progress notes
+          </span>
+          <span class="item">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            Sliding-scale billing
+          </span>
+        </div>
+      </div>
+
+      <!-- Two-pane client workspace preview -->
+      <div class="preview" aria-hidden="true">
+        <div class="titlebar">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span class="crumb">Caseload / Maya R. / Session workspace</span>
+          <span class="badge-live"><i></i> Live</span>
+        </div>
+        <div class="workspace">
+          <!-- left: session timeline -->
+          <div class="timeline">
+            <div class="ws-client">
+              <span class="avatar">MR</span>
+              <div>
+                <div class="nm">Maya R.</div>
+                <div class="sub">Active · CBT · Weekly</div>
+              </div>
+            </div>
+            <div class="tl-label">Session timeline</div>
+            <div class="tl">
+              <div class="tl-item done">
+                <div class="dt">Jun 24 · 10:00</div>
+                <div class="tt">Individual therapy</div>
+                <span class="tl-tag tag-kept">Kept · Note signed</span>
+              </div>
+              <div class="tl-item miss">
+                <div class="dt">Jun 17 · 10:00</div>
+                <div class="tt">Individual therapy</div>
+                <span class="tl-tag tag-noshow">No-show</span>
+              </div>
+              <div class="tl-item done">
+                <div class="dt">Jun 10 · 10:00</div>
+                <div class="tt">Individual therapy</div>
+                <span class="tl-tag tag-kept">Kept · Note signed</span>
+              </div>
+              <div class="tl-item">
+                <div class="dt">Jul 01 · 10:00</div>
+                <div class="tt">Individual therapy</div>
+                <span class="tl-tag tag-sched">Scheduled</span>
+              </div>
+            </div>
+          </div>
+          <!-- right: note + plan editor -->
+          <div class="editor">
+            <div class="ed-tabs">
+              <span class="on">SOAP note</span>
+              <span>Treatment plan</span>
+              <span>Assessments</span>
+            </div>
+            <div class="ed-row">
+              <h4>Progress note — Jun 24</h4>
+              <span class="pill pill-locked">🔒 Signed &amp; locked</span>
+            </div>
+            <div class="soap">
+              <div class="field"><div class="k">Subjective</div><div class="v">Client reports improved sleep and fewer panic episodes since last session.</div></div>
+              <div class="field"><div class="k">Objective</div><div class="v">Engaged, affect congruent. PHQ-9 down from 16 to 11.</div></div>
+              <div class="field">
+                <div class="k">Assessment · Goal progress</div>
+                <div class="v">Anxiety-management goal — 60% to target</div>
+                <div class="bar"><i style="width:60%"></i></div>
+              </div>
+            </div>
+            <div class="scorecard">
+              <div class="big">11</div>
+              <div class="meta"><b>PHQ-9 · Moderate</b><br>Down 5 points over 6 weeks</div>
+              <svg class="spark" width="96" height="40" viewBox="0 0 96 40" fill="none">
+                <polyline points="2,8 20,12 38,16 56,22 74,28 94,32" stroke="#24887b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="94" cy="32" r="3.6" fill="#1c6b62"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRUST / STATS ============ -->
+  <section class="trust">
+    <div class="wrap">
+      <p class="lead">Built for solo therapists, counselors &amp; small group practices</p>
+      <div class="stats">
+        <div class="stat"><div class="n">3 roles</div><div class="l">Therapist, administrator &amp; client access in one system</div></div>
+        <div class="stat"><div class="n">SOAP / DAP</div><div class="l">Structured notes with sign, lock &amp; amendment trail</div></div>
+        <div class="stat"><div class="n">2 measures</div><div class="l">PHQ-9 &amp; GAD-7 auto-scored with severity bands</div></div>
+        <div class="stat"><div class="n">Recurring</div><div class="l">Sessions and invoices generated per kept appointment</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="section features" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span> Everything the practice runs on</span>
+        <h2>Clinical documentation and billing, without the busywork</h2>
+        <p>From the first intake form to the final invoice, MindLedger keeps every record structured, scoped to your caseload, and audit-ready.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">📝</div>
+          <h3>Structured intake &amp; assessments</h3>
+          <p>Capture consent and run standardized PHQ-9 and GAD-7 assessments with automatic scoring and severity classification.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🔏</div>
+          <h3>Sign-and-lock progress notes</h3>
+          <p>Write SOAP or DAP notes linked to each session. Once signed, notes lock and every change is kept as a dated amendment.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🎯</div>
+          <h3>Treatment plan builder</h3>
+          <p>Define measurable goals, objectives, and interventions with scheduled review dates so plans never quietly expire.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🗓️</div>
+          <h3>Recurring scheduling</h3>
+          <p>Generate recurring sessions from a single rule and track each one as scheduled, kept, no-show, or cancelled.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">💸</div>
+          <h3>Sliding-scale fee schedule</h3>
+          <p>Set a client's session rate from their income band, so the right fee follows them across every appointment.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🧾</div>
+          <h3>Recurring session billing</h3>
+          <p>Each kept session generates a matching invoice. Record mock payments and watch client balances update automatically.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">📈</div>
+          <h3>Assessment score trends</h3>
+          <p>Chart PHQ-9 and GAD-7 scores across the course of care to see whether symptoms are moving in the right direction.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🔔</div>
+          <h3>Caseload dashboard alerts</h3>
+          <p>Surface unsigned notes, upcoming sessions, and overdue treatment-plan reviews the moment you sign in.</p>
+        </article>
+        <article class="fcard">
+          <div class="fic" aria-hidden="true">🗂️</div>
+          <h3>Secure document storage</h3>
+          <p>Keep signed consents and uploaded client records in one place, scoped so no one sees another therapist's chart.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section how" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span> How it works</span>
+        <h2>From intake to invoice in four steps</h2>
+        <p>MindLedger mirrors the real rhythm of a behavioral-health practice — each screen hands off cleanly to the next.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Onboard the client</h3>
+          <p>Capture consent, demographics, and an income band, then run the PHQ-9 and GAD-7 baseline in the intake form.</p>
+          <span class="scr">↳ Intake &amp; assessment forms</span>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Schedule the work</h3>
+          <p>Set a recurring session on the calendar and let MindLedger resolve the sliding-scale fee for every appointment.</p>
+          <span class="scr">↳ Scheduling calendar</span>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Document the session</h3>
+          <p>Open the client chart, write the structured note beside the session timeline, then sign and lock it.</p>
+          <span class="scr">↳ Client chart &amp; note editor</span>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <h3>Bill &amp; review</h3>
+          <p>Each kept session creates an invoice; record payment and the dashboard flags any overdue plan reviews.</p>
+          <span class="scr">↳ Billing &amp; dashboard</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORKSPACE SHOWCASE ============ -->
+  <section class="section showcase" id="workspace">
+    <div class="wrap showcase-grid">
+      <div class="copy">
+        <span class="eyebrow"><span class="dot"></span> The two-pane client workspace</span>
+        <h2>Session history on the left. Notes &amp; plans on the right.</h2>
+        <p>Stop hopping between tabs to write a note. The client chart puts the full session timeline beside structured note and treatment-plan editors, so context is always one glance away.</p>
+        <ul class="checklist">
+          <li>
+            <span class="ck"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="t"><b>One chart, every record.</b> Profile, intake, assessments, notes, treatment plan, and billing in a single view.</span>
+          </li>
+          <li>
+            <span class="ck"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="t"><b>Notes tied to sessions.</b> Every SOAP/DAP note links to the appointment it documents — no orphaned paperwork.</span>
+          </li>
+          <li>
+            <span class="ck"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="t"><b>Scoped to you.</b> Role-based access keeps each therapist's caseload private and every query tenant-scoped.</span>
+          </li>
+        </ul>
+        <div style="margin-top:30px;">
+          <a class="btn btn-primary" href="#cta">Open a demo workspace
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Billing mini-panel -->
+      <div class="mini-panel" aria-hidden="true">
+        <div class="mp-head">
+          <span class="t">Billing &amp; invoices</span>
+          <span class="tag">Sliding-scale active</span>
+        </div>
+        <div class="mp-body">
+          <div class="invoice-row">
+            <div class="who">
+              <span class="avatar" style="width:36px;height:36px;font-size:.8rem;">MR</span>
+              <div>
+                <div class="nm">Maya R. · Jun 24 session</div>
+                <div class="meta">Band B · $85 / session</div>
+              </div>
+            </div>
+            <div class="amt"><div class="n">$85.00</div><span class="stat-paid">Paid</span></div>
+          </div>
+          <div class="invoice-row">
+            <div class="who">
+              <span class="avatar" style="width:36px;height:36px;font-size:.8rem;background:linear-gradient(150deg,#3c8a7f,#15534c);">DK</span>
+              <div>
+                <div class="nm">Devon K. · Jun 25 session</div>
+                <div class="meta">Band A · $60 / session</div>
+              </div>
+            </div>
+            <div class="amt"><div class="n">$60.00</div><span class="stat-due">Due</span></div>
+          </div>
+          <div class="invoice-row">
+            <div class="who">
+              <span class="avatar" style="width:36px;height:36px;font-size:.8rem;background:linear-gradient(150deg,#5fae9f,#1c6b62);">PL</span>
+              <div>
+                <div class="nm">Priya L. · Jun 26 session</div>
+                <div class="meta">Band C · $120 / session</div>
+              </div>
+            </div>
+            <div class="amt"><div class="n">$120.00</div><span class="stat-paid">Paid</span></div>
+          </div>
+          <div class="invoice-row" style="background:var(--teal-50);border-color:var(--teal-100);">
+            <div class="who"><div><div class="nm">Outstanding balance</div><div class="meta">Across 12 active clients</div></div></div>
+            <div class="amt"><div class="n" style="color:var(--teal-800);">$430.00</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHO IT'S FOR ============ -->
+  <section class="section roles" id="roles">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow"><span class="dot"></span> Who it's for</span>
+        <h2>One system, three roles, the right access for each</h2>
+        <p>Therapists, practice administrators, and clients each see only what they need — with permissions enforced on every page and query.</p>
+      </div>
+      <div class="role-grid">
+        <article class="role">
+          <div class="ric" aria-hidden="true">🧑‍⚕️</div>
+          <h3>Therapist</h3>
+          <div class="who">Manages caseload &amp; clinical work</div>
+          <p>Your day, organized around the people in your care — from intake through every signed note.</p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Manage caseload and run intake &amp; assessments</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Write progress notes and treatment plans</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Conduct sessions and track outcomes</li>
+          </ul>
+        </article>
+        <article class="role">
+          <div class="ric" aria-hidden="true">🗂️</div>
+          <h3>Practice Administrator</h3>
+          <div class="who">Oversees scheduling &amp; payments</div>
+          <p>Keep the whole practice moving — scheduling, billing, and the rules that set every fee.</p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Manage clients, scheduling, and billing</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Configure sliding-scale rates &amp; fee schedule</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Run practice reports and manage users</li>
+          </ul>
+        </article>
+        <article class="role">
+          <div class="ric" aria-hidden="true">💬</div>
+          <h3>Client</h3>
+          <div class="who">Completes intake &amp; views visits</div>
+          <p>A simple, reassuring front door — paperwork done before the first session, appointments always visible.</p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Complete intake forms and consent</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Take PHQ-9 and GAD-7 assessments</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> View upcoming appointments</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECURITY ============ -->
+  <section class="secure" id="security">
+    <div class="wrap">
+      <div class="secure-band">
+        <div>
+          <span class="eyebrow" style="background:rgba(47,161,145,.18);border-color:rgba(47,161,145,.4);color:#9fe2d6;"><span class="dot" style="background:#7fd3c6;"></span> Privacy by design</span>
+          <h2 style="margin-top:18px;">Sensitive records deserve a careful system</h2>
+          <p>Mental-health data is some of the most sensitive there is. MindLedger scopes every query to the signed-in user and validates every change on the server.</p>
+        </div>
+        <div class="secure-points">
+          <div class="sp">
+            <span class="spic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+            <div><b>Role-based access control</b><span>Therapists, admins, and clients only reach the pages and records their role allows.</span></div>
+          </div>
+          <div class="sp">
+            <span class="spic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6Z"/></svg></span>
+            <div><b>Server-side validation</b><span>Every mutation is checked on the server, so no malformed clinical record slips through.</span></div>
+          </div>
+          <div class="sp">
+            <span class="spic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 15h6"/></svg></span>
+            <div><b>Audit &amp; amendment trail</b><span>Signed notes lock; later edits are recorded as dated amendments, never silent overwrites.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="cta" id="cta">
+    <div class="wrap">
+      <div class="cta-band">
+        <span class="eyebrow"><span class="dot"></span> Start in minutes</span>
+        <h2>Give your practice a calmer back office</h2>
+        <p>Spin up MindLedger with demo data and walk a full caseload — intake, notes, scheduling, and sliding-scale billing — before you add a single real client.</p>
+        <div class="cta-actions">
+          <a class="btn btn-light" href="#auth">Start free trial
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn-outline-light" href="#workspace">Explore the workspace</a>
+        </div>
+        <p class="cta-note">No credit card required · Runs locally on seed data · Demo logins for admin, therapists &amp; clients</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer id="auth">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="brand" href="#top" aria-label="MindLedger home">
+          <span class="mark" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.5-4.7-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 3.2C19.5 16.3 12 21 12 21Z"/><path d="M3 12.5h3l1.5-3 2 5 1.5-3h3"/></svg>
+          </span>
+          MindLedger
+        </a>
+        <p class="foot-about">Therapy practice management for solo therapists, counselors, and small behavioral-health group practices — calm, trustworthy, and clinical by design.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#workspace">Client workspace</a>
+        <a href="#cta">Pricing &amp; trial</a>
+      </div>
+      <div class="foot-col">
+        <h4>Workflows</h4>
+        <a href="#features">Intake &amp; assessments</a>
+        <a href="#features">Progress notes</a>
+        <a href="#features">Treatment plans</a>
+        <a href="#workspace">Billing &amp; invoices</a>
+      </div>
+      <div class="foot-col">
+        <h4>Account</h4>
+        <a href="#auth">Sign in</a>
+        <a href="#auth">Register</a>
+        <a href="#roles">Roles &amp; access</a>
+        <a href="#security">Security</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 MindLedger Mental Health Therapy Practice Management System. For demonstration purposes.</p>
+      <div class="badges">
+        <span>Role-based access</span>
+        <span>Server-side validation</span>
+        <span>Audit trail</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle (minimal vanilla JS)
+  (function () {
+    var nav = document.getElementById('nav');
+    var toggle = document.getElementById('navToggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    // Close menu after tapping a link on mobile
+    nav.querySelectorAll('.nav-links a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        nav.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+</script>
+</body>
+</html>
