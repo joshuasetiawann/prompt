@@ -7,7 +7,8 @@
 | **Prompt ID** | 10 |
 | **Title** | Multi-Vendor Marketplace |
 | **Slug** | multi-vendor-marketplace |
-| **Category** | E-commerce |
+| **Category** | E-commerce & Retail |
+| **Domain** | E-commerce |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Vendor; Admin |

@@ -7,7 +7,8 @@
 | **Prompt ID** | 06 |
 | **Title** | Dentist Appointment Website |
 | **Slug** | dentist-appointment-website |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Patient; Staff/Admin |
@@ -66,6 +67,8 @@
 - Per-dentist slot availability and conflict prevention
 - Appointment status lifecycle and reminders concept
 - Reschedule and cancellation window
+- Deposit and payment tracking per appointment
+- Reminder scheduling for upcoming appointments
 - Marketing homepage with testimonials and CTA
 - Admin schedule and service management
 - Reports: bookings per dentist and service
@@ -104,11 +107,31 @@
 - dentistId -> references the related record
 - patientId -> references the related record
 
+### Payment
+**Fields:** `id`, `appointmentId`, `amount`, `method`, `status`, `paidAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- appointmentId -> references the related record
+
+### Reminder
+**Fields:** `id`, `appointmentId`, `channel`, `scheduledFor`, `sentAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- appointmentId -> references the related record
+
+### Testimonial
+**Fields:** `id`, `patientId`, `authorName`, `rating`, `content`, `isPublished`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- patientId -> references the related record
+
 ## Backend logic
 
 - Slot generation by dentist and service duration
 - Conflict-free booking creation
 - Reschedule/cancel within policy
+- Mock deposit/payment capture that records a Payment status per appointment
+- Reminder scheduling and mock notification dispatch per appointment
 - Admin CRUD for services and schedules
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
@@ -213,6 +236,8 @@ CORE FEATURES
 - Per-dentist slot availability and conflict prevention
 - Appointment status lifecycle and reminders concept
 - Reschedule and cancellation window
+- Deposit and payment tracking per appointment
+- Reminder scheduling for upcoming appointments
 - Marketing homepage with testimonials and CTA
 - Admin schedule and service management
 - Reports: bookings per dentist and service
@@ -223,12 +248,17 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Dentist: id, name, workingHours, createdAt, updatedAt
 - Patient: id, userId, fullName, phone, createdAt, updatedAt
 - Appointment: id, serviceId, dentistId, patientId, startTime, status, createdAt, updatedAt
+- Payment: id, appointmentId, amount, method, status, paidAt, createdAt, updatedAt
+- Reminder: id, appointmentId, channel, scheduledFor, sentAt, status, createdAt, updatedAt
+- Testimonial: id, patientId, authorName, rating, content, isPublished, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
 - Slot generation by dentist and service duration
 - Conflict-free booking creation
 - Reschedule/cancel within policy
+- Mock deposit/payment capture that records a Payment status per appointment
+- Reminder scheduling and mock notification dispatch per appointment
 - Admin CRUD for services and schedules
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 

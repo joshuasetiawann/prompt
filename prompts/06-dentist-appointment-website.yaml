@@ -1,14 +1,18 @@
 prompt_id: '06'
 title: Dentist Appointment Website
 slug: dentist-appointment-website
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: BrightDental Dentist Appointment Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers building sites for dental and medical practices that want a marketing site plus booking.
 target_user: Patient; Staff/Admin
+target_users: dental patients booking treatments and practice staff managing appointments
+role_line: You are a senior full-stack engineer who builds dental practice websites with online booking
 business_goal: Present services and let patients book a treatment slot, while staff manage the schedule
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: bright, friendly, clean clinical. Colors: sky blue, mint accent, white. Clean, modern, welcoming layout with service cards and a clear booking flow.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -180,6 +184,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Patient — book and manage appointments
+- Staff/Admin — manage services, dentists, schedules, and appointments
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 6 services, 3 dentists, sample appointments, testimonials, 1 admin and 2 patients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

@@ -7,7 +7,8 @@
 | **Prompt ID** | 07 |
 | **Title** | Beauty Salon Booking App |
 | **Slug** | beauty-salon-booking-app |
-| **Category** | Booking & Reservation |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Reservation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Client; Stylist; Admin/Owner |

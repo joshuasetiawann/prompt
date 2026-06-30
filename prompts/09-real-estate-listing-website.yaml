@@ -1,14 +1,18 @@
 prompt_id: 09
 title: Real Estate Listing Website
 slug: real-estate-listing-website
-category: Marketplace & Listings
+category: E-commerce & Retail
+domain: Marketplace & Listings
 app_name: Estatly Real Estate Listing Website
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Freelancers and agencies building listing sites for real estate agents and brokerages.
 target_user: Visitor/Buyer; Agent/Admin
+target_users: property buyers and renters searching listings, and agents managing listings and leads
+role_line: You are a senior full-stack engineer who builds property listing and lead-capture sites
 business_goal: Let visitors search and view properties and submit inquiries, and let agents manage listings and leads
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: premium, trustworthy, property-focused. Colors: deep blue, white, gold accent. Clean, modern, photo-forward listing cards, strong filters, and clean detail pages.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -198,6 +202,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Visitor/Buyer — search, save, and inquire
+- Agent/Admin — manage listings and respond to leads
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~15 properties with photos and specs, sample favorites and leads, 1 admin/agent and 2 buyers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

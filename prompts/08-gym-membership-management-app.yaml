@@ -1,14 +1,18 @@
 prompt_id: 08
 title: Gym Membership Management App
 slug: gym-membership-management-app
-category: Business & Operations
+category: Business Operations
+domain: Business & Operations
 app_name: FlexGym Gym Membership Management App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building management tools for gyms, studios, and fitness centers.
 target_user: Admin/Owner; Trainer; Member
+target_users: gym owners and front-desk staff managing members, and members viewing their plan and classes
+role_line: You are a senior full-stack engineer who builds membership and operations software for gyms
 business_goal: Manage memberships, track check-ins, schedule classes, and give members a simple portal
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: energetic, bold, motivating. Colors: electric blue, slate, lime accent. Clean, modern, strong dashboard with clear stats and schedule grids.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -162,6 +166,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Admin/Owner — manage members, plans, classes, reports
+- Trainer — manage assigned classes
+- Member — view plan and book classes
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 plans, ~20 members in various statuses, check-in history, a week of classes, 1 admin, 1 trainer, 2 members. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

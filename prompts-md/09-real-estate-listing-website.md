@@ -7,7 +7,8 @@
 | **Prompt ID** | 09 |
 | **Title** | Real Estate Listing Website |
 | **Slug** | real-estate-listing-website |
-| **Category** | Marketplace & Listings |
+| **Category** | E-commerce & Retail |
+| **Domain** | Marketplace & Listings |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Intermediate |
 | **Target user** | Visitor/Buyer; Agent/Admin |
@@ -66,6 +67,9 @@
 - Inquiry form creating a lead tied to a property and agent
 - Agent listing CRUD with photos and status (active/sold/rented)
 - Leads inbox with status (new, contacted, closed)
+- Schedule property viewings/tours with an agent and track their status
+- Submit and track purchase/rental offers on a listing
+- Saved searches and agent reviews per account
 - Reports: views and leads per listing concept
 
 ## Database models
@@ -96,12 +100,43 @@
 - propertyId -> references the related record
 - agentId -> references the related record
 
+### Viewing
+**Fields:** `id`, `propertyId`, `userId`, `agentId`, `scheduledFor`, `status`, `notes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- propertyId -> references the related record
+- userId -> references the related record
+- agentId -> references the related record
+
+### Offer
+**Fields:** `id`, `propertyId`, `userId`, `amount`, `status`, `message`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- propertyId -> references the related record
+- userId -> references the related record
+
+### Review
+**Fields:** `id`, `agentId`, `userId`, `rating`, `comment`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- agentId -> references the related record
+- userId -> references the related record
+
+### SavedSearch
+**Fields:** `id`, `userId`, `name`, `location`, `type`, `minPrice`, `maxPrice`, `bedrooms`, `isActive`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
 ## Backend logic
 
 - Filtered and sorted property search
 - Favorite toggle per user
 - Inquiry creating a lead for the listing's agent
 - Agent CRUD for listings and lead status updates
+- Viewing scheduling with agent confirmation and status updates
+- Offer submission with agent review and accept/decline handling
+- Save searches and capture agent reviews per user
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -206,6 +241,9 @@ CORE FEATURES
 - Inquiry form creating a lead tied to a property and agent
 - Agent listing CRUD with photos and status (active/sold/rented)
 - Leads inbox with status (new, contacted, closed)
+- Schedule property viewings/tours with an agent and track their status
+- Submit and track purchase/rental offers on a listing
+- Saved searches and agent reviews per account
 - Reports: views and leads per listing concept
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
@@ -213,6 +251,10 @@ DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - Property: id, agentId, title, type, price, bedrooms, bathrooms, area, location, description, photos, status, createdAt, updatedAt
 - Favorite: id, userId, propertyId, createdAt, updatedAt
 - Lead: id, propertyId, agentId, name, email, phone, message, status, createdAt, updatedAt
+- Viewing: id, propertyId, userId, agentId, scheduledFor, status, notes, createdAt, updatedAt
+- Offer: id, propertyId, userId, amount, status, message, createdAt, updatedAt
+- Review: id, agentId, userId, rating, comment, createdAt, updatedAt
+- SavedSearch: id, userId, name, location, type, minPrice, maxPrice, bedrooms, isActive, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -220,6 +262,9 @@ BACKEND / API LOGIC
 - Favorite toggle per user
 - Inquiry creating a lead for the listing's agent
 - Agent CRUD for listings and lead status updates
+- Viewing scheduling with agent confirmation and status updates
+- Offer submission with agent review and accept/decline handling
+- Save searches and capture agent reviews per user
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

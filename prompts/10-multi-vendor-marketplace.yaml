@@ -1,14 +1,18 @@
 prompt_id: '10'
 title: Multi-Vendor Marketplace
 slug: multi-vendor-marketplace
-category: E-commerce
+category: E-commerce & Retail
+domain: E-commerce
 app_name: MarketHub Multi-Vendor Marketplace
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building marketplace MVPs for niches (handmade, local, digital) with multiple sellers.
 target_user: Customer; Vendor; Admin
+target_users: shoppers buying from many sellers, vendors managing their own shops, and an admin overseeing the platform
+role_line: You are a senior full-stack engineer who builds multi-vendor e-commerce marketplaces
 business_goal: Let customers shop across vendors and check out, while vendors manage products and orders and admin oversees everything
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: modern, lively, trustworthy commerce. Colors: indigo, white, coral accent. Clean, modern, clean catalog, vendor storefronts, and an efficient checkout.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -179,6 +183,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — browse, buy, track orders
+- Vendor — manage products and fulfill orders
+- Admin — manage vendors, oversee orders, set commission
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 4 vendors, ~30 products, multi-vendor orders, reviews, 1 admin, 2 vendors, 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

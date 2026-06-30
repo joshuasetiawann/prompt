@@ -1,14 +1,18 @@
 prompt_id: '07'
 title: Beauty Salon Booking App
 slug: beauty-salon-booking-app
-category: Booking & Reservation
+category: Booking & Reservations
+domain: Booking & Reservation
 app_name: GlowBook Beauty Salon Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Intermediate
 best_for: Developers building booking systems for salons, spas, and barbershops with multiple staff.
 target_user: Client; Stylist; Admin/Owner
+target_users: salon and spa clients booking treatments and salon staff managing stylists and bookings
+role_line: You are a senior full-stack engineer who builds booking apps for salons and spas
 business_goal: Let clients book a service with a chosen stylist and let the salon manage staff schedules and bookings
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: elegant, soft, beauty-focused. Colors: blush pink, charcoal, warm white. Clean, modern, refined cards, service imagery, and an easy stylist + time picker.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -153,6 +157,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Client — book and manage appointments
+- Stylist — view own schedule
+- Admin/Owner — manage services, stylists, schedules, and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 3 stylists, ~12 services across categories, sample bookings, 1 admin, 1 stylist, 2 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
