@@ -7,7 +7,8 @@
 | **Prompt ID** | 57 |
 | **Title** | Laundry Pickup & Delivery App |
 | **Slug** | laundry-pickup-delivery-app |
-| **Category** | On-Demand Logistics |
+| **Category** | Logistics & Field Service |
+| **Domain** | On-Demand Logistics |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Driver; Admin |

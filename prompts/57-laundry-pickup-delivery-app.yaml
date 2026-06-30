@@ -1,14 +1,18 @@
 prompt_id: '57'
 title: Laundry Pickup & Delivery App
 slug: laundry-pickup-delivery-app
-category: On-Demand Logistics
+category: Logistics & Field Service
+domain: On-Demand Logistics
 app_name: FreshFold Laundry Pickup & Delivery App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building on-demand pickup/delivery apps for laundry and similar services.
 target_user: Customer; Driver; Admin
+target_users: customers ordering laundry service and drivers and admins managing pickups and deliveries
+role_line: You are a senior full-stack engineer who builds on-demand pickup-and-delivery service apps
 business_goal: Let customers schedule pickup and delivery for laundry services and let staff manage orders and routes
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fresh, clean, convenient. Colors: sky blue, mint, white. Clean, modern, simple ordering flow with clear time slots and status.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -175,6 +179,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — order and track service
+- Driver — handle assigned pickups and deliveries
+- Admin — manage orders, drivers, and services
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~6 services, sample orders across statuses, 2 drivers with assignments, 1 admin, 1 driver, 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

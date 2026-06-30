@@ -7,7 +7,8 @@
 | **Prompt ID** | 56 |
 | **Title** | Property Maintenance Request Portal |
 | **Slug** | property-maintenance-request-portal |
-| **Category** | Property & Facilities |
+| **Category** | Business Operations |
+| **Domain** | Property & Facilities |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Tenant; Manager/Admin; Vendor |

@@ -7,7 +7,8 @@
 | **Prompt ID** | 58 |
 | **Title** | Home Cleaning Service Booking App |
 | **Slug** | home-cleaning-service-booking-app |
-| **Category** | Service Booking & Operations |
+| **Category** | Booking & Reservations |
+| **Domain** | Service Booking & Operations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Cleaner; Admin |

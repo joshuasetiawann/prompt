@@ -7,7 +7,8 @@
 | **Prompt ID** | 59 |
 | **Title** | Repair Service Management System |
 | **Slug** | repair-service-management-system |
-| **Category** | Field Service Management |
+| **Category** | Logistics & Field Service |
+| **Domain** | Field Service Management |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Technician; Admin/Dispatcher |

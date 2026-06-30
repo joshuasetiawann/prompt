@@ -1,14 +1,18 @@
 prompt_id: '60'
 title: Photography Studio Booking & Proofing Portal
 slug: photography-studio-booking-proofing-portal
-category: Booking & Client Proofing
+category: Booking & Reservations
+domain: Booking & Client Proofing
 app_name: Shutterly Photography Studio Booking & Proofing Portal
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building booking and proofing portals for photographers and studios.
 target_user: Client; Photographer/Admin
+target_users: clients booking sessions and reviewing proofs, and photographers managing sessions and galleries
+role_line: You are a senior full-stack engineer who builds booking and client-gallery proofing portals for photographers
 business_goal: Let clients book sessions and select favorites from private galleries while photographers manage delivery
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: artistic, minimal, premium. Colors: charcoal, warm cream, muted gold. Clean, modern, gallery-forward layout with elegant selection controls.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -159,6 +163,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Client — book sessions and select proofs
+- Photographer/Admin — manage sessions, galleries, and delivery
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~4 packages, sample sessions and galleries with photos, selections, 1 admin/photographer and 2 clients. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

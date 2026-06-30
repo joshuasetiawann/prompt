@@ -7,7 +7,8 @@
 | **Prompt ID** | 60 |
 | **Title** | Photography Studio Booking & Proofing Portal |
 | **Slug** | photography-studio-booking-proofing-portal |
-| **Category** | Booking & Client Proofing |
+| **Category** | Booking & Reservations |
+| **Domain** | Booking & Client Proofing |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Client; Photographer/Admin |

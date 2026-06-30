@@ -1,14 +1,18 @@
 prompt_id: '58'
 title: Home Cleaning Service Booking App
 slug: home-cleaning-service-booking-app
-category: Service Booking & Operations
+category: Booking & Reservations
+domain: Service Booking & Operations
 app_name: TidyNest Home Cleaning Service Booking App
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building booking apps for cleaning and other recurring home services.
 target_user: Customer; Cleaner; Admin
+target_users: customers booking cleaning and cleaners and admins managing schedules and jobs
+role_line: You are a senior full-stack engineer who builds booking apps for home and field-service businesses
 business_goal: Let customers book one-off or recurring cleaning visits and let staff assign cleaners and track jobs
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fresh, friendly, trustworthy. Colors: teal, lime accent, white. Clean, modern, clean booking flow with property size and recurrence options.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -172,6 +176,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — book and manage visits
+- Cleaner — view assigned jobs and mark complete
+- Admin — manage cleaners, bookings, and services
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~5 services/add-ons, recurring and one-off bookings, 3 cleaners, 1 admin, 1 cleaner, 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation
