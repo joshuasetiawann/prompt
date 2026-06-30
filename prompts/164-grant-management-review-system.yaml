@@ -1,0 +1,353 @@
+prompt_id: '164'
+title: Grant Management & Review System
+slug: grant-management-review-system
+category: Community, Civic & Nonprofit
+domain: Grantmaking & Funder Operations
+app_name: GrantBridge Grant Management & Review System
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building grants administration tools for foundations, community funds, and government grant programs.
+target_user: Foundation program officers and review panelists; nonprofit grant applicants
+target_users: nonprofit applicants submitting grant proposals and foundation program officers and review panelists scoring proposals and tracking awards
+role_line: You are a senior full-stack engineer who builds grantmaking and funder operations products
+business_goal: Let foundations post funding opportunities, applicants submit proposals, review panels score them against rubrics, and staff track awards through disbursement milestones and impact reporting
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: credible, civic, structured. Colors: deep indigo, gold, warm grey. A clean opportunity catalog with multi-step application forms and a rubric-driven scoring panel.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Home with open funding opportunities
+- Opportunity detail with eligibility, budget, and deadlines
+- 'Applicant: multi-step proposal application wizard'
+- 'Applicant: my applications and award/reporting dashboard'
+- Auth (sign in / register)
+- 'Officer: applications pipeline and reviewer assignment'
+- 'Reviewer: rubric scoring workspace'
+- 'Officer: award and disbursement milestone tracker'
+- Impact report submission and review
+- 'Admin: programs, rubrics, and user management'
+required_features:
+- Funding opportunity catalog with eligibility criteria, budgets, and deadlines
+- Multi-step proposal application with budget line items and document uploads
+- Reviewer assignment with conflict-of-interest flagging
+- Rubric-based scoring with weighted criteria and panel score aggregation
+- Decision workflow (shortlist, award, decline) with applicant notifications
+- Award tracking through scheduled disbursement milestones
+- Impact and progress report collection tied to each awarded grant
+- Deadline enforcement that locks submissions after the close date
+- Officer dashboard of pipeline, scores, and committed vs disbursed funds
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - organization
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Opportunity
+  fields:
+  - id
+  - programOfficerId
+  - title
+  - description
+  - eligibility
+  - totalBudget
+  - rubric
+  - opensAt
+  - closesAt
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - programOfficerId -> references the related record
+- name: Application
+  fields:
+  - id
+  - opportunityId
+  - applicantId
+  - projectTitle
+  - requestedAmount
+  - narrative
+  - budgetItems
+  - attachments
+  - status
+  - submittedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - opportunityId -> references the related record
+  - applicantId -> references the related record
+- name: Review
+  fields:
+  - id
+  - applicationId
+  - reviewerId
+  - conflictDeclared
+  - scores
+  - weightedTotal
+  - comments
+  - status
+  - createdAt
+  - updatedAt
+  relationships:
+  - applicationId -> references the related record
+  - reviewerId -> references the related record
+- name: Award
+  fields:
+  - id
+  - applicationId
+  - amount
+  - status
+  - awardedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - applicationId -> references the related record
+- name: Disbursement
+  fields:
+  - id
+  - awardId
+  - milestone
+  - amount
+  - dueDate
+  - status
+  - paidAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - awardId -> references the related record
+- name: ImpactReport
+  fields:
+  - id
+  - awardId
+  - periodLabel
+  - narrative
+  - metrics
+  - status
+  - submittedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - awardId -> references the related record
+backend_logic:
+- Publish funding opportunities and enforce open/close windows that lock submissions after the deadline
+- Assign proposals to review panelists and flag declared conflicts of interest
+- Aggregate weighted rubric scores across panelists into a ranked applicant list
+- Drive the decision workflow (shortlist, award, decline) and notify applicants by mock notification
+- Schedule and track disbursement milestones against each award
+- Collect and review periodic impact reports tied to awarded grants
+- Compute program totals of requested, committed, and disbursed funds for the officer dashboard
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Applicant — browse opportunities, submit proposals, and report on awarded grants
+- Program Officer — post opportunities, manage applications, and track disbursements
+- Review Panelist — score assigned proposals against rubrics and leave comments
+- Admin — manage users, funding programs, and rubrics
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: 2 funding programs with ~5 open opportunities, a scoring rubric per opportunity, ~12 applications across draft/submitted/awarded/declined, panel reviews with weighted scores, 3 awards with disbursement milestones, sample impact reports, 1 admin, 2 program officers, 4 reviewers, and 6 applicants. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- Applications cannot be submitted after the opportunity close date
+- Weighted rubric scores aggregate across panelists into a correct ranked list
+- Disbursement milestones track committed vs paid amounts against each award
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds grantmaking and funder operations products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: GrantBridge Grant Management & Review System
+  Type: Grant Management & Review System (Grantmaking & Funder Operations)
+  Target users: nonprofit applicants submitting grant proposals and foundation program officers and review panelists scoring proposals and tracking awards.
+  Business goal: Let foundations post funding opportunities, applicants submit proposals, review panels score them against rubrics, and staff track awards through disbursement milestones and impact reporting.
+
+  BRAND & DESIGN
+  Brand style: credible, civic, structured. Colors: deep indigo, gold, warm grey. A clean opportunity catalog with multi-step application forms and a rubric-driven scoring panel. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Home with open funding opportunities
+  2. Opportunity detail with eligibility, budget, and deadlines
+  3. Applicant: multi-step proposal application wizard
+  4. Applicant: my applications and award/reporting dashboard
+  5. Auth (sign in / register)
+  6. Officer: applications pipeline and reviewer assignment
+  7. Reviewer: rubric scoring workspace
+  8. Officer: award and disbursement milestone tracker
+  9. Impact report submission and review
+  10. Admin: programs, rubrics, and user management
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Applicant — browse opportunities, submit proposals, and report on awarded grants
+  - Program Officer — post opportunities, manage applications, and track disbursements
+  - Review Panelist — score assigned proposals against rubrics and leave comments
+  - Admin — manage users, funding programs, and rubrics
+
+  CORE FEATURES
+  - Funding opportunity catalog with eligibility criteria, budgets, and deadlines
+  - Multi-step proposal application with budget line items and document uploads
+  - Reviewer assignment with conflict-of-interest flagging
+  - Rubric-based scoring with weighted criteria and panel score aggregation
+  - Decision workflow (shortlist, award, decline) with applicant notifications
+  - Award tracking through scheduled disbursement milestones
+  - Impact and progress report collection tied to each awarded grant
+  - Deadline enforcement that locks submissions after the close date
+  - Officer dashboard of pipeline, scores, and committed vs disbursed funds
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, organization, createdAt, updatedAt
+  - Opportunity: id, programOfficerId, title, description, eligibility, totalBudget, rubric, opensAt, closesAt, status, createdAt, updatedAt
+  - Application: id, opportunityId, applicantId, projectTitle, requestedAmount, narrative, budgetItems, attachments, status, submittedAt, createdAt, updatedAt
+  - Review: id, applicationId, reviewerId, conflictDeclared, scores, weightedTotal, comments, status, createdAt, updatedAt
+  - Award: id, applicationId, amount, status, awardedAt, createdAt, updatedAt
+  - Disbursement: id, awardId, milestone, amount, dueDate, status, paidAt, createdAt, updatedAt
+  - ImpactReport: id, awardId, periodLabel, narrative, metrics, status, submittedAt, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Publish funding opportunities and enforce open/close windows that lock submissions after the deadline
+  - Assign proposals to review panelists and flag declared conflicts of interest
+  - Aggregate weighted rubric scores across panelists into a ranked applicant list
+  - Drive the decision workflow (shortlist, award, decline) and notify applicants by mock notification
+  - Schedule and track disbursement milestones against each award
+  - Collect and review periodic impact reports tied to awarded grants
+  - Compute program totals of requested, committed, and disbursed funds for the officer dashboard
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Payments: implement a mock checkout/deposit that records a Payment status; structure it to swap in a real gateway (e.g., Stripe) via env vars.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 2 funding programs with ~5 open opportunities, a scoring rubric per opportunity, ~12 applications across draft/submitted/awarded/declined, panel reviews with weighted scores, 3 awards with disbursement milestones, sample impact reports, 1 admin, 2 program officers, 4 reviewers, and 6 applicants. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
