@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ScribeFlow — AI Meeting Notes &amp; Action-Item Tracker</title>
+<meta name="description" content="ScribeFlow turns every meeting into a speaker-labeled transcript, a clean summary, and tracked action items with owners and due dates — across your whole workspace." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --midnight:#0C1A3C;
+    --midnight-2:#122451;
+    --midnight-3:#1B2F63;
+    --teal:#0FB6A2;
+    --teal-bright:#2DD4BF;
+    --teal-soft:#D7F4EF;
+    --warm-white:#FBF7EF;
+    --warm-white-2:#F4EEE2;
+    --card:#FFFFFF;
+    --ink:#0E1A33;
+    --muted:#57647E;
+    --muted-2:#7B879E;
+    --border:rgba(12,26,60,0.10);
+    --border-strong:rgba(12,26,60,0.16);
+    --shadow-sm:0 1px 2px rgba(12,26,60,0.06), 0 2px 6px rgba(12,26,60,0.05);
+    --shadow-md:0 10px 24px rgba(12,26,60,0.10), 0 2px 6px rgba(12,26,60,0.06);
+    --shadow-lg:0 30px 60px rgba(12,26,60,0.18), 0 8px 20px rgba(12,26,60,0.10);
+    --radius:18px;
+    --radius-sm:12px;
+    --radius-lg:26px;
+    --maxw:1180px;
+    --amber:#E9A23B;
+    --rose:#E5687E;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--warm-white);
+    color:var(--ink);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-0.02em;line-height:1.08;color:var(--midnight)}
+  a{text-decoration:none;color:inherit}
+  img{max-width:100%}
+  ::selection{background:var(--teal-bright);color:var(--midnight)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--teal);
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--teal);border-radius:2px;display:inline-block}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    font-weight:600;font-size:.98rem;border-radius:999px;cursor:pointer;
+    padding:14px 26px;border:1px solid transparent;transition:transform .15s ease,box-shadow .2s ease,background .2s ease,color .2s ease;
+    white-space:nowrap;
+  }
+  .btn-primary{background:var(--teal);color:#04241F;box-shadow:0 8px 20px rgba(15,182,162,.32)}
+  .btn-primary:hover{background:var(--teal-bright);transform:translateY(-2px);box-shadow:0 12px 28px rgba(15,182,162,.42)}
+  .btn-primary:focus-visible{outline:3px solid var(--midnight);outline-offset:2px}
+  .btn-ghost{background:transparent;color:var(--midnight);border-color:var(--border-strong)}
+  .btn-ghost:hover{background:#fff;border-color:var(--midnight);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+  .btn-ghost:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+  .btn-light{background:#fff;color:var(--midnight)}
+  .btn-light:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+  .link-arrow{font-weight:600;color:var(--midnight);display:inline-flex;align-items:center;gap:7px;transition:gap .2s ease,color .2s ease}
+  .link-arrow:hover{gap:12px;color:var(--teal)}
+  .link-arrow:focus-visible{outline:3px solid var(--teal);outline-offset:3px;border-radius:6px}
+
+  /* ---------- Nav ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,247,239,.82);
+    backdrop-filter:saturate(160%) blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:'Space Grotesk';font-weight:700;font-size:1.18rem;color:var(--midnight)}
+  .brand .mark{
+    width:36px;height:36px;border-radius:11px;flex:none;
+    background:linear-gradient(140deg,var(--midnight-3),var(--midnight));
+    display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08), 0 4px 10px rgba(12,26,60,.25);
+    position:relative;
+  }
+  .brand .mark svg{width:20px;height:20px}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a.navlink{font-weight:500;font-size:.96rem;color:var(--muted);transition:color .18s ease;position:relative;padding:4px 0}
+  .nav-links a.navlink:hover{color:var(--midnight)}
+  .nav-links a.navlink:focus-visible{outline:3px solid var(--teal);outline-offset:4px;border-radius:6px}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .nav-cta .btn{padding:10px 20px;font-size:.92rem}
+  .nav-signin{font-weight:600;color:var(--midnight);font-size:.95rem}
+  .nav-signin:hover{color:var(--teal)}
+  .hamburger{display:none;background:none;border:1px solid var(--border-strong);border-radius:10px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center}
+  .hamburger svg{width:22px;height:22px;stroke:var(--midnight)}
+  .mobile-menu{display:none;border-top:1px solid var(--border);background:var(--warm-white)}
+  .mobile-menu.open{display:block}
+  .mobile-menu nav{display:flex;flex-direction:column;padding:14px 24px 24px}
+  .mobile-menu a{padding:13px 0;font-weight:500;color:var(--midnight);border-bottom:1px solid var(--border)}
+  .mobile-menu .btn{margin-top:18px}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;overflow:hidden;padding:78px 0 90px}
+  .hero::before{
+    content:"";position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(900px 460px at 88% -8%, rgba(15,182,162,.14), transparent 60%),
+      radial-gradient(680px 420px at 4% 8%, rgba(27,47,99,.08), transparent 55%);
+    pointer-events:none;
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr 1.1fr;gap:62px;align-items:center}
+  .hero h1{font-size:clamp(2.5rem,4.7vw,3.85rem);font-weight:700;margin:20px 0 0}
+  .hero h1 .accent{color:var(--teal);position:relative;white-space:nowrap}
+  .hero p.sub{font-size:1.16rem;color:var(--muted);margin:22px 0 0;max-width:540px}
+  .hero-actions{display:flex;align-items:center;gap:20px;margin-top:34px;flex-wrap:wrap}
+  .hero-trust{display:flex;align-items:center;gap:22px;margin-top:40px;flex-wrap:wrap;color:var(--muted-2);font-size:.86rem;font-weight:500}
+  .hero-trust .stat{display:flex;flex-direction:column;gap:1px}
+  .hero-trust .stat b{font-family:'Space Grotesk';font-size:1.5rem;color:var(--midnight);font-weight:700;letter-spacing:-.02em;line-height:1}
+  .hero-trust .divider{width:1px;height:38px;background:var(--border-strong)}
+
+  /* ---------- Product preview (signature visual) ---------- */
+  .preview{
+    position:relative;z-index:1;
+    background:linear-gradient(160deg,#0E1F47,#0A1730);
+    border-radius:var(--radius-lg);
+    padding:16px;
+    box-shadow:var(--shadow-lg);
+    border:1px solid rgba(255,255,255,.07);
+  }
+  .preview .topbar{display:flex;align-items:center;gap:8px;padding:6px 8px 14px}
+  .preview .dots{display:flex;gap:7px}
+  .preview .dots i{width:11px;height:11px;border-radius:50%;display:block;opacity:.85}
+  .preview .dots i:nth-child(1){background:#ff6159}
+  .preview .dots i:nth-child(2){background:#ffbd2e}
+  .preview .dots i:nth-child(3){background:#28c840}
+  .preview .urlbar{
+    margin-left:8px;flex:1;background:rgba(255,255,255,.08);border-radius:8px;
+    font-size:.72rem;color:#aab6d4;padding:6px 12px;display:flex;align-items:center;gap:7px;font-weight:500;
+  }
+  .preview .urlbar .lock{width:11px;height:11px;opacity:.7}
+  .preview .canvas{
+    background:var(--warm-white);
+    border-radius:16px;overflow:hidden;
+    display:grid;grid-template-columns:1.55fr 1fr;
+  }
+  /* left: transcript + timeline */
+  .pv-main{padding:18px 18px 20px;border-right:1px solid var(--border)}
+  .pv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .pv-title{font-family:'Space Grotesk';font-weight:700;font-size:1.02rem;color:var(--midnight);white-space:nowrap}
+  .pv-meta{font-size:.72rem;color:var(--muted-2);margin-top:3px;white-space:nowrap}
+  .pv-head .pv-badge{flex:none}
+  .pv-badge{font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#04241F;background:var(--teal-bright);padding:4px 9px;border-radius:999px}
+  /* timeline */
+  .timeline{height:7px;border-radius:999px;background:var(--warm-white-2);position:relative;margin:4px 0 16px}
+  .timeline .fill{position:absolute;left:0;top:0;bottom:0;width:46%;border-radius:999px;background:linear-gradient(90deg,var(--midnight-3),var(--teal))}
+  .timeline .knob{position:absolute;left:46%;top:50%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--teal);box-shadow:0 2px 6px rgba(12,26,60,.3)}
+  .timeline .tick{position:absolute;top:-3px;width:3px;height:13px;border-radius:2px;background:var(--midnight-3);opacity:.45}
+  /* transcript lines */
+  .tline{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border)}
+  .tline:last-child{border-bottom:0}
+  .tav{width:28px;height:28px;border-radius:8px;flex:none;display:grid;place-items:center;font-size:.66rem;font-weight:700;color:#fff}
+  .tav.a{background:#2C5CC5}.tav.b{background:#0FB6A2}.tav.c{background:#8257D8}
+  .tbody{flex:1;min-width:0}
+  .tname{font-size:.74rem;font-weight:700;color:var(--midnight);display:flex;align-items:center;gap:7px}
+  .tstamp{font-size:.66rem;color:var(--muted-2);font-weight:600}
+  .ttext{font-size:.78rem;color:var(--muted);margin-top:2px;line-height:1.45}
+  .ttext .hl{background:var(--teal-soft);border-radius:4px;padding:0 3px;color:var(--midnight);font-weight:600}
+  /* right column: summary + checklist */
+  .pv-side{padding:16px 16px 18px;display:flex;flex-direction:column;gap:14px;background:#fff}
+  .scard{background:var(--warm-white);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .scard h5{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+  .scard p{font-size:.76rem;color:var(--muted);line-height:1.5}
+  .decision{display:flex;gap:8px;align-items:flex-start;font-size:.75rem;color:var(--midnight);font-weight:500;margin-top:8px}
+  .decision svg{width:14px;height:14px;flex:none;margin-top:3px;color:var(--teal)}
+  .checklist h5{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--midnight-3);font-weight:700;margin-bottom:4px}
+  .citem{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+  .citem:last-child{border-bottom:0}
+  .cbox{width:18px;height:18px;border-radius:6px;flex:none;border:2px solid var(--border-strong);margin-top:1px;display:grid;place-items:center;background:#fff}
+  .cbox.done{background:var(--teal);border-color:var(--teal)}
+  .cbox.prog{border-color:var(--amber);background:#fff;position:relative}
+  .cbox.prog::after{content:"";width:8px;height:8px;border-radius:2px;background:var(--amber)}
+  .cbox svg{width:12px;height:12px;color:#04241F}
+  .cbody{flex:1;min-width:0}
+  .ctitle{font-size:.77rem;font-weight:600;color:var(--midnight);line-height:1.3}
+  .ctitle.struck{text-decoration:line-through;color:var(--muted-2);text-decoration-color:var(--teal)}
+  .cmeta{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:.66rem}
+  .owner{display:inline-flex;align-items:center;gap:5px;color:var(--muted)}
+  .owner i{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-size:.55rem;font-weight:700;color:#fff;font-style:normal}
+  .due{font-weight:700;padding:2px 7px;border-radius:999px;font-size:.62rem}
+  .due.ok{background:var(--teal-soft);color:#08665B}
+  .due.soon{background:#FBEBCF;color:#8A5A12}
+  .due.over{background:#FBDBE1;color:#A32B40}
+
+  /* ---------- Logos / proof strip ---------- */
+  .proof{padding:28px 0 8px}
+  .proof p{text-align:center;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);font-weight:600;margin-bottom:22px}
+  .logos{display:flex;align-items:center;justify-content:center;gap:46px;flex-wrap:wrap;opacity:.7}
+  .logos span{font-family:'Space Grotesk';font-weight:700;font-size:1.18rem;color:var(--midnight);letter-spacing:-.02em;display:inline-flex;align-items:center;gap:8px}
+  .logos span svg{width:20px;height:20px;color:var(--teal)}
+
+  /* ---------- Section shells ---------- */
+  section{position:relative}
+  .section-pad{padding:92px 0}
+  .section-head{max-width:680px;margin-bottom:54px}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center}
+  .section-head h2{font-size:clamp(2rem,3.4vw,2.75rem);font-weight:700;margin:16px 0 0}
+  .section-head p{font-size:1.1rem;color:var(--muted);margin-top:16px}
+
+  /* ---------- Features ---------- */
+  .features{background:linear-gradient(180deg,var(--warm-white),#fff)}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .feat{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px 24px;box-shadow:var(--shadow-sm);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+  }
+  .feat:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);border-color:var(--teal)}
+  .feat .ic{
+    width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;
+    background:var(--teal-soft);margin-bottom:18px;border:1px solid rgba(15,182,162,.22);
+  }
+  .feat h3{font-size:1.12rem;font-weight:700;margin-bottom:8px}
+  .feat p{font-size:.94rem;color:var(--muted);line-height:1.55}
+
+  /* ---------- How it works ---------- */
+  .how{background:var(--midnight);color:#EAF0FF;overflow:hidden}
+  .how::before{content:"";position:absolute;inset:0;background:radial-gradient(720px 360px at 80% 0%,rgba(15,182,162,.16),transparent 60%);pointer-events:none}
+  .how .section-head h2{color:#fff}
+  .how .section-head p{color:#A9B6D6}
+  .how .eyebrow{color:var(--teal-bright)}
+  .how .eyebrow::before{background:var(--teal-bright)}
+  .steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .step{
+    background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.10);border-radius:var(--radius);padding:26px 22px;position:relative;
+    transition:transform .2s ease,border-color .2s ease;
+  }
+  .step:hover{transform:translateY(-5px);border-color:rgba(45,212,191,.5)}
+  .step .num{font-family:'Space Grotesk';font-weight:700;font-size:.92rem;color:#04241F;background:var(--teal-bright);width:34px;height:34px;border-radius:10px;display:grid;place-items:center;margin-bottom:18px}
+  .step h3{color:#fff;font-size:1.06rem;margin-bottom:8px}
+  .step p{color:#A9B6D6;font-size:.9rem;line-height:1.55}
+  .step .pg{display:inline-block;margin-top:14px;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--teal-bright);background:rgba(45,212,191,.12);padding:4px 10px;border-radius:999px}
+
+  /* ---------- Screens / pages strip ---------- */
+  .screens .section-head{margin-bottom:40px}
+  .screen-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .screen{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+    box-shadow:var(--shadow-sm);transition:transform .2s ease,box-shadow .2s ease;display:flex;flex-direction:column;
+  }
+  .screen:hover{transform:translateY(-5px);box-shadow:var(--shadow-md)}
+  .screen .cap{height:148px;background:var(--midnight);position:relative;overflow:hidden;padding:16px}
+  .screen .cap.alt{background:linear-gradient(160deg,#15306B,#0A1730)}
+  .screen .cap.alt2{background:linear-gradient(160deg,#0E2A52,#0A1730)}
+  .screen .cbar{height:8px;border-radius:4px;background:rgba(255,255,255,.16);margin-bottom:9px}
+  .screen .cbar.w70{width:70%}.screen .cbar.w45{width:45%}.screen .cbar.w90{width:90%}.screen .cbar.teal{background:var(--teal-bright);width:38%}
+  .screen .mini{display:flex;gap:8px;margin-top:12px}
+  .screen .minibox{flex:1;height:48px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08)}
+  .screen .minibox.t{background:rgba(45,212,191,.16);border-color:rgba(45,212,191,.3)}
+  .screen .sbody{padding:20px 22px 24px}
+  .screen .sbody h3{font-size:1.04rem;margin-bottom:7px}
+  .screen .sbody p{font-size:.9rem;color:var(--muted)}
+
+  /* ---------- Who it's for ---------- */
+  .who{background:linear-gradient(180deg,#fff,var(--warm-white))}
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .role{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:30px 26px;
+    box-shadow:var(--shadow-sm);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+    display:flex;flex-direction:column;
+  }
+  .role:hover{transform:translateY(-5px);box-shadow:var(--shadow-md);border-color:var(--teal)}
+  .role .rtop{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+  .role .ravatar{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:1.5rem;flex:none}
+  .role.r1 .ravatar{background:var(--teal-soft)}
+  .role.r2 .ravatar{background:#E7EDFB}
+  .role.r3 .ravatar{background:#F1ECFB}
+  .role h3{font-size:1.16rem}
+  .role .rtag{font-size:.74rem;font-weight:600;color:var(--teal);letter-spacing:.04em}
+  .role p{font-size:.95rem;color:var(--muted);margin-bottom:18px}
+  .role ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-top:auto}
+  .role li{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:var(--midnight)}
+  .role li svg{width:17px;height:17px;color:var(--teal);flex:none;margin-top:3px}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{padding:30px 0 100px}
+  .cta-inner{
+    position:relative;overflow:hidden;
+    background:linear-gradient(150deg,var(--midnight-2),var(--midnight) 55%,#081229);
+    border-radius:var(--radius-lg);padding:62px 56px;text-align:center;
+    box-shadow:var(--shadow-lg);
+  }
+  .cta-inner::before{content:"";position:absolute;inset:0;background:radial-gradient(560px 280px at 50% -20%,rgba(45,212,191,.22),transparent 65%);pointer-events:none}
+  .cta-inner .eyebrow{color:var(--teal-bright);justify-content:center}
+  .cta-inner .eyebrow::before{background:var(--teal-bright)}
+  .cta-inner h2{position:relative;color:#fff;font-size:clamp(2rem,3.6vw,2.85rem);margin:14px auto 0;max-width:680px}
+  .cta-inner p{position:relative;color:#AEBBDA;font-size:1.12rem;margin:18px auto 0;max-width:560px}
+  .cta-inner .hero-actions{justify-content:center;position:relative}
+  .cta-note{position:relative;margin-top:22px;color:#8E9CC0;font-size:.85rem}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--midnight);color:#A9B6D6;padding:64px 0 36px}
+  .foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.10)}
+  footer .brand{color:#fff}
+  footer .fdesc{margin-top:16px;font-size:.92rem;color:#8E9CC0;max-width:300px;line-height:1.6}
+  .fcol h4{color:#fff;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;font-weight:700}
+  .fcol a{display:block;color:#A9B6D6;font-size:.92rem;padding:6px 0;transition:color .18s ease}
+  .fcol a:hover{color:var(--teal-bright)}
+  .fcol a:focus-visible{outline:2px solid var(--teal-bright);outline-offset:3px;border-radius:4px}
+  .foot-bottom{display:flex;align-items:center;justify-content:space-between;padding-top:26px;flex-wrap:wrap;gap:14px;font-size:.86rem;color:#7C8AAF}
+  .foot-bottom .socials{display:flex;gap:12px}
+  .foot-bottom .socials a{width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;transition:background .18s ease,border-color .18s ease}
+  .foot-bottom .socials a:hover{background:rgba(255,255,255,.08);border-color:var(--teal-bright)}
+  .foot-bottom .socials svg{width:17px;height:17px;color:#A9B6D6}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:1080px){
+    .hero-grid{grid-template-columns:1fr;gap:48px}
+    .preview .canvas{grid-template-columns:1.4fr 1fr}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .foot-grid{grid-template-columns:1.4fr 1fr 1fr}
+  }
+  @media (max-width:860px){
+    .nav-links,.nav-cta .btn,.nav-signin{display:none}
+    .hamburger{display:flex}
+    .feat-grid{grid-template-columns:repeat(2,1fr)}
+    .screen-tabs{grid-template-columns:1fr 1fr}
+    .roles{grid-template-columns:1fr}
+    .section-pad{padding:70px 0}
+    .preview .canvas{grid-template-columns:1fr}
+    .pv-main{border-right:0;border-bottom:1px solid var(--border)}
+  }
+  @media (max-width:620px){
+    .wrap{padding:0 18px}
+    .hero{padding:54px 0 64px}
+    .hero p.sub{font-size:1.06rem}
+    .hero-actions{gap:14px}
+    .hero-actions .btn{width:100%}
+    .hero-trust{gap:16px}
+    .hero-trust .divider{display:none}
+    .feat-grid{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .screen-tabs{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .cta-inner{padding:46px 26px}
+    .logos{gap:26px}
+    .section-pad{padding:58px 0}
+  }
+  @media (max-width:420px){
+    .foot-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="ScribeFlow home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5C4 5.7 4.7 5 5.5 5H15l5 5v7.5c0 .8-.7 1.5-1.5 1.5h-13C4.7 19 4 18.3 4 17.5v-11Z" stroke="#2DD4BF" stroke-width="1.6"/><path d="M7.5 9.5h7M7.5 12.5h7M7.5 15.5h4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </span>
+      ScribeFlow
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="navlink" href="#features">Features</a>
+      <a class="navlink" href="#how">How it works</a>
+      <a class="navlink" href="#screens">Product</a>
+      <a class="navlink" href="#roles">Who it's for</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#signin" class="nav-signin">Sign in</a>
+      <a href="#start" class="btn btn-primary">Start free</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <nav aria-label="Mobile">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#screens">Product</a>
+      <a href="#roles">Who it's for</a>
+      <a href="#signin">Sign in</a>
+      <a href="#start" class="btn btn-primary">Start free</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">AI meeting notes &amp; action tracking</span>
+      <h1>Every meeting, turned into notes and <span class="accent">tracked action items</span>.</h1>
+      <p class="sub">Upload or record a call and ScribeFlow returns a speaker-labeled transcript, a decision-ready summary, and action items assigned to owners with due dates — then tracks each one to done across your whole workspace.</p>
+      <div class="hero-actions">
+        <a href="#start" class="btn btn-primary">
+          Start free
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#how" class="link-arrow">See how it works
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg>
+        </a>
+      </div>
+      <div class="hero-trust">
+        <div class="stat"><b>8 hrs</b><span>saved per team / week</span></div>
+        <div class="divider"></div>
+        <div class="stat"><b>0 keys</b><span>runs locally on mock AI</span></div>
+        <div class="divider"></div>
+        <div class="stat"><b>100%</b><span>workspace-isolated data</span></div>
+      </div>
+    </div>
+
+    <!-- Signature product preview: timeline + transcript + summary + checklist -->
+    <div class="preview" role="img" aria-label="ScribeFlow meeting detail showing a synced transcript, a summary card, and an action-item checklist">
+      <div class="topbar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="urlbar">
+          <svg class="lock" viewBox="0 0 24 24" fill="none" stroke="#aab6d4" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
+          app.scribeflow.io / meetings / q3-roadmap-sync
+        </div>
+      </div>
+      <div class="canvas">
+        <!-- transcript + timeline -->
+        <div class="pv-main">
+          <div class="pv-head">
+            <div>
+              <div class="pv-title">Q3 Roadmap Sync</div>
+              <div class="pv-meta">Jun 28 · 42 min · 3 speakers</div>
+            </div>
+            <span class="pv-badge">Processed</span>
+          </div>
+          <div class="timeline" aria-hidden="true">
+            <span class="tick" style="left:18%"></span>
+            <span class="tick" style="left:34%"></span>
+            <span class="tick" style="left:62%"></span>
+            <span class="tick" style="left:81%"></span>
+            <div class="fill"></div>
+            <div class="knob"></div>
+          </div>
+          <div class="tline">
+            <div class="tav a">PM</div>
+            <div class="tbody">
+              <div class="tname">Priya Menon <span class="tstamp">· 19:24</span></div>
+              <div class="ttext">Let's lock the beta date. <span class="hl">We're committing to August 12</span> for the design partners.</div>
+            </div>
+          </div>
+          <div class="tline">
+            <div class="tav b">DK</div>
+            <div class="tbody">
+              <div class="tname">Daniel Koo <span class="tstamp">· 21:08</span></div>
+              <div class="ttext">I'll have the migration script ready. <span class="hl">Owner: me, due Friday</span> so QA can start early.</div>
+            </div>
+          </div>
+          <div class="tline">
+            <div class="tav c">AR</div>
+            <div class="tbody">
+              <div class="tname">Ana Reyes <span class="tstamp">· 24:51</span></div>
+              <div class="ttext">Marketing needs the final copy. I can draft the launch note by next Wednesday.</div>
+            </div>
+          </div>
+        </div>
+        <!-- summary + checklist -->
+        <div class="pv-side">
+          <div class="scard">
+            <h5>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l4 4L19 6"/></svg>
+              Decisions
+            </h5>
+            <div class="decision">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>
+              Beta ships Aug 12 to design partners
+            </div>
+            <div class="decision">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>
+              QA starts as soon as migration lands
+            </div>
+          </div>
+          <div class="checklist">
+            <h5>Action items · 3</h5>
+            <div class="citem">
+              <div class="cbox done" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg></div>
+              <div class="cbody">
+                <div class="ctitle struck">Confirm Aug 12 beta date</div>
+                <div class="cmeta"><span class="owner"><i style="background:#2C5CC5">PM</i>Priya</span><span class="due ok">Done</span></div>
+              </div>
+            </div>
+            <div class="citem">
+              <div class="cbox prog" aria-hidden="true"></div>
+              <div class="cbody">
+                <div class="ctitle">Finish migration script</div>
+                <div class="cmeta"><span class="owner"><i style="background:#0FB6A2">DK</i>Daniel</span><span class="due soon">Due Fri</span></div>
+              </div>
+            </div>
+            <div class="citem">
+              <div class="cbox" aria-hidden="true"></div>
+              <div class="cbody">
+                <div class="ctitle">Draft launch note</div>
+                <div class="cmeta"><span class="owner"><i style="background:#8257D8">AR</i>Ana</span><span class="due over">Overdue</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROOF STRIP ============ -->
+<section class="proof">
+  <div class="wrap">
+    <p>Built for the teams that live in back-to-back calls</p>
+    <div class="logos">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Northwind</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>Loop Studio</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V8l8-4 8 4v10"/><path d="M9 18v-5h6v5"/></svg>Vantage</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5"/></svg>Helio</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7" cy="12" r="3"/><circle cx="17" cy="12" r="3"/><path d="M10 12h4"/></svg>Meridian</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="features section-pad" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">What ScribeFlow does</span>
+      <h2>From raw recording to accountable follow-through.</h2>
+      <p>Nine capabilities that take a meeting from audio to a tracked, owned, searchable record — without anyone typing notes.</p>
+    </div>
+    <div class="feat-grid">
+      <article class="feat">
+        <div class="ic" aria-hidden="true">🎙️</div>
+        <h3>Upload &amp; record</h3>
+        <p>Drop in an audio file or capture live in the browser. Every meeting enters a processing queue with a visible status from queued to ready.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">📝</div>
+        <h3>Speaker-labeled transcripts</h3>
+        <p>AI transcription produces a timestamped, speaker-attributed transcript you can read, scan, and jump through moment by moment.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">✨</div>
+        <h3>Decision-ready summaries</h3>
+        <p>A structured summary distills the overview, the decisions made, and the discussion highlights — no more scrubbing the recording.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">✅</div>
+        <h3>Auto-extracted action items</h3>
+        <p>ScribeFlow pulls out the to-dos and suggests an owner and a due date for each, so nothing said out loud gets forgotten.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">🔄</div>
+        <h3>Assign &amp; track to done</h3>
+        <p>Hand items to teammates and move them through open, in progress, and done — visible on a board and in each person's task list.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">⏱️</div>
+        <h3>Linked to the source moment</h3>
+        <p>Every summary point and action item references the exact transcript timestamp it came from, so context is one click away.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">🔍</div>
+        <h3>Search across everything</h3>
+        <p>Full-text search spans transcripts, summaries, and action items in your workspace — find that one commitment in seconds.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">🔒</div>
+        <h3>Per-workspace isolation</h3>
+        <p>Data is scoped per workspace with member roles, so each team only ever sees its own meetings, notes, and tasks.</p>
+      </article>
+      <article class="feat">
+        <div class="ic" aria-hidden="true">🔔</div>
+        <h3>Overdue &amp; upcoming alerts</h3>
+        <p>Notifications flag items that are coming due or already overdue, with a mock email log so the full flow runs without a provider.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how section-pad" id="how">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow" style="justify-content:center">How it works</span>
+      <h2>Four steps from call to closed loop.</h2>
+      <p>Each step maps to a real screen in the app — built to keep accountability moving after the meeting ends.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Capture the meeting</h3>
+        <p>Upload a recording or record live in the browser. The job is queued and you watch it move through processing.</p>
+        <span class="pg">Upload / Record</span>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>AI does the notes</h3>
+        <p>Transcription, a structured summary, and extracted action items with suggested owners and due dates — automatically.</p>
+        <span class="pg">Meeting detail</span>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Assign the work</h3>
+        <p>Confirm or reassign each item to a workspace member and set due dates on a board that spans all your meetings.</p>
+        <span class="pg">Action tracker</span>
+      </div>
+      <div class="step">
+        <div class="num">4</div>
+        <h3>Track to done</h3>
+        <p>Owners work from their own task list, alerts flag what's overdue, and every item moves to done in plain sight.</p>
+        <span class="pg">My tasks</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCREENS / PRODUCT ============ -->
+<section class="screens section-pad" id="screens">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Inside the product</span>
+      <h2>Real screens, built for the whole workflow.</h2>
+      <p>A connected set of pages that take a team from "what did we agree to?" to "it's done."</p>
+    </div>
+    <div class="screen-tabs">
+      <article class="screen">
+        <div class="cap" aria-hidden="true">
+          <div class="cbar teal"></div>
+          <div class="cbar w90"></div>
+          <div class="cbar w70"></div>
+          <div class="mini"><div class="minibox t"></div><div class="minibox"></div><div class="minibox"></div></div>
+        </div>
+        <div class="sbody">
+          <h3>Dashboard</h3>
+          <p>Recent meetings, your assigned action items, and overdue tasks at a glance the moment you log in.</p>
+        </div>
+      </article>
+      <article class="screen">
+        <div class="cap alt" aria-hidden="true">
+          <div class="cbar w45"></div>
+          <div class="cbar w90"></div>
+          <div class="cbar w70"></div>
+          <div class="mini"><div class="minibox"></div><div class="minibox t"></div></div>
+        </div>
+        <div class="sbody">
+          <h3>Meeting detail</h3>
+          <p>The synced transcript, summary, and extracted action items side by side — each item linked to its source moment.</p>
+        </div>
+      </article>
+      <article class="screen">
+        <div class="cap alt2" aria-hidden="true">
+          <div class="mini" style="margin-top:0"><div class="minibox"></div><div class="minibox t"></div><div class="minibox"></div></div>
+          <div class="cbar w70" style="margin-top:14px"></div>
+          <div class="cbar w45"></div>
+        </div>
+        <div class="sbody">
+          <h3>Action-item tracker</h3>
+          <p>A board across every meeting with owners, due dates, and status columns from open to done.</p>
+        </div>
+      </article>
+      <article class="screen">
+        <div class="cap alt" aria-hidden="true">
+          <div class="cbar w70"></div>
+          <div class="cbar teal" style="width:60%"></div>
+          <div class="cbar w45"></div>
+          <div class="mini"><div class="minibox"></div><div class="minibox"></div></div>
+        </div>
+        <div class="sbody">
+          <h3>My tasks</h3>
+          <p>Your personal queue, filtered by status and due date, so you always know what's next and what's slipping.</p>
+        </div>
+      </article>
+      <article class="screen">
+        <div class="cap alt2" aria-hidden="true">
+          <div class="cbar w90"></div>
+          <div class="cbar w45"></div>
+          <div class="mini"><div class="minibox t"></div><div class="minibox"></div><div class="minibox"></div></div>
+        </div>
+        <div class="sbody">
+          <h3>Search</h3>
+          <p>One search box across transcripts, summaries, and action items in your workspace — results in plain language.</p>
+        </div>
+      </article>
+      <article class="screen">
+        <div class="cap" aria-hidden="true">
+          <div class="cbar w45"></div>
+          <div class="mini" style="margin-top:8px"><div class="minibox"></div><div class="minibox"></div></div>
+          <div class="cbar w70" style="margin-top:12px"></div>
+          <div class="cbar teal" style="width:30%"></div>
+        </div>
+        <div class="sbody">
+          <h3>Admin &amp; settings</h3>
+          <p>Manage workspaces, members, and roles, plus notification and processing preferences and integration setup.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHO IT'S FOR ============ -->
+<section class="who section-pad" id="roles">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow" style="justify-content:center">Who it's for</span>
+      <h2>One workspace, three ways to win.</h2>
+      <p>ScribeFlow gives every role exactly the view and permissions they need — nothing more, nothing missed.</p>
+    </div>
+    <div class="roles">
+      <article class="role r1">
+        <div class="rtop">
+          <div class="ravatar" aria-hidden="true">🎧</div>
+          <div>
+            <h3>Meeting Organizer</h3>
+            <span class="rtag">Runs the call</span>
+          </div>
+        </div>
+        <p>Upload or record meetings and review the AI notes and action items before they go out to the team.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Upload or capture meetings live</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Review transcript &amp; summary</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Confirm and assign action items</li>
+        </ul>
+      </article>
+      <article class="role r2">
+        <div class="rtop">
+          <div class="ravatar" aria-hidden="true">🙋</div>
+          <div>
+            <h3>Team Member</h3>
+            <span class="rtag">Owns the follow-through</span>
+          </div>
+        </div>
+        <p>View the notes and work assigned action items through to completion from a focused personal task list.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>See notes from any meeting</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Track items open to done</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Get overdue &amp; upcoming alerts</li>
+        </ul>
+      </article>
+      <article class="role r3">
+        <div class="rtop">
+          <div class="ravatar" aria-hidden="true">🛡️</div>
+          <div>
+            <h3>Workspace Admin</h3>
+            <span class="rtag">Keeps it running</span>
+          </div>
+        </div>
+        <p>Manage members, workspaces, and integrations, and set the processing and notification preferences for the team.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Invite members &amp; set roles</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Configure integrations</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12l4 4L19 6"/></svg>Govern data &amp; access</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BAND ============ -->
+<section class="cta-band" id="start">
+  <div class="wrap">
+    <div class="cta-inner">
+      <span class="eyebrow">Get started</span>
+      <h2>Stop re-watching calls. Start closing the loop.</h2>
+      <p>Spin up a workspace, drop in your first recording, and watch ScribeFlow turn it into notes and tracked action items in minutes.</p>
+      <div class="hero-actions">
+        <a href="#signin" class="btn btn-primary">
+          Start free
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#screens" class="btn btn-light">Take a product tour</a>
+      </div>
+      <p class="cta-note">Runs locally on a deterministic mock AI — no paid keys required to try the full flow.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer id="signin">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="brand" aria-label="ScribeFlow home">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5C4 5.7 4.7 5 5.5 5H15l5 5v7.5c0 .8-.7 1.5-1.5 1.5h-13C4.7 19 4 18.3 4 17.5v-11Z" stroke="#2DD4BF" stroke-width="1.6"/><path d="M7.5 9.5h7M7.5 12.5h7M7.5 15.5h4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </span>
+          ScribeFlow
+        </a>
+        <p class="fdesc">AI meeting notes and an action-item tracker for distributed teams — transcripts, summaries, and accountable follow-through in one workspace.</p>
+      </div>
+      <div class="fcol">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#screens">Product tour</a>
+        <a href="#roles">Who it's for</a>
+      </div>
+      <div class="fcol">
+        <h4>Workspace</h4>
+        <a href="#screens">Dashboard</a>
+        <a href="#screens">Action tracker</a>
+        <a href="#screens">My tasks</a>
+        <a href="#screens">Search</a>
+      </div>
+      <div class="fcol">
+        <h4>Account</h4>
+        <a href="#signin">Sign in</a>
+        <a href="#start">Register</a>
+        <a href="#screens">Admin</a>
+        <a href="#screens">Settings</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 ScribeFlow AI Meeting Notes &amp; Action-Item Tracker. Built for distributed teams.</span>
+      <div class="socials">
+        <a href="#top" aria-label="ScribeFlow on X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-7 8 8.2 10h-6.4l-4.3-5.5L5.5 21H2.5l7.5-8.6L2 3h6.5l3.9 5.1L17.5 3Z"/></svg></a>
+        <a href="#top" aria-label="ScribeFlow on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H3.56V21h3.38V8.5ZM5.25 3a1.96 1.96 0 1 0 0 3.92 1.96 1.96 0 0 0 0-3.92ZM21 13.6c0-3-1.6-4.4-3.74-4.4-1.72 0-2.5.95-2.93 1.62V8.5H10.9V21h3.38v-6.6c0-1.5.83-2.1 1.7-2.1.86 0 1.64.6 1.64 2.12V21H21v-7.4Z"/></svg></a>
+        <a href="#top" aria-label="ScribeFlow on GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.1-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 0 1 5 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 4-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2Z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn = document.getElementById('hamburger');
+    var menu = document.getElementById('mobileMenu');
+    if(!btn || !menu) return;
+    btn.addEventListener('click', function(){
+      var open = menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    menu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded','false');
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CourtSide — Sports Court & Facility Booking System</title>
+<meta name="description" content="CourtSide lets players find open courts and book single or recurring slots at the right member or casual rate, while operators manage schedules, pricing, and revenue across a multi-sport venue." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Brand palette: court green, slate, white */
+    --green: #138043;
+    --green-bright: #1fb866;
+    --green-dark: #0d6b39;
+    --green-tint: #e7f6ed;
+    --green-tint-2: #d2eede;
+    --slate-950: #0c1622;
+    --slate-900: #11203059;
+    --slate-ink: #0f1d2e;
+    --slate-800: #1c2c3e;
+    --slate-700: #2c3e52;
+    --slate-500: #5a6b7c;
+    --slate-400: #8195a6;
+    --slate-200: #d8e0e8;
+    --slate-100: #eef2f6;
+    --slate-50: #f6f9fb;
+    --white: #ffffff;
+    --peak: #e8852b;
+    --peak-tint: #fdf0e2;
+    --peak-ink: #9a4f0e;
+    --line: #e3e9ef;
+    --shadow-sm: 0 1px 2px rgba(15, 29, 46, .06), 0 2px 6px rgba(15, 29, 46, .05);
+    --shadow-md: 0 12px 32px -12px rgba(15, 29, 46, .22), 0 4px 12px rgba(15, 29, 46, .06);
+    --shadow-lg: 0 30px 70px -28px rgba(12, 22, 34, .45);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --maxw: 1160px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: var(--slate-ink);
+    background: var(--white);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 { font-family: 'Sora', system-ui, sans-serif; line-height: 1.1; letter-spacing: -0.02em; color: var(--slate-ink); }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--green-dark); background: var(--green-tint); border: 1px solid var(--green-tint-2);
+    padding: 7px 14px; border-radius: 999px;
+  }
+  .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 0 4px rgba(31,184,102,.18); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: 'Sora', sans-serif; font-weight: 600; font-size: 16px;
+    padding: 14px 24px; border-radius: 12px; cursor: pointer; border: 1.5px solid transparent;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--green); color: #fff; box-shadow: 0 8px 20px -8px rgba(13,107,57,.6); }
+  .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 14px 26px -10px rgba(13,107,57,.65); }
+  .btn-primary:focus-visible { outline: 3px solid var(--green-bright); outline-offset: 3px; }
+  .btn-ghost { background: #fff; color: var(--slate-ink); border-color: var(--slate-200); }
+  .btn-ghost:hover { border-color: var(--green); color: var(--green-dark); transform: translateY(-2px); }
+  .btn-ghost:focus-visible { outline: 3px solid var(--green-bright); outline-offset: 3px; }
+  .btn-light { background: rgba(255,255,255,.12); color:#fff; border-color: rgba(255,255,255,.28); }
+  .btn-light:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+  .btn-sm { padding: 10px 18px; font-size: 14.5px; }
+  .link-arrow { display:inline-flex; align-items:center; gap:7px; font-weight:600; color: var(--green-dark); font-family:'Sora',sans-serif; }
+  .link-arrow svg { transition: transform .2s ease; }
+  .link-arrow:hover svg { transform: translateX(4px); }
+
+  /* ---------- NAV ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,.82);
+    backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: 'Sora', sans-serif; font-weight: 800; font-size: 19px; letter-spacing: -.02em; }
+  .brand .mark {
+    width: 38px; height: 38px; border-radius: 11px; flex: none;
+    background: linear-gradient(150deg, var(--green-bright), var(--green-dark));
+    display: grid; place-items: center; box-shadow: 0 6px 14px -6px rgba(13,107,57,.7);
+  }
+  .brand .mark svg { width: 21px; height: 21px; }
+  .brand small { display:block; font-family:'Inter',sans-serif; font-weight:500; font-size:11px; letter-spacing:.04em; color:var(--slate-400); margin-top:-3px;}
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a.navlink {
+    font-size: 15px; font-weight: 500; color: var(--slate-700); padding: 9px 14px; border-radius: 9px;
+    transition: background .15s, color .15s;
+  }
+  .nav-links a.navlink:hover { background: var(--slate-100); color: var(--slate-ink); }
+  .nav-cta { display: flex; align-items: center; gap: 10px; }
+  .nav-toggle { display: none; background: none; border: 1px solid var(--slate-200); border-radius: 10px; width:44px; height:44px; cursor: pointer; align-items:center; justify-content:center; }
+  .nav-toggle svg { width: 22px; height: 22px; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(1100px 480px at 78% -8%, rgba(31,184,102,.16), transparent 60%),
+      radial-gradient(700px 420px at 6% 110%, rgba(31,184,102,.10), transparent 60%),
+      var(--white);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.04fr .96fr; gap: 56px; align-items: center; padding: 74px 0 86px; }
+  h1.hero-title { font-size: clamp(2.45rem, 5vw, 3.85rem); font-weight: 800; }
+  h1.hero-title .hl { color: var(--green); position: relative; white-space: nowrap; }
+  h1.hero-title .hl:after { content:""; position:absolute; left:0; right:0; bottom:.06em; height:.18em; background: var(--green-tint-2); z-index:-1; border-radius:3px; }
+  .hero-sub { font-size: 1.2rem; color: var(--slate-500); margin-top: 22px; max-width: 540px; }
+  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; align-items: center; }
+
+  /* search/date bar */
+  .searchbar {
+    margin-top: 34px; background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow-md); padding: 10px; display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr auto; gap: 8px;
+  }
+  .sb-field { padding: 9px 13px; border-radius: 11px; display:flex; flex-direction:column; gap:1px; min-width:0; }
+  .sb-field:hover { background: var(--slate-50); }
+  .sb-field .lbl { font-size: 11px; font-weight: 700; letter-spacing:.05em; text-transform: uppercase; color: var(--slate-400); }
+  .sb-field .val { font-size: 15px; font-weight: 600; color: var(--slate-ink); display:flex; align-items:center; gap:7px; }
+  .sb-field .val svg { width:15px; height:15px; color: var(--green); flex:none;}
+  .sb-go { align-self: stretch; }
+
+  .trust { display:flex; flex-wrap:wrap; gap: 26px 34px; margin-top: 30px; }
+  .trust .ti { }
+  .trust .num { font-family:'Sora',sans-serif; font-weight:800; font-size: 1.55rem; color: var(--slate-ink); letter-spacing:-.02em;}
+  .trust .lab { font-size: 13.5px; color: var(--slate-500); }
+
+  /* faux time-slot board */
+  .board-shell { position: relative; }
+  .board {
+    background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow-lg);
+    padding: 18px; position: relative; z-index: 2;
+  }
+  .board-top { display:flex; align-items:center; justify-content: space-between; margin-bottom: 14px; padding: 2px 4px;}
+  .board-top .bt-title { font-family:'Sora',sans-serif; font-weight:700; font-size: 15.5px; display:flex; align-items:center; gap:8px;}
+  .board-top .bt-title .pin { width:9px; height:9px; border-radius:50%; background: var(--green-bright); }
+  .board-top .bt-date { font-size: 13px; font-weight:600; color: var(--slate-500); background: var(--slate-100); padding: 5px 11px; border-radius: 8px; }
+  .board-cols { display:grid; grid-template-columns: 46px repeat(3, 1fr); gap: 7px; }
+  .col-head { font-size: 11.5px; font-weight: 700; text-align:center; color: var(--slate-700); padding: 8px 4px; border-radius: 8px; background: var(--slate-50); }
+  .col-head .sport { display:block; font-size: 10px; font-weight:600; color: var(--slate-400); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
+  .time-lab { font-size: 11px; font-weight:600; color: var(--slate-400); display:flex; align-items:center; justify-content:flex-end; padding-right:4px;}
+  .cell {
+    border-radius: 9px; padding: 9px 6px; text-align:center; font-size: 11.5px; font-weight: 700;
+    border: 1px solid transparent; min-height: 44px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .cell .tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.05em; opacity:.85;}
+  .cell.off { background: var(--green-tint); color: var(--green-dark); border-color: var(--green-tint-2); cursor:pointer; }
+  .cell.off:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(13,107,57,.5); }
+  .cell.peak { background: var(--peak-tint); color: var(--peak-ink); border-color: #f6ddc1; cursor:pointer; }
+  .cell.peak:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(232,133,43,.5); }
+  .cell.booked { background: var(--slate-100); color: var(--slate-400); border-color: var(--slate-200); }
+  .cell.sel { background: var(--green); color:#fff; border-color: var(--green-dark); box-shadow: 0 10px 20px -8px rgba(13,107,57,.6); }
+  .cell.sel .tag { opacity: .9; }
+  .board-legend { display:flex; flex-wrap:wrap; gap: 14px; margin-top: 14px; padding: 0 4px; }
+  .lg { display:flex; align-items:center; gap:7px; font-size: 12px; font-weight:600; color: var(--slate-500); }
+  .lg .sw { width:13px; height:13px; border-radius:4px; }
+  .float-card {
+    position:absolute; z-index: 3; background:#fff; border:1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow-md); padding: 13px 15px; display:flex; align-items:center; gap:11px;
+  }
+  .float-card .ic { width:38px; height:38px; border-radius:10px; display:grid; place-items:center; flex:none;}
+  .float-card .t { font-family:'Sora',sans-serif; font-weight:700; font-size:14px; }
+  .float-card .s { font-size: 12px; color: var(--slate-500); }
+  .fc-pay { bottom: -26px; left: -26px; }
+  .fc-pay .ic { background: var(--green-tint); color: var(--green-dark);}
+  .fc-conf { top: -24px; right: -22px; }
+  .fc-conf .ic { background: var(--peak-tint); color: var(--peak-ink);}
+
+  /* logos strip */
+  .strip { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--slate-50); }
+  .strip-inner { display:flex; align-items:center; justify-content:space-between; gap: 18px; flex-wrap:wrap; padding: 22px 0; }
+  .strip-lab { font-size: 13px; font-weight: 600; color: var(--slate-400); letter-spacing:.02em; }
+  .strip-sports { display:flex; flex-wrap:wrap; gap: 12px 26px; }
+  .sport-pill { display:flex; align-items:center; gap:8px; font-family:'Sora',sans-serif; font-weight:700; font-size:15px; color: var(--slate-700); }
+  .sport-pill .e { font-size: 18px; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section { padding: 92px 0; }
+  .sec-head { max-width: 680px; margin: 0 auto 54px; text-align: center; }
+  .sec-head.left { margin-left: 0; text-align: left; }
+  .sec-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.7rem); font-weight: 800; }
+  .sec-head p { color: var(--slate-500); font-size: 1.13rem; margin-top: 16px; }
+
+  /* features grid */
+  .features { background: var(--white); }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .feat {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px;
+    box-shadow: var(--shadow-sm); transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .feat:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--green-tint-2); }
+  .feat .fic {
+    width: 50px; height: 50px; border-radius: 13px; display: grid; place-items: center; font-size: 24px;
+    background: var(--green-tint); margin-bottom: 17px;
+  }
+  .feat h3 { font-size: 1.18rem; font-weight: 700; }
+  .feat p { color: var(--slate-500); font-size: 15.5px; margin-top: 9px; }
+
+  /* how it works / screens */
+  .screens { background: var(--slate-50); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .step-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; counter-reset: step; }
+  .step {
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 20px;
+    box-shadow: var(--shadow-sm); position: relative; transition: transform .18s ease, box-shadow .2s ease;
+  }
+  .step:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .step .sn {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--slate-ink); color: #fff;
+    font-family:'Sora',sans-serif; font-weight: 800; font-size: 15px; display: grid; place-items: center; margin-bottom: 16px;
+  }
+  .step.accent .sn { background: var(--green); }
+  .step .mini { height: 64px; border-radius: 10px; margin-bottom: 16px; border:1px solid var(--line); overflow:hidden; position:relative; background: var(--slate-50);}
+  .step h3 { font-size: 1.04rem; font-weight: 700; }
+  .step p { color: var(--slate-500); font-size: 14px; margin-top: 7px; }
+  /* mini illustrations */
+  .mini.m-cat { background: repeating-linear-gradient(90deg, var(--green-tint) 0 22px, #fff 22px 26px); display:flex; align-items:center; padding:8px;}
+  .mini.m-cat:before{content:"";width:60%;height:8px;border-radius:4px;background:var(--green-bright);}
+  .mini.m-board { display:grid; grid-template-columns:repeat(5,1fr); gap:3px; padding:7px;}
+  .mini.m-board span{border-radius:3px;}
+  .mini.m-pay { display:flex; flex-direction:column; gap:6px; padding:10px; justify-content:center;}
+  .mini.m-pay span{height:8px;border-radius:3px;background:var(--slate-200);}
+  .mini.m-pay span:first-child{width:70%;background:var(--green-bright);}
+  .mini.m-pay span:last-child{width:40%;}
+  .mini.m-rec { display:flex; align-items:center; justify-content:space-around; padding:8px;}
+  .mini.m-rec b{width:13px;height:13px;border-radius:50%;border:2px solid var(--green);}
+  .mini.m-rec b.on{background:var(--green);}
+  .mini.m-dash { display:flex; align-items:flex-end; gap:5px; padding:9px 12px;}
+  .mini.m-dash i{flex:1;background:var(--green-bright);border-radius:3px 3px 0 0;}
+
+  /* who it's for / roles */
+  .roles { background: var(--white); }
+  .role-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .role {
+    border-radius: var(--radius); padding: 28px 24px; border: 1px solid var(--line);
+    background: #fff; box-shadow: var(--shadow-sm); transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease;
+    display:flex; flex-direction:column;
+  }
+  .role:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--green-tint-2); }
+  .role .badge { align-self:flex-start; font-size: 11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color: var(--green-dark); background: var(--green-tint); padding: 5px 11px; border-radius:999px; margin-bottom:16px;}
+  .role .re { font-size: 30px; margin-bottom: 12px; }
+  .role h3 { font-size: 1.2rem; font-weight: 700; }
+  .role p { color: var(--slate-500); font-size: 15px; margin-top: 9px; flex:1;}
+  .role ul { list-style:none; margin-top: 16px; display:flex; flex-direction:column; gap:8px; }
+  .role li { font-size: 14px; color: var(--slate-700); display:flex; align-items:flex-start; gap:9px; }
+  .role li svg { width: 17px; height:17px; color: var(--green); flex:none; margin-top:2px;}
+
+  /* final CTA */
+  .cta-band { padding: 0 0 100px; }
+  .cta-inner {
+    position: relative; overflow:hidden;
+    background:
+      radial-gradient(700px 360px at 88% -30%, rgba(31,184,102,.34), transparent 62%),
+      radial-gradient(600px 320px at 0% 130%, rgba(31,184,102,.20), transparent 60%),
+      var(--slate-ink);
+    border-radius: 30px; padding: 70px 56px; text-align: center; color: #fff;
+    box-shadow: var(--shadow-lg);
+  }
+  .cta-inner:before{ content:""; position:absolute; inset:0;
+    background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 46px 46px; mask-image: radial-gradient(circle at 50% 40%, #000, transparent 75%); }
+  .cta-inner > * { position: relative; z-index: 1; }
+  .cta-inner h2 { color: #fff; font-size: clamp(2rem, 4vw, 2.85rem); font-weight: 800; }
+  .cta-inner p { color: rgba(255,255,255,.78); font-size: 1.18rem; margin: 18px auto 0; max-width: 560px; }
+  .cta-inner .hero-cta { justify-content: center; margin-top: 32px; }
+
+  /* footer */
+  footer { background: var(--slate-950); color: #aebccb; padding: 64px 0 34px; }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 36px; padding-bottom: 44px; border-bottom: 1px solid rgba(255,255,255,.09);}
+  footer .brand { color:#fff; }
+  footer .brand small { color: #6e8094; }
+  .foot-blurb { font-size: 14.5px; color: #8497a8; margin-top: 16px; max-width: 320px; }
+  .foot-col h4 { color:#fff; font-family:'Sora',sans-serif; font-size:14px; letter-spacing:.04em; text-transform:uppercase; margin-bottom:16px; }
+  .foot-col a { display:block; font-size:14.5px; color:#9fb0c0; padding: 5px 0; transition: color .15s; }
+  .foot-col a:hover { color: var(--green-bright); }
+  .foot-bottom { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; padding-top: 26px; font-size: 13.5px; color: #708498; }
+  .foot-bottom .badges { display:flex; gap: 18px; flex-wrap:wrap;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; padding: 56px 0 70px;}
+    .board-shell { max-width: 540px; }
+    .feat-grid { grid-template-columns: repeat(2, 1fr); }
+    .step-grid { grid-template-columns: repeat(2, 1fr); }
+    .role-grid { grid-template-columns: repeat(2, 1fr); }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
+  }
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .nav-links { display: none; }
+    .nav-cta .btn-ghost { display:none; }
+    .nav-toggle { display: inline-flex; }
+    .nav-links.open {
+      display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+      position: absolute; left: 16px; right: 16px; top: 76px; background:#fff;
+      border: 1px solid var(--line); border-radius: 16px; padding: 12px; box-shadow: var(--shadow-md);
+    }
+    .nav-links.open a.navlink { padding: 12px 14px; }
+    section { padding: 64px 0; }
+    .searchbar { grid-template-columns: 1fr 1fr; }
+    .sb-go { grid-column: 1 / -1; }
+    .cta-inner { padding: 48px 26px; }
+    .hero-cta { width:100%; }
+    .hero-cta .btn { flex: 1; }
+  }
+  @media (max-width: 520px) {
+    .feat-grid, .step-grid, .role-grid, .foot-grid { grid-template-columns: 1fr; }
+    .float-card { display:none; }
+    .searchbar { grid-template-columns: 1fr; }
+    .wrap { padding: 0 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="CourtSide home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 8.5h17.6M3.2 15.5h17.6M12 3v18"/></svg>
+      </span>
+      <span>CourtSide<small>Court &amp; Facility Booking</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a class="navlink" href="#features">Features</a>
+      <a class="navlink" href="#how">How it works</a>
+      <a class="navlink" href="#roles">Who it's for</a>
+      <a class="navlink" href="#dashboard">For operators</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="#how">Sign in</a>
+      <a class="btn btn-primary btn-sm" href="#search">Find a court</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero" style="padding-bottom:0;">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span> Tennis · Badminton · Futsal</span>
+      <h1 class="hero-title">Find open courts and <span class="hl">book the right slot</span> in seconds.</h1>
+      <p class="hero-sub">CourtSide lets players reserve single or recurring time slots at the correct member or casual rate, while operators run schedules, pricing, and revenue across every court in the venue.</p>
+
+      <!-- search/date bar -->
+      <form class="searchbar" id="search" onsubmit="return false;" aria-label="Court availability search">
+        <div class="sb-field" tabindex="0">
+          <span class="lbl">Sport</span>
+          <span class="val"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg> All sports</span>
+        </div>
+        <div class="sb-field" tabindex="0">
+          <span class="lbl">Location</span>
+          <span class="val"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Riverside</span>
+        </div>
+        <div class="sb-field" tabindex="0">
+          <span class="lbl">Date</span>
+          <span class="val"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg> Today, 6:00 PM</span>
+        </div>
+        <button class="btn btn-primary sb-go" type="submit">Search courts</button>
+      </form>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#search">Book a court now</a>
+        <a class="link-arrow" href="#dashboard">See the operator dashboard
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <div class="trust">
+        <div class="ti"><div class="num">3 venues</div><div class="lab">across the city network</div></div>
+        <div class="ti"><div class="num">12 courts</div><div class="lab">tennis, badminton &amp; futsal</div></div>
+        <div class="ti"><div class="num">0 clashes</div><div class="lab">conflict-free slot booking</div></div>
+      </div>
+    </div>
+
+    <!-- faux time-slot board -->
+    <div class="board-shell">
+      <div class="board" role="img" aria-label="Court availability board showing peak, off-peak, booked and selected time slots across three courts">
+        <div class="board-top">
+          <div class="bt-title"><span class="pin"></span> Riverside Sports Hub</div>
+          <div class="bt-date">Sat, 4 Jul</div>
+        </div>
+        <div class="board-cols">
+          <div></div>
+          <div class="col-head">Court 1<span class="sport">Tennis</span></div>
+          <div class="col-head">Court 4<span class="sport">Badminton</span></div>
+          <div class="col-head">Pitch A<span class="sport">Futsal</span></div>
+
+          <div class="time-lab">09:00</div>
+          <div class="cell off">£14<span class="tag">Off-peak</span></div>
+          <div class="cell off">£9<span class="tag">Off-peak</span></div>
+          <div class="cell booked">Booked</div>
+
+          <div class="time-lab">12:00</div>
+          <div class="cell off">£14<span class="tag">Off-peak</span></div>
+          <div class="cell booked">Booked</div>
+          <div class="cell off">£40<span class="tag">Off-peak</span></div>
+
+          <div class="time-lab">18:00</div>
+          <div class="cell peak">£22<span class="tag">Peak</span></div>
+          <div class="cell sel">Selected<span class="tag">£15 · member</span></div>
+          <div class="cell peak">£60<span class="tag">Peak</span></div>
+
+          <div class="time-lab">20:00</div>
+          <div class="cell peak">£22<span class="tag">Peak</span></div>
+          <div class="cell peak">£15<span class="tag">Peak</span></div>
+          <div class="cell booked">Booked</div>
+        </div>
+        <div class="board-legend">
+          <span class="lg"><span class="sw" style="background:var(--green-tint);border:1px solid var(--green-tint-2)"></span>Off-peak</span>
+          <span class="lg"><span class="sw" style="background:var(--peak-tint);border:1px solid #f6ddc1"></span>Peak rate</span>
+          <span class="lg"><span class="sw" style="background:var(--green)"></span>Your pick</span>
+          <span class="lg"><span class="sw" style="background:var(--slate-100);border:1px solid var(--slate-200)"></span>Booked</span>
+        </div>
+      </div>
+      <div class="float-card fc-conf">
+        <span class="ic" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </span>
+        <div><div class="t">Booking confirmed</div><div class="s">Receipt sent · Court 4, 6 PM</div></div>
+      </div>
+      <div class="float-card fc-pay">
+        <span class="ic" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/></svg>
+        </span>
+        <div><div class="t">Member rate applied</div><div class="s">£15 · saved £7 at checkout</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sports strip -->
+  <div class="strip" style="margin-top:64px;">
+    <div class="wrap strip-inner">
+      <span class="strip-lab">One booking engine for every surface in your venue</span>
+      <div class="strip-sports">
+        <span class="sport-pill"><span class="e">🎾</span> Tennis</span>
+        <span class="sport-pill"><span class="e">🏸</span> Badminton</span>
+        <span class="sport-pill"><span class="e">⚽</span> Futsal</span>
+        <span class="sport-pill"><span class="e">🏐</span> Indoor turf</span>
+        <span class="sport-pill"><span class="e">🏀</span> Multi-court</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><span class="dot"></span> Everything in one court</span>
+      <h2>Built for booking courts and running venues</h2>
+      <p>From availability search to revenue reporting, CourtSide covers the full reservation workflow for a multi-sport facility.</p>
+    </div>
+    <div class="feat-grid">
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🔎</div>
+        <h3>Multi-sport venue catalog</h3>
+        <p>Browse every venue and court with availability search across tennis, badminton, and futsal in one place.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🗓️</div>
+        <h3>Interactive time-slot board</h3>
+        <p>A grid of per-court columns with tap-to-book cells that clearly show peak and off-peak rates.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🔁</div>
+        <h3>Single &amp; recurring bookings</h3>
+        <p>Reserve a one-off slot or a weekly recurring series, with conflict prevention on every overlap.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🏷️</div>
+        <h3>Member vs. casual pricing</h3>
+        <p>The right tier is applied automatically at checkout based on the player's membership status.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">⭐</div>
+        <h3>Membership plans</h3>
+        <p>Member-only rates and earlier booking windows reward your regulars and fill off-peak hours.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">↩️</div>
+        <h3>Cancel &amp; reschedule rules</h3>
+        <p>Self-service changes that respect each venue's cancellation cutoff window automatically.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🧾</div>
+        <h3>Mock payment &amp; receipts</h3>
+        <p>Confirm a booking with mock checkout and a downloadable receipt, ready to swap in a real gateway.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">🛠️</div>
+        <h3>Maintenance &amp; event blocking</h3>
+        <p>Operators block courts for maintenance or tournaments so blocked slots never get double-booked.</p>
+      </article>
+      <article class="feat">
+        <div class="fic" aria-hidden="true">📊</div>
+        <h3>Occupancy &amp; revenue dashboard</h3>
+        <p>See utilisation and income broken down by court, sport, and peak or off-peak time band.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS / SCREENS -->
+<section class="screens" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><span class="dot"></span> From search to confirmed</span>
+      <h2>Book a court in five clear steps</h2>
+      <p>Every screen is purpose-built — from the venue catalog to the availability board, checkout, and recurring setup.</p>
+    </div>
+    <div class="step-grid">
+      <article class="step accent">
+        <div class="sn">1</div>
+        <div class="mini m-cat" aria-hidden="true"></div>
+        <h3>Browse the catalog</h3>
+        <p>Filter venues by sport, location, and live availability to find an open court near you.</p>
+      </article>
+      <article class="step accent">
+        <div class="sn">2</div>
+        <div class="mini m-board" aria-hidden="true"><span style="background:var(--green-tint)"></span><span style="background:var(--peak-tint)"></span><span style="background:var(--slate-200)"></span><span style="background:var(--green)"></span><span style="background:var(--green-tint)"></span><span style="background:var(--peak-tint)"></span><span style="background:var(--green-tint)"></span><span style="background:var(--slate-200)"></span><span style="background:var(--peak-tint)"></span><span style="background:var(--green-tint)"></span></div>
+        <h3>Pick a slot on the board</h3>
+        <p>Tap a peak or off-peak cell on the per-court time grid for your chosen date.</p>
+      </article>
+      <article class="step accent">
+        <div class="sn">3</div>
+        <div class="mini m-pay" aria-hidden="true"><span></span><span></span><span></span></div>
+        <h3>Checkout at your rate</h3>
+        <p>Your member or casual rate applies automatically, then mock payment confirms the booking.</p>
+      </article>
+      <article class="step">
+        <div class="sn">4</div>
+        <div class="mini m-rec" aria-hidden="true"><b class="on"></b><b class="on"></b><b></b><b class="on"></b><b></b></div>
+        <h3>Set it to repeat</h3>
+        <p>Turn any slot into a weekly recurring booking that skips maintenance and tournament blocks.</p>
+      </article>
+      <article class="step">
+        <div class="sn">5</div>
+        <div class="mini m-dash" aria-hidden="true"><i style="height:60%"></i><i style="height:90%"></i><i style="height:45%"></i><i style="height:75%"></i></div>
+        <h3>Manage from one account</h3>
+        <p>Review upcoming and past bookings, download receipts, and reschedule within the cutoff window.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR / ROLES -->
+<section class="roles" id="roles">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow"><span class="dot"></span> Made for both sides of the net</span>
+      <h2>One platform, four roles</h2>
+      <p>Players, members, operators, and admins each get exactly the tools and access they need — and nothing they don't.</p>
+    </div>
+    <div class="role-grid">
+      <article class="role">
+        <span class="badge">Player</span>
+        <div class="re" aria-hidden="true">🏃</div>
+        <h3>Casual players</h3>
+        <p>Find open courts and book or manage time slots without an account barrier.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Search venues by sport &amp; date</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Book and cancel court time</li>
+        </ul>
+      </article>
+      <article class="role">
+        <span class="badge">Member</span>
+        <div class="re" aria-hidden="true">⭐</div>
+        <h3>Club members</h3>
+        <p>Unlock member rates and lock in regular court time with recurring bookings.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Automatic member pricing</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Weekly recurring slots</li>
+        </ul>
+      </article>
+      <article class="role">
+        <span class="badge">Operator</span>
+        <div class="re" aria-hidden="true">🛠️</div>
+        <h3>Venue operators</h3>
+        <p>Manage courts, schedules, and pricing while blocking time for maintenance.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Court &amp; schedule control</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Peak / off-peak pricing rules</li>
+        </ul>
+      </article>
+      <article class="role">
+        <span class="badge">Admin</span>
+        <div class="re" aria-hidden="true">📈</div>
+        <h3>Network admins</h3>
+        <p>Oversee venues, staff, and members with full revenue reporting across the network.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Manage venues &amp; staff</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Cross-venue revenue reports</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- OPERATOR DASHBOARD CALLOUT -->
+<section id="dashboard" style="background:var(--slate-50);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="wrap" style="display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center;">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> For operators &amp; admins</span>
+      <h2 style="font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:800;margin-top:18px;">Know your occupancy and revenue at a glance</h2>
+      <p style="color:var(--slate-500);font-size:1.13rem;margin-top:16px;">CourtSide aggregates every booking into a live dashboard, so operators can see which courts, sports, and time bands are driving income — and which off-peak hours need a push.</p>
+      <ul style="list-style:none;margin-top:26px;display:flex;flex-direction:column;gap:14px;">
+        <li style="display:flex;gap:12px;align-items:flex-start;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px;"><path d="M20 6 9 17l-5-5"/></svg><span><b style="font-family:'Sora',sans-serif;">Occupancy by court &amp; sport</b> — spot underused courts before they cost you a season.</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px;"><path d="M20 6 9 17l-5-5"/></svg><span><b style="font-family:'Sora',sans-serif;">Revenue by time band</b> — compare peak and off-peak income across the week.</span></li>
+        <li style="display:flex;gap:12px;align-items:flex-start;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px;"><path d="M20 6 9 17l-5-5"/></svg><span><b style="font-family:'Sora',sans-serif;">Block &amp; reschedule</b> — close courts for tournaments without breaking existing bookings.</span></li>
+      </ul>
+      <div class="hero-cta"><a class="btn btn-primary" href="#search">Explore the dashboard</a></div>
+    </div>
+    <!-- faux KPI / dashboard panel -->
+    <div class="board" style="padding:22px;">
+      <div class="board-top">
+        <div class="bt-title"><span class="pin"></span> Revenue this week</div>
+        <div class="bt-date">All venues</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+        <div style="background:var(--green-tint);border:1px solid var(--green-tint-2);border-radius:12px;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.04em;">Bookings</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.7rem;color:var(--slate-ink);">486</div>
+        </div>
+        <div style="background:var(--peak-tint);border:1px solid #f6ddc1;border-radius:12px;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:var(--peak-ink);text-transform:uppercase;letter-spacing:.04em;">Occupancy</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.7rem;color:var(--slate-ink);">78%</div>
+        </div>
+        <div style="background:var(--slate-100);border:1px solid var(--slate-200);border-radius:12px;padding:14px;">
+          <div style="font-size:12px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;">Revenue</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.7rem;color:var(--slate-ink);">£9.4k</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:9px;height:120px;padding:0 4px 0;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:55px;background:var(--green-bright);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Mon</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:72px;background:var(--green-bright);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Tue</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:48px;background:var(--green-bright);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Wed</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:90px;background:var(--green);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Thu</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:108px;background:var(--peak);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Fri</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:96px;background:var(--peak);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Sat</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><div style="width:100%;height:80px;background:var(--green-bright);border-radius:6px 6px 0 0;"></div><span style="font-size:10px;color:var(--slate-400);font-weight:600;">Sun</span></div>
+      </div>
+      <div class="board-legend" style="margin-top:16px;">
+        <span class="lg"><span class="sw" style="background:var(--green-bright)"></span>Off-peak income</span>
+        <span class="lg"><span class="sw" style="background:var(--peak)"></span>Peak income</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-band">
+  <div class="wrap">
+    <div class="cta-inner">
+      <span class="eyebrow" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#cdebd9;"><span class="dot"></span> Game on</span>
+      <h2>Your courts, fully booked.</h2>
+      <p>Give players a faster way to reserve and give your venue a clearer view of every slot, rate, and pound of revenue.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#search">Find a court now</a>
+        <a class="btn btn-light" href="#dashboard">Book an operator demo</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.2 8.5h17.6M3.2 15.5h17.6M12 3v18"/></svg>
+          </span>
+          <span>CourtSide<small>Court &amp; Facility Booking</small></span>
+        </div>
+        <p class="foot-blurb">The sports court and facility booking system for multi-sport venues — book single or recurring slots at the right rate, and run schedules, pricing, and revenue from one place.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Book</h4>
+        <a href="#search">Find a court</a>
+        <a href="#features">Venue catalog</a>
+        <a href="#how">Availability board</a>
+        <a href="#how">Recurring bookings</a>
+      </div>
+      <div class="foot-col">
+        <h4>Operate</h4>
+        <a href="#dashboard">Operator dashboard</a>
+        <a href="#dashboard">Schedule &amp; pricing</a>
+        <a href="#roles">Membership plans</a>
+        <a href="#dashboard">Revenue reports</a>
+      </div>
+      <div class="foot-col">
+        <h4>Account</h4>
+        <a href="#how">Sign in</a>
+        <a href="#how">Register</a>
+        <a href="#roles">My bookings</a>
+        <a href="#features">Help &amp; rules</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 CourtSide Sports Court &amp; Facility Booking System. All rights reserved.</span>
+      <div class="badges">
+        <span>Tennis · Badminton · Futsal</span>
+        <span>Member &amp; casual rates</span>
+        <span>Mock-payment ready</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle (only vanilla JS used)
+  (function () {
+    var t = document.getElementById('navToggle');
+    var l = document.getElementById('navLinks');
+    if (!t || !l) return;
+    t.addEventListener('click', function () {
+      var open = l.classList.toggle('open');
+      t.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    l.addEventListener('click', function (e) {
+      if (e.target.classList.contains('navlink')) {
+        l.classList.remove('open');
+        t.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+</script>
+</body>
+</html>

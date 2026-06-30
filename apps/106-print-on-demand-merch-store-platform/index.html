@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InkRoute — Print-on-Demand Merch Store Platform</title>
+<meta name="description" content="InkRoute lets shoppers drop their artwork onto blank products with a live mockup designer, while owners manage the catalog and paid orders auto-route to print partners for fulfillment and tracking." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0E0E10;
+    --ink-2:#17171B;
+    --ink-3:#26262C;
+    --paper:#FBF8F2;
+    --paper-2:#F2EBDD;
+    --paper-3:#EAE1CF;
+    --magenta:#FF1F9C;
+    --magenta-deep:#C8056F;
+    --magenta-soft:#FFD9EE;
+    --text:#2C2C32;
+    --muted:#5B5B63;
+    --line:rgba(14,14,16,.12);
+    --line-2:rgba(14,14,16,.07);
+    --on-ink:#F4EFE6;
+    --on-ink-muted:#A9A6A0;
+    --line-ink:rgba(255,255,255,.12);
+    --radius:20px;
+    --radius-sm:12px;
+    --shadow-sm:0 1px 2px rgba(14,14,16,.06), 0 2px 8px rgba(14,14,16,.05);
+    --shadow:0 14px 40px -18px rgba(14,14,16,.35), 0 4px 14px -8px rgba(14,14,16,.18);
+    --shadow-magenta:0 22px 60px -22px rgba(255,31,156,.55);
+    --maxw:1180px;
+    --font-display:'Space Grotesk', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:var(--font-body);
+    color:var(--text);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.04;letter-spacing:-.02em;color:var(--ink)}
+  ::selection{background:var(--magenta);color:#fff}
+
+  .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-display);font-weight:600;
+    font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--magenta-deep);
+  }
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--magenta);border-radius:2px}
+  .eyebrow.on-ink{color:var(--magenta)}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:9px;
+    font-family:var(--font-display);font-weight:600;font-size:1rem;
+    padding:14px 24px;border-radius:999px;border:1.5px solid transparent;
+    cursor:pointer;transition:transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+    white-space:nowrap;
+  }
+  .btn:focus-visible{outline:3px solid var(--magenta);outline-offset:3px}
+  .btn-primary{background:var(--magenta);color:var(--ink);box-shadow:var(--shadow-magenta)}
+  .btn-primary:hover{transform:translateY(-2px);background:#ff3aa9}
+  .btn-ink{background:var(--ink);color:var(--on-ink)}
+  .btn-ink:hover{transform:translateY(-2px);background:#000}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+  .btn-ghost.on-ink{color:var(--on-ink);border-color:var(--line-ink)}
+  .btn-ghost.on-ink:hover{border-color:var(--on-ink)}
+  .link-cta{
+    display:inline-flex;align-items:center;gap:7px;font-family:var(--font-display);
+    font-weight:600;color:var(--magenta-deep);border-bottom:2px solid transparent;padding-bottom:2px;
+    transition:gap .18s ease,border-color .18s ease;
+  }
+  .link-cta:hover{gap:11px;border-color:var(--magenta)}
+  .link-cta.on-ink{color:var(--magenta)}
+  .link-cta:focus-visible{outline:3px solid var(--magenta);outline-offset:4px;border-radius:4px}
+
+  /* ---------- Nav ---------- */
+  header.nav{position:sticky;top:0;z-index:60;background:rgba(251,248,242,.82);backdrop-filter:saturate(160%) blur(14px);border-bottom:1px solid var(--line-2)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:74px;gap:24px}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-weight:700;font-size:1.18rem;color:var(--ink);letter-spacing:-.02em}
+  .brand .mark{
+    width:36px;height:36px;border-radius:11px;background:var(--ink);
+    display:grid;place-items:center;flex:0 0 auto;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.06);
+  }
+  .brand .mark svg{width:21px;height:21px}
+  .nav-links{display:flex;align-items:center;gap:32px}
+  .nav-links a{font-weight:500;font-size:.95rem;color:var(--muted);transition:color .18s ease;position:relative}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a::after{content:"";position:absolute;left:0;right:0;bottom:-22px;height:2px;background:var(--magenta);transform:scaleX(0);transition:transform .2s ease;transform-origin:left}
+  .nav-links a:hover::after{transform:scaleX(1)}
+  .nav-actions{display:flex;align-items:center;gap:14px}
+  .nav-actions .signin{font-family:var(--font-display);font-weight:600;font-size:.95rem;color:var(--ink)}
+  .nav-actions .signin:hover{color:var(--magenta-deep)}
+  .nav-toggle{display:none;background:none;border:1px solid var(--line);border-radius:10px;width:44px;height:44px;cursor:pointer;align-items:center;justify-content:center}
+  .nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:"";display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:.2s}
+  .nav-toggle span::before{transform:translateY(-6px)}
+  .nav-toggle span::after{transform:translateY(4px)}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;padding:64px 0 84px;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;top:-200px;right:-160px;width:560px;height:560px;border-radius:50%;
+    background:radial-gradient(circle at center, rgba(255,31,156,.18), transparent 62%);z-index:0;
+  }
+  .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.02fr 1.18fr;gap:56px;align-items:center}
+  .hero-copy{max-width:560px}
+  .badge-row{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:7px 14px;font-size:.82rem;font-weight:600;color:var(--ink);box-shadow:var(--shadow-sm)
+  }
+  .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--magenta);box-shadow:0 0 0 4px rgba(255,31,156,.18)}
+  h1.hero-title{font-size:clamp(2.55rem,5.2vw,4.05rem);font-weight:700;margin:0 0 22px}
+  h1.hero-title .hl{color:var(--magenta-deep);position:relative;white-space:nowrap}
+  .hero-sub{font-size:1.16rem;color:var(--muted);max-width:520px;margin-bottom:34px}
+  .hero-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .hero-meta{display:flex;align-items:center;gap:26px;margin-top:38px;flex-wrap:wrap}
+  .hero-meta .m{display:flex;flex-direction:column}
+  .hero-meta .m b{font-family:var(--font-display);font-size:1.55rem;color:var(--ink);line-height:1}
+  .hero-meta .m span{font-size:.82rem;color:var(--muted);margin-top:5px}
+  .hero-meta .sep{width:1px;height:38px;background:var(--line)}
+
+  /* ---------- Designer mockup ---------- */
+  .designer{
+    position:relative;background:var(--ink);border-radius:26px;padding:16px;
+    box-shadow:0 40px 80px -36px rgba(14,14,16,.6), 0 10px 30px -12px rgba(14,14,16,.3);
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .designer-bar{display:flex;align-items:center;gap:10px;padding:6px 8px 14px}
+  .designer-bar .dots{display:flex;gap:7px}
+  .designer-bar .dots i{width:11px;height:11px;border-radius:50%;display:block}
+  .designer-bar .dots i:nth-child(1){background:#ff5f57}
+  .designer-bar .dots i:nth-child(2){background:#febc2e}
+  .designer-bar .dots i:nth-child(3){background:#28c840}
+  .designer-bar .title{margin-left:6px;font-family:var(--font-display);font-weight:600;font-size:.82rem;color:var(--on-ink-muted)}
+  .designer-bar .live{
+    margin-left:auto;display:inline-flex;align-items:center;gap:7px;background:rgba(255,31,156,.16);
+    color:#ff7bc4;border:1px solid rgba(255,31,156,.35);border-radius:999px;padding:5px 11px;font-size:.72rem;font-weight:700;letter-spacing:.04em
+  }
+  .designer-bar .live .blink{width:7px;height:7px;border-radius:50%;background:var(--magenta);animation:blink 1.4s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .designer-stage{display:grid;grid-template-columns:72px 1fr;gap:14px;background:var(--ink-2);border-radius:18px;padding:14px}
+
+  .rail{display:flex;flex-direction:column;gap:11px}
+  .rail .thumb{
+    aspect-ratio:1;border-radius:13px;background:var(--ink-3);border:1.5px solid transparent;
+    display:grid;place-items:center;cursor:pointer;transition:.18s;position:relative
+  }
+  .rail .thumb svg{width:30px;height:30px;opacity:.62}
+  .rail .thumb:hover{background:#34343c}
+  .rail .thumb.active{border-color:var(--magenta);background:#2a1c27;box-shadow:0 0 0 3px rgba(255,31,156,.18)}
+  .rail .thumb.active svg{opacity:1}
+  .rail .rail-cap{font-size:.58rem;text-align:center;color:var(--on-ink-muted);font-weight:600;letter-spacing:.06em;margin-top:-4px}
+
+  .canvas{
+    position:relative;background:
+      radial-gradient(circle at 30% 25%, #ffffff, #efe9dd 90%);
+    border-radius:14px;min-height:382px;display:grid;place-items:center;overflow:hidden;
+  }
+  .canvas::after{
+    content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(14,14,16,.06) 1px, transparent 1px);
+    background-size:18px 18px;opacity:.6;pointer-events:none
+  }
+  .tee-wrap{position:relative;width:300px;max-width:80%;filter:drop-shadow(0 22px 30px rgba(14,14,16,.18))}
+  .tee-wrap svg.tee{width:100%;height:auto}
+  /* print area + artwork */
+  .print-area{
+    position:absolute;left:50%;top:39%;transform:translate(-50%,-12%);
+    width:118px;height:128px;border:2px dashed var(--magenta);border-radius:6px;
+    display:grid;place-items:center;
+  }
+  .print-area .handle{position:absolute;width:10px;height:10px;background:#fff;border:2px solid var(--magenta);border-radius:3px}
+  .print-area .handle.tl{top:-6px;left:-6px}.print-area .handle.tr{top:-6px;right:-6px}
+  .print-area .handle.bl{bottom:-6px;left:-6px}.print-area .handle.br{bottom:-6px;right:-6px}
+  .artwork{width:84px;height:84px}
+  .area-tag{
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--magenta);color:var(--ink);
+    font-family:var(--font-display);font-weight:700;font-size:.58rem;letter-spacing:.06em;padding:2px 8px;border-radius:6px;white-space:nowrap
+  }
+
+  .canvas .price-card{
+    position:absolute;right:14px;bottom:14px;background:rgba(14,14,16,.92);color:var(--on-ink);
+    border-radius:14px;padding:13px 15px;min-width:166px;box-shadow:0 18px 40px -18px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08)
+  }
+  .price-card .row{display:flex;justify-content:space-between;align-items:center;font-size:.74rem;color:var(--on-ink-muted);margin-bottom:5px}
+  .price-card .row b{color:#fff;font-weight:600}
+  .price-card .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.1)}
+  .price-card .total span{font-size:.72rem;color:var(--on-ink-muted)}
+  .price-card .total b{font-family:var(--font-display);font-size:1.32rem;color:var(--magenta)}
+
+  .canvas .variant-bar{
+    position:absolute;left:14px;top:14px;display:flex;flex-direction:column;gap:9px;
+  }
+  .swatches{display:flex;gap:7px;align-items:center;background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:999px;padding:6px 9px;backdrop-filter:blur(4px)}
+  .swatches .sw{width:17px;height:17px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+  .swatches .sw.on{box-shadow:0 0 0 2px var(--magenta)}
+  .sizes{display:flex;gap:6px}
+  .sizes .sz{width:30px;height:28px;border-radius:8px;background:rgba(255,255,255,.85);border:1px solid var(--line);font-family:var(--font-display);font-weight:600;font-size:.72rem;color:var(--ink);display:grid;place-items:center}
+  .sizes .sz.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  .designer-foot{display:flex;align-items:center;gap:10px;padding:14px 8px 4px}
+  .designer-foot .upload{
+    flex:1;display:flex;align-items:center;gap:10px;background:var(--ink-2);border:1.5px dashed rgba(255,255,255,.18);
+    border-radius:12px;padding:11px 14px;color:var(--on-ink-muted);font-size:.84rem;font-weight:500
+  }
+  .designer-foot .upload b{color:var(--on-ink)}
+  .designer-foot .upload .ic{width:30px;height:30px;border-radius:9px;background:rgba(255,31,156,.16);display:grid;place-items:center;flex:0 0 auto}
+  .designer-foot .upload .ic svg{width:16px;height:16px}
+  .designer-foot .add{flex:0 0 auto;background:var(--magenta);color:var(--ink);font-family:var(--font-display);font-weight:700;font-size:.86rem;border:none;border-radius:12px;padding:12px 18px;cursor:pointer;transition:.18s}
+  .designer-foot .add:hover{background:#ff3aa9}
+
+  /* ---------- Marquee logos ---------- */
+  .trust{border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);background:var(--paper-2);padding:26px 0}
+  .trust-inner{display:flex;align-items:center;gap:30px;flex-wrap:wrap;justify-content:center}
+  .trust .lbl{font-size:.78rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .trust .names{display:flex;gap:34px;flex-wrap:wrap;justify-content:center}
+  .trust .names span{font-family:var(--font-display);font-weight:700;font-size:1.12rem;color:#9a9388;letter-spacing:-.01em}
+
+  /* ---------- Section shell ---------- */
+  section{position:relative}
+  .section-pad{padding:96px 0}
+  .sec-head{max-width:680px;margin-bottom:54px}
+  .sec-head.center{margin-left:auto;margin-right:auto;text-align:center}
+  .sec-head h2{font-size:clamp(2rem,3.6vw,2.85rem);margin:18px 0 16px}
+  .sec-head p{font-size:1.1rem;color:var(--muted)}
+
+  /* ---------- Features grid ---------- */
+  .features{background:var(--paper)}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .feat{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;position:relative;overflow:hidden
+  }
+  .feat::before{content:"";position:absolute;left:0;top:0;height:3px;width:0;background:var(--magenta);transition:width .25s ease}
+  .feat:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+  .feat:hover::before{width:100%}
+  .feat .ic{
+    width:50px;height:50px;border-radius:14px;background:var(--paper-2);display:grid;place-items:center;
+    font-size:1.5rem;margin-bottom:18px;border:1px solid var(--line-2)
+  }
+  .feat h3{font-size:1.16rem;margin-bottom:9px}
+  .feat p{font-size:.95rem;color:var(--muted);line-height:1.55}
+
+  /* ---------- How it works ---------- */
+  .how{background:var(--ink);color:var(--on-ink)}
+  .how h2{color:#fff}
+  .how .sec-head p{color:var(--on-ink-muted)}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:step}
+  .step{
+    background:var(--ink-2);border:1px solid var(--line-ink);border-radius:var(--radius);padding:24px;position:relative;
+    transition:transform .2s ease,border-color .2s ease
+  }
+  .step:hover{transform:translateY(-4px);border-color:rgba(255,31,156,.5)}
+  .step .num{
+    font-family:var(--font-display);font-weight:700;font-size:.82rem;color:var(--magenta);
+    border:1px solid rgba(255,31,156,.4);border-radius:8px;padding:4px 9px;display:inline-block;margin-bottom:16px
+  }
+  .step h3{color:#fff;font-size:1.12rem;margin-bottom:9px}
+  .step p{color:var(--on-ink-muted);font-size:.92rem}
+  .step .screen-tag{margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-size:.74rem;color:#ff7bc4;font-weight:600}
+  .step .screen-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--magenta)}
+
+  .flow-strip{
+    margin-top:46px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;background:var(--ink-2);
+    border:1px solid var(--line-ink);border-radius:var(--radius);overflow:hidden
+  }
+  .flow-cell{padding:24px 26px;border-right:1px solid var(--line-ink)}
+  .flow-cell:last-child{border-right:none}
+  .flow-cell .k{font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--on-ink-muted);font-weight:600;margin-bottom:14px}
+  .track{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .track .node{font-family:var(--font-display);font-weight:600;font-size:.82rem;padding:6px 11px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line-ink);color:var(--on-ink)}
+  .track .node.done{background:rgba(255,31,156,.16);border-color:rgba(255,31,156,.45);color:#ff8fcc}
+  .track .arr{color:var(--on-ink-muted);font-size:.9rem}
+  .flow-cell .trk-num{font-family:var(--font-display);font-size:1.42rem;color:#fff;margin-top:6px}
+  .flow-cell .trk-num small{font-size:.8rem;color:var(--on-ink-muted);font-weight:400}
+
+  /* ---------- Audience ---------- */
+  .audience{background:var(--paper-2)}
+  .role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .role{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px;display:flex;gap:20px;align-items:flex-start;
+    transition:transform .2s ease,box-shadow .2s ease
+  }
+  .role:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .role .badge{
+    width:56px;height:56px;border-radius:16px;flex:0 0 auto;display:grid;place-items:center;font-size:1.6rem;
+    background:var(--paper-2);border:1px solid var(--line)
+  }
+  .role.lead .badge{background:var(--ink);}
+  .role h3{font-size:1.24rem;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+  .role h3 .tag{font-family:var(--font-body);font-weight:600;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--magenta-deep);background:var(--magenta-soft);padding:3px 9px;border-radius:999px}
+  .role p{font-size:.97rem;color:var(--muted);margin-bottom:14px}
+  .role ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .role li{font-size:.9rem;color:var(--text);display:flex;align-items:flex-start;gap:9px}
+  .role li::before{content:"";width:16px;height:16px;border-radius:5px;background:var(--magenta-soft);flex:0 0 auto;margin-top:3px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C8056F' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-size:11px;background-repeat:no-repeat;background-position:center}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{padding:0 0 96px}
+  .cta-inner{
+    position:relative;background:linear-gradient(135deg,#ff1f9c,#c8056f 78%);border-radius:28px;
+    padding:64px 56px;overflow:hidden;color:#fff;text-align:center;box-shadow:var(--shadow-magenta)
+  }
+  .cta-inner::before,.cta-inner::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+  .cta-inner::before{width:280px;height:280px;top:-120px;left:-60px}
+  .cta-inner::after{width:220px;height:220px;bottom:-110px;right:-40px}
+  .cta-inner > *{position:relative;z-index:1}
+  .cta-inner h2{color:#fff;font-size:clamp(2rem,4vw,3rem);margin-bottom:16px}
+  .cta-inner p{font-size:1.15rem;color:rgba(255,255,255,.92);max-width:560px;margin:0 auto 32px}
+  .cta-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn-onmag{background:var(--ink);color:#fff}
+  .btn-onmag:hover{background:#000;transform:translateY(-2px)}
+  .btn-onmag-2{background:#fff;color:var(--ink)}
+  .btn-onmag-2:hover{background:var(--paper);transform:translateY(-2px)}
+  .cta-note{margin-top:22px;font-size:.88rem;color:rgba(255,255,255,.85)}
+
+  /* ---------- Footer ---------- */
+  footer{background:var(--ink);color:var(--on-ink-muted);padding:64px 0 34px}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding-bottom:44px;border-bottom:1px solid var(--line-ink)}
+  .foot-brand .brand{color:#fff;margin-bottom:16px}
+  .foot-brand p{font-size:.92rem;max-width:300px;line-height:1.6}
+  .foot-col h4{color:#fff;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;font-family:var(--font-display)}
+  .foot-col a{display:block;font-size:.92rem;color:var(--on-ink-muted);margin-bottom:11px;transition:color .16s}
+  .foot-col a:hover{color:var(--magenta)}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:26px;flex-wrap:wrap;gap:14px}
+  .foot-bottom p{font-size:.85rem}
+  .foot-bottom .socials{display:flex;gap:12px}
+  .foot-bottom .socials a{width:38px;height:38px;border-radius:10px;border:1px solid var(--line-ink);display:grid;place-items:center;transition:.18s}
+  .foot-bottom .socials a:hover{border-color:var(--magenta);background:rgba(255,31,156,.12)}
+  .foot-bottom .socials svg{width:17px;height:17px}
+
+  /* ---------- Mobile ---------- */
+  @media (max-width:1080px){
+    .feat-grid{grid-template-columns:repeat(2,1fr)}
+    .steps{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:920px){
+    .hero-grid{grid-template-columns:1fr;gap:48px}
+    .hero-copy{max-width:none}
+    .designer{max-width:560px;margin:0 auto}
+    .foot-grid{grid-template-columns:1fr 1fr;gap:32px}
+  }
+  @media (max-width:760px){
+    .nav-links,.nav-actions .signin{display:none}
+    .nav-toggle{display:flex}
+    .nav-links.open{
+      display:flex;flex-direction:column;position:absolute;top:74px;left:0;right:0;
+      background:var(--paper);padding:20px 24px;gap:6px;border-bottom:1px solid var(--line);box-shadow:var(--shadow)
+    }
+    .nav-links.open a{padding:12px 0;font-size:1.05rem;color:var(--ink);border-bottom:1px solid var(--line-2)}
+    .nav-links.open a::after{display:none}
+    .section-pad{padding:68px 0}
+    .feat-grid{grid-template-columns:1fr}
+    .role-grid{grid-template-columns:1fr}
+    .flow-strip{grid-template-columns:1fr}
+    .flow-cell{border-right:none;border-bottom:1px solid var(--line-ink)}
+    .flow-cell:last-child{border-bottom:none}
+    .cta-inner{padding:48px 26px}
+    .hero-meta .sep:last-of-type{display:none}
+  }
+  @media (max-width:480px){
+    .steps{grid-template-columns:1fr}
+    .designer-stage{grid-template-columns:60px 1fr}
+    .canvas .price-card{position:static;margin-top:0}
+    .trust .names{gap:20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="InkRoute home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#FF1F9C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7l4-3 2 1.5L12 4l2 1.5L16 4l4 3-2.5 2.5V20H6.5V9.5z"/>
+        </svg>
+      </span>
+      InkRoute
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Primary">
+      <a href="#designer">Designer</a>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#audience">Who it's for</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#auth" class="signin">Sign in</a>
+      <a href="#designer" class="btn btn-primary" style="padding:11px 20px">Start designing</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="designer">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="badge-row">
+          <span class="pill"><span class="dot"></span> No inventory. No minimums.</span>
+          <span class="pill">Built for creators &amp; small brands</span>
+        </div>
+        <h1 class="hero-title">Drop your art on a tee. We <span class="hl">route it to print</span> automatically.</h1>
+        <p class="hero-sub">InkRoute is the print-on-demand platform where shoppers design custom merch on a live mockup canvas, owners run the catalog and pricing, and every paid order auto-routes to a print partner for fulfillment and tracking.</p>
+        <div class="hero-actions">
+          <a href="#designer" class="btn btn-primary">Start designing free
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#how" class="link-cta">See how fulfillment works
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="hero-meta">
+          <div class="m"><b>10k+</b><span>Designs printed</span></div>
+          <div class="sep"></div>
+          <div class="m"><b>48 hrs</b><span>Avg. to ship</span></div>
+          <div class="sep"></div>
+          <div class="m"><b>4 roles</b><span>One platform</span></div>
+        </div>
+      </div>
+
+      <!-- Live mockup designer mockup -->
+      <div class="designer" role="img" aria-label="InkRoute live mockup designer showing artwork placed on a t-shirt print area, with product picker rail, color and size variants, and a live retail price of $28.00.">
+        <div class="designer-bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="title">inkroute.studio / designer</span>
+          <span class="live"><span class="blink"></span> LIVE PREVIEW</span>
+        </div>
+        <div class="designer-stage">
+          <!-- product picker rail -->
+          <div class="rail" aria-hidden="true">
+            <div class="thumb active" title="T-shirt">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FF1F9C" stroke-width="1.6" stroke-linejoin="round"><path d="M8 3l-5 3 2 4 2-1v11h10V9l2 1 2-4-5-3-2 2-2-2z"/></svg>
+            </div>
+            <div class="thumb" title="Hoodie">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M8 3l-5 3 2 4 2-1v11h10V9l2 1 2-4-5-3M8 3c0 2 1.8 3 4 3s4-1 4-3M12 6v6"/></svg>
+            </div>
+            <div class="thumb" title="Mug">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M5 5h11v10a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3z"/><path d="M16 7h2.5a2.5 2.5 0 0 1 0 5H16"/></svg>
+            </div>
+            <div class="thumb" title="Tote">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M6 8h12l-1 12H7z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+            </div>
+            <div class="thumb" title="Cap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 15c0-5 3.6-8 8-8s8 3 8 8M4 15h16M4 15l-2 2h6"/></svg>
+            </div>
+            <div class="rail-cap">BLANKS</div>
+          </div>
+
+          <!-- canvas -->
+          <div class="canvas">
+            <!-- variant controls -->
+            <div class="variant-bar">
+              <div class="swatches" title="Color">
+                <span class="sw on" style="background:#0E0E10"></span>
+                <span class="sw" style="background:#fff"></span>
+                <span class="sw" style="background:#FF1F9C"></span>
+                <span class="sw" style="background:#2E6BFF"></span>
+              </div>
+              <div class="sizes">
+                <span class="sz">S</span><span class="sz on">M</span><span class="sz">L</span><span class="sz">XL</span>
+              </div>
+            </div>
+
+            <div class="tee-wrap">
+              <svg class="tee" viewBox="0 0 200 200" aria-hidden="true">
+                <path d="M64 24 L80 16 Q100 30 120 16 L136 24 L178 50 L162 82 L142 72 L142 186 L58 186 L58 72 L38 82 L22 50 Z"
+                      fill="#16161A" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/>
+                <path d="M80 16 Q100 34 120 16" fill="none" stroke="#000" stroke-width="2.4" opacity=".5"/>
+              </svg>
+              <div class="print-area">
+                <span class="area-tag">PRINT AREA · 12×14 in</span>
+                <span class="handle tl"></span><span class="handle tr"></span>
+                <span class="handle bl"></span><span class="handle br"></span>
+                <!-- artwork -->
+                <svg class="artwork" viewBox="0 0 100 100" aria-hidden="true">
+                  <g fill="none" stroke="#FF1F9C" stroke-width="3.4" stroke-linecap="round">
+                    <circle cx="50" cy="50" r="30"/>
+                    <circle cx="50" cy="50" r="19"/>
+                  </g>
+                  <path d="M50 14 L57 38 L50 50 L43 38 Z" fill="#FF1F9C"/>
+                  <path d="M50 86 L43 62 L50 50 L57 62 Z" fill="#fff"/>
+                  <circle cx="50" cy="50" r="6" fill="#FF1F9C"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- price -->
+            <div class="price-card" aria-hidden="true">
+              <div class="row"><span>Heavyweight Tee</span><b>Black / M</b></div>
+              <div class="row"><span>Base + DTG print</span><b>$16.00</b></div>
+              <div class="row"><span>Creator markup</span><b>$12.00</b></div>
+              <div class="total"><span>Retail price</span><b>$28.00</b></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- upload bar -->
+        <div class="designer-foot">
+          <div class="upload">
+            <span class="ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#FF1F9C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+            </span>
+            <span><b>starburst-logo.png</b> · 4500×4500 · 300 DPI ✓ fits print area</span>
+          </div>
+          <button class="add" type="button">Add to cart</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <div class="trust">
+    <div class="wrap trust-inner">
+      <span class="lbl">Powering merch for</span>
+      <div class="names">
+        <span>Studio&nbsp;Nova</span>
+        <span>Pixel&nbsp;Pack</span>
+        <span>Lo-Fi&nbsp;Threads</span>
+        <span>Brushfire&nbsp;Co.</span>
+        <span>The&nbsp;Daily&nbsp;Press</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="features section-pad" id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Everything in the box</span>
+        <h2>From blank product to printed parcel, in one workflow.</h2>
+        <p>InkRoute ships the full print-on-demand stack — a live designer, variant-aware catalog, snapshotting checkout, partner routing, and owner analytics — so you launch a store instead of stitching tools together.</p>
+      </div>
+      <div class="feat-grid">
+        <article class="feat">
+          <div class="ic" aria-hidden="true">🎨</div>
+          <h3>Live mockup designer</h3>
+          <p>Upload artwork and place it on any blank product with a real-time preview that updates as you scale, move, and recolor.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">👕</div>
+          <h3>Variant-aware catalog</h3>
+          <p>Blank products carry size and color variants plus defined print areas, so designs always land where they actually print.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">💾</div>
+          <h3>Saved designs</h3>
+          <p>Keep custom designs in your library and reuse the same artwork across products and repeat orders without redoing the work.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">🛒</div>
+          <h3>Snapshotting checkout</h3>
+          <p>A mock-payment cart locks in each item's artwork, placement, and variant so what's ordered is exactly what gets printed.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">🔀</div>
+          <h3>Automatic partner routing</h3>
+          <p>Every paid order item auto-routes to a print partner that supports its product type and shipping region — no manual hand-off.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">📦</div>
+          <h3>Fulfillment tracking</h3>
+          <p>Follow each item from received to in-production to shipped, with tracking numbers surfaced on the customer's order page.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">🗂️</div>
+          <h3>Print-partner queue</h3>
+          <p>Partners accept assigned jobs and push in-production and shipped status updates from a dedicated fulfillment queue.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">🏷️</div>
+          <h3>Markup pricing</h3>
+          <p>Retail price is built from each product's base cost, print options, and the creator's markup — transparent on every item.</p>
+        </article>
+        <article class="feat">
+          <div class="ic" aria-hidden="true">📊</div>
+          <h3>Owner reports</h3>
+          <p>Track sales, average fulfillment time, and partner performance so you know what's selling and who's shipping fastest.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how section-pad" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow on-ink">The screens behind the flow</span>
+        <h2>One order, four screens, fully automatic.</h2>
+        <p>Each step maps to a real screen in InkRoute — from the designer a shopper opens to the revenue report an admin reviews.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <span class="num">STEP 01</span>
+          <h3>Design it</h3>
+          <p>The shopper opens a blank product, uploads art, places it inside the print area, and watches the live mockup update.</p>
+          <span class="screen-tag">Blank product · Designer</span>
+        </article>
+        <article class="step">
+          <span class="num">STEP 02</span>
+          <h3>Check out</h3>
+          <p>The cart snapshots artwork, placement, and variant; checkout captures the shipping address and a mock payment.</p>
+          <span class="screen-tag">Cart · Checkout</span>
+        </article>
+        <article class="step">
+          <span class="num">STEP 03</span>
+          <h3>Auto-route</h3>
+          <p>On payment, each item routes to a print partner that matches its product type and region, landing in their queue.</p>
+          <span class="screen-tag">Print partner · Queue</span>
+        </article>
+        <article class="step">
+          <span class="num">STEP 04</span>
+          <h3>Track &amp; report</h3>
+          <p>Customers follow fulfillment and tracking on their orders; owners and admins review sales and partner reports.</p>
+          <span class="screen-tag">Account · Admin reports</span>
+        </article>
+      </div>
+
+      <!-- fulfilment flow strip -->
+      <div class="flow-strip">
+        <div class="flow-cell">
+          <div class="k">Fulfillment status</div>
+          <div class="track">
+            <span class="node done">Received</span><span class="arr">→</span>
+            <span class="node done">In production</span><span class="arr">→</span>
+            <span class="node">Shipped</span>
+          </div>
+        </div>
+        <div class="flow-cell">
+          <div class="k">Routed to partner</div>
+          <div class="track"><span class="node done">CoastPrint · West US</span></div>
+          <div class="trk-num">DTG · Apparel <small>matched by region</small></div>
+        </div>
+        <div class="flow-cell">
+          <div class="k">Tracking number</div>
+          <div class="trk-num">1Z·INK·4471 <small>visible to customer</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUDIENCE -->
+  <section class="audience section-pad" id="audience">
+    <div class="wrap">
+      <div class="sec-head center">
+        <span class="eyebrow">Who it's for</span>
+        <h2>Four roles, each with the screens they need.</h2>
+        <p>InkRoute scopes every view to its role — shoppers design, owners run the store, partners fulfill, and admins keep the platform healthy.</p>
+      </div>
+      <div class="role-grid">
+        <article class="role lead">
+          <div class="badge" aria-hidden="true">🧑‍🎨</div>
+          <div>
+            <h3>Shopper <span class="tag">Designs &amp; buys</span></h3>
+            <p>Creates custom products on the live mockup designer, saves favorite designs, and places orders.</p>
+            <ul>
+              <li>Design on a real-time mockup canvas</li>
+              <li>Reuse saved designs across products</li>
+              <li>Track orders and tracking numbers</li>
+            </ul>
+          </div>
+        </article>
+        <article class="role">
+          <div class="badge" aria-hidden="true">🏪</div>
+          <div>
+            <h3>Store Owner <span class="tag">Runs the store</span></h3>
+            <p>Manages the blank catalog, designs, and pricing, and keeps an eye on every order moving through fulfillment.</p>
+            <ul>
+              <li>Manage blank products and print areas</li>
+              <li>Set base cost, print options, and markup</li>
+              <li>Review sales and fulfillment reports</li>
+            </ul>
+          </div>
+        </article>
+        <article class="role">
+          <div class="badge" aria-hidden="true">🖨️</div>
+          <div>
+            <h3>Print Partner <span class="tag">Fulfills &amp; ships</span></h3>
+            <p>Receives routed orders in a dedicated queue, accepts jobs, and pushes status from in-production to shipped.</p>
+            <ul>
+              <li>Work an assigned fulfillment queue</li>
+              <li>Accept, produce, and mark shipped</li>
+              <li>Attach tracking numbers to items</li>
+            </ul>
+          </div>
+        </article>
+        <article class="role">
+          <div class="badge" aria-hidden="true">🛡️</div>
+          <div>
+            <h3>Admin <span class="tag">Oversees platform</span></h3>
+            <p>Manages stores and print partners, watches order routing, and reviews platform-wide revenue reports.</p>
+            <ul>
+              <li>Manage stores and print partners</li>
+              <li>Audit order routing decisions</li>
+              <li>Review platform revenue reports</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band" id="pricing">
+    <div class="wrap">
+      <div class="cta-inner">
+        <span class="eyebrow" style="color:#fff">Start free · pay on fulfillment</span>
+        <h2>Launch your merch store this afternoon.</h2>
+        <p>Spin up a store, drop in your artwork, and start selling. You only pay base cost and printing when an order is placed — keep every dollar of your markup.</p>
+        <div class="cta-actions">
+          <a href="#auth" class="btn btn-onmag-2">Create your store</a>
+          <a href="#designer" class="btn btn-onmag">Try the designer</a>
+        </div>
+        <p class="cta-note">No card to start · Mock checkout for testing · Bring your own print partners or use ours</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer id="auth">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FF1F9C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7l4-3 2 1.5L12 4l2 1.5L16 4l4 3-2.5 2.5V20H6.5V9.5z"/>
+            </svg>
+          </span>
+          InkRoute
+        </a>
+        <p>The print-on-demand merch store platform. Design on a live mockup, sell without inventory, and let paid orders route themselves to print.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Product</h4>
+        <a href="#designer">Live designer</a>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="foot-col">
+        <h4>Roles</h4>
+        <a href="#audience">Shoppers</a>
+        <a href="#audience">Store owners</a>
+        <a href="#audience">Print partners</a>
+        <a href="#audience">Admins</a>
+      </div>
+      <div class="foot-col">
+        <h4>Account</h4>
+        <a href="#auth">Sign in</a>
+        <a href="#auth">Register</a>
+        <a href="#designer">Start designing</a>
+        <a href="#pricing">Create a store</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 InkRoute Print-on-Demand Merch Store Platform. All rights reserved.</p>
+      <div class="socials" aria-label="Social links">
+        <a href="#top" aria-label="InkRoute on X">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#A9A6A0" stroke-width="1.8" stroke-linecap="round"><path d="M4 4l16 16M20 4L4 20"/></svg>
+        </a>
+        <a href="#top" aria-label="InkRoute on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#A9A6A0" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#A9A6A0" stroke="none"/></svg>
+        </a>
+        <a href="#top" aria-label="InkRoute on GitHub">
+          <svg viewBox="0 0 24 24" fill="#A9A6A0"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var t=document.getElementById('navToggle');
+    var l=document.getElementById('navLinks');
+    if(t&&l){
+      t.addEventListener('click',function(){
+        var open=l.classList.toggle('open');
+        t.setAttribute('aria-expanded',open?'true':'false');
+      });
+      l.addEventListener('click',function(e){
+        if(e.target.tagName==='A'){l.classList.remove('open');t.setAttribute('aria-expanded','false');}
+      });
+    }
+  })();
+</script>
+</body>
+</html>

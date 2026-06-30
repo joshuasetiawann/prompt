@@ -60,6 +60,7 @@
 8. Owner: blank product, design, and pricing management
 9. Print Partner: assigned orders and fulfillment queue
 10. Admin: orders, routing, and revenue reports
+11. Public creator storefront page listing a single creator's published designs/products (the home page links to 'creator stores' but no such page exists).
 
 ## Required features
 
@@ -72,6 +73,8 @@
 - Print partner queue with accept, in-production, and shipped status updates
 - Per-product base cost, print options, and creator markup pricing
 - Owner reports on sales, fulfillment time, and partner performance
+- Order status notifications: when an order item advances to in-production or shipped, send a mock email/SMS (logged locally) to the customer surfacing the new status and tracking number.
+- One-click reorder from a past order that re-snapshots the saved design, placement, and variant into a fresh cart.
 
 ## Database models
 
@@ -82,13 +85,13 @@
 - Standalone model (no outbound foreign keys)
 
 ### BlankProduct
-**Fields:** `id`, `name`, `productType`, `basePrice`, `variants`, `printAreas`, `status`, `createdAt`, `updatedAt`
+**Fields:** `id`, `name`, `productType`, `basePrice`, `variants`, `printAreas`, `status`, `category`, `printOptions`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - Standalone model (no outbound foreign keys)
 
 ### Design
-**Fields:** `id`, `ownerId`, `blankProductId`, `name`, `artworkUrl`, `placement`, `retailPrice`, `createdAt`, `updatedAt`
+**Fields:** `id`, `ownerId`, `blankProductId`, `name`, `artworkUrl`, `placement`, `retailPrice`, `markup`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - ownerId -> references the related record
@@ -101,7 +104,7 @@
 - customerId -> references the related record
 
 ### OrderItem
-**Fields:** `id`, `orderId`, `designId`, `variant`, `qty`, `lineTotal`, `printPartnerId`, `fulfillmentStatus`, `trackingNumber`, `createdAt`, `updatedAt`
+**Fields:** `id`, `orderId`, `designId`, `variant`, `qty`, `lineTotal`, `printPartnerId`, `fulfillmentStatus`, `trackingNumber`, `acceptedAt`, `shippedAt`, `carrier`, `trackingUrl`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - orderId -> references the related record
@@ -120,6 +123,13 @@
 **Relationships:**
 - orderId -> references the related record
 
+### Notification
+**Fields:** `id`, `userId`, `orderItemId`, `channel`, `type`, `subject`, `body`, `status`, `sentAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+- orderItemId -> references the related record
+
 ## Backend logic
 
 - Render a live product mockup by compositing uploaded artwork onto a blank product's print areas
@@ -129,6 +139,8 @@
 - Route each paid order item to a print partner that supports its product type and shipping region
 - Advance fulfillment status from received to in-production to shipped and attach tracking numbers
 - Aggregate sales, fulfillment time, and partner performance for owner reports
+- On each fulfillment status change, generate and persist a mock customer notification recording the new status and tracking number.
+- When no print partner supports an order item's product type and region, mark the item unassigned and queue it for manual routing instead of failing the order.
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -182,6 +194,8 @@
 - [ ] Uploading artwork updates the live mockup preview in real time and is saved with the order
 - [ ] A paid order auto-routes each item to a print partner that supports its product type and region
 - [ ] Fulfillment status and tracking-number updates appear on the customer's order tracking page
+- [ ] When no print partner matches an item's product type and region, the item is marked unassigned and appears in the admin routing view for manual assignment while the order still completes.
+- [ ] Advancing an order item to shipped records a mock customer notification containing the tracking number that is viewable on the customer's order tracking page.
 
 ## Ready-to-use prompt
 
@@ -200,7 +214,7 @@ Target users: shoppers who design custom merch on a live mockup designer and a s
 Business goal: Let shoppers upload artwork and place it on blank products with a live mockup designer to buy custom merch, while the owner manages the catalog and paid orders auto-route to print partners for fulfillment and tracking.
 
 BRAND & DESIGN
-Brand style: creative, bold, maker-friendly. Colors: ink black, electric magenta, paper white. A live mockup designer canvas with a product picker rail and a real-time merch preview. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: creative, bold, maker-friendly. Colors: ink black (#0E0E10), electric magenta (#FF1F9C) with deep magenta (#C8056F) for accents/links, paper white (#FBF8F2). Signature layout is a dark live mockup-designer canvas with a left product-picker rail and a real-time merch preview, pairing Space Grotesk display headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -220,6 +234,7 @@ PAGES / SCREENS
 8. Owner: blank product, design, and pricing management
 9. Print Partner: assigned orders and fulfillment queue
 10. Admin: orders, routing, and revenue reports
+11. Public creator storefront page listing a single creator's published designs/products (the home page links to 'creator stores' but no such page exists).
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -240,15 +255,18 @@ CORE FEATURES
 - Print partner queue with accept, in-production, and shipped status updates
 - Per-product base cost, print options, and creator markup pricing
 - Owner reports on sales, fulfillment time, and partner performance
+- Order status notifications: when an order item advances to in-production or shipped, send a mock email/SMS (logged locally) to the customer surfacing the new status and tracking number.
+- One-click reorder from a past order that re-snapshots the saved design, placement, and variant into a fresh cart.
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, createdAt, updatedAt
-- BlankProduct: id, name, productType, basePrice, variants, printAreas, status, createdAt, updatedAt
-- Design: id, ownerId, blankProductId, name, artworkUrl, placement, retailPrice, createdAt, updatedAt
+- BlankProduct: id, name, productType, basePrice, variants, printAreas, status, category, printOptions, createdAt, updatedAt
+- Design: id, ownerId, blankProductId, name, artworkUrl, placement, retailPrice, markup, createdAt, updatedAt
 - Order: id, customerId, total, status, shippingAddress, createdAt, updatedAt
-- OrderItem: id, orderId, designId, variant, qty, lineTotal, printPartnerId, fulfillmentStatus, trackingNumber, createdAt, updatedAt
+- OrderItem: id, orderId, designId, variant, qty, lineTotal, printPartnerId, fulfillmentStatus, trackingNumber, acceptedAt, shippedAt, carrier, trackingUrl, createdAt, updatedAt
 - PrintPartner: id, name, capabilities, regions, status, createdAt, updatedAt
 - Payment: id, orderId, amount, status, method, createdAt, updatedAt
+- Notification: id, userId, orderItemId, channel, type, subject, body, status, sentAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -259,6 +277,8 @@ BACKEND / API LOGIC
 - Route each paid order item to a print partner that supports its product type and shipping region
 - Advance fulfillment status from received to in-production to shipped and attach tracking numbers
 - Aggregate sales, fulfillment time, and partner performance for owner reports
+- On each fulfillment status change, generate and persist a mock customer notification recording the new status and tracking number.
+- When no print partner supports an order item's product type and region, mark the item unassigned and queue it for manual routing instead of failing the order.
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES

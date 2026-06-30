@@ -12,7 +12,7 @@ target_users: meeting organizers who upload recordings and review AI notes and t
 role_line: You are a senior full-stack engineer who builds meeting-intelligence and productivity products
 business_goal: Let teams upload or record meetings, get AI transcripts, summaries, and auto-extracted action items assigned to owners with due dates, and track those items to completion across workspaces
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
-brand_design: 'Brand style: smart, calm, productive. Colors: midnight blue, teal, warm white. A meeting timeline with a synced transcript pane, a summary card, and an action-item checklist sidebar.'
+brand_design: 'Brand style: smart, calm, productive. Colors: midnight blue (#0C1A3C), teal (#0FB6A2), warm white (#FBF7EF), with bright teal accent (#2DD4BF) and amber/rose due-date chips (#E9A23B / #E5687E). Signature layout: a synced meeting timeline with a transcript pane beside a summary card and an action-item checklist sidebar; pair Space Grotesk headings with Inter body text.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -72,6 +72,7 @@ required_pages:
 - Auth (sign in / register)
 - 'Admin: workspaces, members, and integration settings'
 - 'Settings: notification and processing preferences'
+- 'Notifications inbox: a per-member list of assigned, upcoming, and overdue action-item alerts with an unread badge and mark-as-read controls (surfaces the mock notification log to users).'
 required_features:
 - Audio upload and in-browser recording with a processing queue and status
 - AI transcription producing a speaker-labeled, timestamped transcript
@@ -82,6 +83,7 @@ required_features:
 - Full-text search across transcripts, summaries, and action items
 - Per-workspace data isolation with member roles
 - Overdue and upcoming action-item notifications (mock email log)
+- Export and share a meeting's full notes (speaker-labeled transcript, summary with decisions and highlights, and all action items with owners and due dates) as a downloadable PDF or Markdown file.
 database_models:
 - name: User
   fields:
@@ -159,11 +161,30 @@ database_models:
   - dueDate
   - status
   - sourceTimestamp
+  - completedAt
+  - priority
   - createdAt
   - updatedAt
   relationships:
   - meetingId -> references the related record
   - assigneeId -> references the related record
+- name: Notification
+  fields:
+  - id
+  - workspaceId
+  - userId
+  - actionItemId
+  - type
+  - channel
+  - message
+  - readAt
+  - sentAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - workspaceId -> references the related record
+  - userId -> references the related record
+  - actionItemId -> references the related record
 backend_logic:
 - Accept uploaded or recorded audio, enqueue it, and track processing status through to completion
 - Transcribe meeting audio into a speaker-labeled, timestamped transcript via the AI provider
@@ -172,6 +193,8 @@ backend_logic:
 - Assign action items to workspace members and advance their status to completion
 - Provide full-text search across transcripts, summaries, and action items within a workspace
 - Send mock notifications for newly assigned, upcoming, and overdue action items
+- Render a downloadable export (PDF or Markdown) of a meeting's transcript, summary, and action items on demand.
+- Generate notification records when an action item is assigned, becomes due soon, or goes overdue, and mark them read; de-duplicate so each member is alerted once per state change.
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -224,6 +247,8 @@ acceptance_checklist:
 - A processed meeting produces a timestamped transcript, a summary, and at least one extracted action item
 - Extracted action items can be assigned to a member and tracked to done, updating that member's task list
 - With no AI key set, transcription, summary, and extraction use a deterministic mock so the full flow runs locally
+- Exporting a processed meeting produces a file containing the speaker-labeled transcript, the summary's decisions and highlights, and every action item with its owner and due date.
+- When an action item is assigned or becomes overdue, a notification appears in the assignee's notifications inbox with an unread indicator that clears once marked read.
 ready_to_use_prompt: |-
   You are a senior full-stack engineer who builds meeting-intelligence and productivity products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
 
@@ -237,7 +262,7 @@ ready_to_use_prompt: |-
   Business goal: Let teams upload or record meetings, get AI transcripts, summaries, and auto-extracted action items assigned to owners with due dates, and track those items to completion across workspaces.
 
   BRAND & DESIGN
-  Brand style: smart, calm, productive. Colors: midnight blue, teal, warm white. A meeting timeline with a synced transcript pane, a summary card, and an action-item checklist sidebar. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+  Brand style: smart, calm, productive. Colors: midnight blue (#0C1A3C), teal (#0FB6A2), warm white (#FBF7EF), with bright teal accent (#2DD4BF) and amber/rose due-date chips (#E9A23B / #E5687E). Signature layout: a synced meeting timeline with a transcript pane beside a summary card and an action-item checklist sidebar; pair Space Grotesk headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
   TECH STACK
   - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -257,6 +282,7 @@ ready_to_use_prompt: |-
   8. Auth (sign in / register)
   9. Admin: workspaces, members, and integration settings
   10. Settings: notification and processing preferences
+  11. Notifications inbox: a per-member list of assigned, upcoming, and overdue action-item alerts with an unread badge and mark-as-read controls (surfaces the mock notification log to users).
 
   NAVIGATION
   - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -276,6 +302,7 @@ ready_to_use_prompt: |-
   - Full-text search across transcripts, summaries, and action items
   - Per-workspace data isolation with member roles
   - Overdue and upcoming action-item notifications (mock email log)
+  - Export and share a meeting's full notes (speaker-labeled transcript, summary with decisions and highlights, and all action items with owners and due dates) as a downloadable PDF or Markdown file.
 
   DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
   - User: id, email, passwordHash, name, role, createdAt, updatedAt
@@ -284,7 +311,8 @@ ready_to_use_prompt: |-
   - Meeting: id, workspaceId, organizerId, title, audioUrl, durationSeconds, status, meetingDate, createdAt, updatedAt
   - Transcript: id, meetingId, language, segments, createdAt, updatedAt
   - Summary: id, meetingId, overview, decisions, highlights, createdAt, updatedAt
-  - ActionItem: id, meetingId, assigneeId, title, dueDate, status, sourceTimestamp, createdAt, updatedAt
+  - ActionItem: id, meetingId, assigneeId, title, dueDate, status, sourceTimestamp, completedAt, priority, createdAt, updatedAt
+  - Notification: id, workspaceId, userId, actionItemId, type, channel, message, readAt, sentAt, createdAt, updatedAt
   - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
   BACKEND / API LOGIC
@@ -295,6 +323,8 @@ ready_to_use_prompt: |-
   - Assign action items to workspace members and advance their status to completion
   - Provide full-text search across transcripts, summaries, and action items within a workspace
   - Send mock notifications for newly assigned, upcoming, and overdue action items
+  - Render a downloadable export (PDF or Markdown) of a meeting's transcript, summary, and action items on demand.
+  - Generate notification records when an action item is assigned, becomes due soon, or goes overdue, and mark them read; de-duplicate so each member is alerted once per state change.
   - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
   ENVIRONMENT & MODES

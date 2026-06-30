@@ -60,6 +60,8 @@
 8. Auth (sign in / register)
 9. Operator: court and schedule management
 10. Operator: bookings, occupancy, and revenue dashboard
+11. Membership plans page: compare casual vs member tiers (rates and earlier booking window), then join or upgrade a plan
+12. Booking confirmation and receipt page: post-checkout summary with slot, rate breakdown, receipt number, and downloadable receipt
 
 ## Required features
 
@@ -72,6 +74,8 @@
 - Mock payment and booking confirmation with a downloadable receipt
 - Operator schedule blocking for maintenance and tournaments
 - Occupancy and revenue dashboard by court, sport, and time band
+- Waitlist for fully-booked slots: players join a waitlist on a booked court/time, and are notified when the slot frees up
+- Add a confirmed booking to a personal calendar via downloadable .ics file or Google Calendar link, plus export of the player's full upcoming schedule
 
 ## Database models
 
@@ -82,7 +86,7 @@
 - Standalone model (no outbound foreign keys)
 
 ### Venue
-**Fields:** `id`, `ownerId`, `name`, `address`, `sports`, `openingHours`, `createdAt`, `updatedAt`
+**Fields:** `id`, `ownerId`, `name`, `address`, `sports`, `openingHours`, `amenities`, `description`, `cancellationCutoffHours`, `memberBookingWindowDays`, `casualBookingWindowDays`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - ownerId -> references the related record
@@ -106,7 +110,7 @@
 - courtId -> references the related record
 
 ### Booking
-**Fields:** `id`, `courtId`, `userId`, `startTime`, `endTime`, `rateType`, `recurrenceRule`, `status`, `totalPrice`, `createdAt`, `updatedAt`
+**Fields:** `id`, `courtId`, `userId`, `startTime`, `endTime`, `rateType`, `recurrenceRule`, `status`, `totalPrice`, `receiptNumber`, `cancelledAt`, `cancellationReason`, `createdAt`, `updatedAt`
 
 **Relationships:**
 - courtId -> references the related record
@@ -118,6 +122,13 @@
 **Relationships:**
 - bookingId -> references the related record
 
+### WaitlistEntry
+**Fields:** `id`, `courtId`, `userId`, `requestedStartTime`, `requestedEndTime`, `status`, `notifiedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- courtId -> references the related record
+- userId -> references the related record
+
 ## Backend logic
 
 - Compute court availability for a date by overlaying bookings, blocks, and opening hours
@@ -127,6 +138,8 @@
 - Apply cancellation and reschedule rules against the venue cutoff window
 - Aggregate occupancy and revenue by court, sport, and time band for the operator dashboard
 - Record mock payments and update booking status on successful checkout
+- Generate a downloadable .ics calendar file (and Google Calendar add-link) for a single confirmed booking and for a player's full set of upcoming bookings
+- On cancellation of a fully-booked slot, notify the first eligible waitlist entry and hold the freed slot for them for a short claim window before reopening it to everyone
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
@@ -180,6 +193,8 @@
 - [ ] Overlapping court bookings for the same time slot are rejected
 - [ ] Member and casual rates resolve correctly for peak and off-peak slots
 - [ ] A recurring weekly booking creates individual slots and skips maintenance blocks
+- [ ] A member can reserve a slot during the member-only advance booking window while a casual player is blocked from that slot until the casual window opens
+- [ ] Joining the waitlist on a fully-booked slot succeeds, and cancelling that booking notifies the first waitlisted player for the freed slot
 
 ## Ready-to-use prompt
 
@@ -198,7 +213,7 @@ Target users: players booking courts across a multi-sport venue and operators ma
 Business goal: Let players find open courts, book single or recurring time slots at the right member or casual rate, and let operators manage venue schedules, pricing, and revenue.
 
 BRAND & DESIGN
-Brand style: energetic, sporty, clean. Colors: court green, slate, white. A grid-style time-slot board with per-court columns and tap-to-book peak and off-peak cells. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+Brand style: energetic, sporty, clean. Colors: court green #138043, bright green #1fb866, slate ink #0f1d2e, peak orange #e8852b, white #ffffff. Signature per-court time-slot grid with green off-peak and orange peak tap-to-book cells; pair bold Sora headings with Inter body text. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
 
 TECH STACK
 - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
@@ -218,6 +233,8 @@ PAGES / SCREENS
 8. Auth (sign in / register)
 9. Operator: court and schedule management
 10. Operator: bookings, occupancy, and revenue dashboard
+11. Membership plans page: compare casual vs member tiers (rates and earlier booking window), then join or upgrade a plan
+12. Booking confirmation and receipt page: post-checkout summary with slot, rate breakdown, receipt number, and downloadable receipt
 
 NAVIGATION
 - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
@@ -238,15 +255,18 @@ CORE FEATURES
 - Mock payment and booking confirmation with a downloadable receipt
 - Operator schedule blocking for maintenance and tournaments
 - Occupancy and revenue dashboard by court, sport, and time band
+- Waitlist for fully-booked slots: players join a waitlist on a booked court/time, and are notified when the slot frees up
+- Add a confirmed booking to a personal calendar via downloadable .ics file or Google Calendar link, plus export of the player's full upcoming schedule
 
 DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
 - User: id, email, passwordHash, name, role, phone, createdAt, updatedAt
-- Venue: id, ownerId, name, address, sports, openingHours, createdAt, updatedAt
+- Venue: id, ownerId, name, address, sports, openingHours, amenities, description, cancellationCutoffHours, memberBookingWindowDays, casualBookingWindowDays, createdAt, updatedAt
 - Court: id, venueId, name, sport, surface, status, createdAt, updatedAt
 - Membership: id, userId, plan, status, startsAt, expiresAt, createdAt, updatedAt
 - PricingRule: id, courtId, dayType, startTime, endTime, memberRate, casualRate, createdAt, updatedAt
-- Booking: id, courtId, userId, startTime, endTime, rateType, recurrenceRule, status, totalPrice, createdAt, updatedAt
+- Booking: id, courtId, userId, startTime, endTime, rateType, recurrenceRule, status, totalPrice, receiptNumber, cancelledAt, cancellationReason, createdAt, updatedAt
 - Payment: id, bookingId, amount, status, method, createdAt, updatedAt
+- WaitlistEntry: id, courtId, userId, requestedStartTime, requestedEndTime, status, notifiedAt, createdAt, updatedAt
 - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
 
 BACKEND / API LOGIC
@@ -257,6 +277,8 @@ BACKEND / API LOGIC
 - Apply cancellation and reschedule rules against the venue cutoff window
 - Aggregate occupancy and revenue by court, sport, and time band for the operator dashboard
 - Record mock payments and update booking status on successful checkout
+- Generate a downloadable .ics calendar file (and Google Calendar add-link) for a single confirmed booking and for a player's full set of upcoming bookings
+- On cancellation of a fully-booked slot, notify the first eligible waitlist entry and hold the freed slot for them for a short claim window before reopening it to everyone
 - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
 
 ENVIRONMENT & MODES
