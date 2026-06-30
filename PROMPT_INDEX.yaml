@@ -164,6 +164,141 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '101'
+  title: Sports Court & Facility Booking System
+  filename: prompts/101-sports-court-booking-system.yaml
+  category: Booking & Reservations
+  domain: Sports Facility Booking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building reservation systems for sports complexes, racket clubs, and indoor turf centers
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '102'
+  title: Golf Tee Time Reservation System
+  filename: prompts/102-golf-tee-time-reservation-system.yaml
+  category: Booking & Reservations
+  domain: Golf & Tee Time Booking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building tee-time and pro-shop booking tools for golf courses and country clubs
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '103'
+  title: Intercity Bus Ticket & Seat Reservation System
+  filename: prompts/103-bus-ticket-reservation-system.yaml
+  category: Booking & Reservations
+  domain: Bus Travel & Seat Booking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building ticketing systems for intercity bus operators and travel agents
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '104'
+  title: Cinema Seat Booking & Showtime System
+  filename: prompts/104-cinema-seat-booking-system.yaml
+  category: Booking & Reservations
+  domain: Cinema & Showtime Booking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building booking systems for independent cinemas and small theater chains
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '105'
+  title: Fitness Class & Studio Schedule Booking App
+  filename: prompts/105-fitness-class-booking-app.yaml
+  category: Booking & Reservations
+  domain: Fitness Class Scheduling
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building class-booking platforms for boutique fitness studios and dance schools
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '106'
+  title: Print-on-Demand Merch Store Platform
+  filename: prompts/106-print-on-demand-merch-store-platform.yaml
+  category: E-commerce & Retail
+  domain: Custom Merchandise & Print-on-Demand
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers and agencies building branded merch stores for creators, artists, and small brands that want to sell custom apparel and goods without holding stock.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '107'
+  title: Returns & Exchange (RMA) Management Portal
+  filename: prompts/107-returns-exchange-rma-management-portal.yaml
+  category: E-commerce & Retail
+  domain: Post-Purchase Returns & RMA
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building post-purchase return tooling for online retailers that need an auditable RMA workflow separate from a generic support help desk.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '108'
+  title: Online Auction & Bidding Platform
+  filename: prompts/108-online-auction-bidding-platform.yaml
+  category: E-commerce & Retail
+  domain: Auctions & Bidding
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building auction sites for collectibles, estate sales, charity events, or niche goods where price is set by competitive bidding rather than a fixed listing.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '109'
+  title: Flash Sale & Daily Deals Platform
+  filename: prompts/109-flash-sale-daily-deals-platform.yaml
+  category: E-commerce & Retail
+  domain: Deals & Flash Commerce
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building deal-of-the-day or flash-sale sites for retailers that drive urgency through limited-time, limited-quantity offers.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '11'
   title: General Online Store
   filename: prompts/11-general-online-store.yaml
@@ -172,6 +307,156 @@ prompts:
   app_type: Production-grade full-stack web app scaffold
   difficulty: Intermediate
   best_for: Freelancers building stores for small brands and owners wanting a self-hosted shop.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '110'
+  title: Product Pre-Order & Crowdfunding Commerce Platform
+  filename: prompts/110-product-preorder-crowdfunding-platform.yaml
+  category: E-commerce & Retail
+  domain: Pre-Order & Crowdfunding Commerce
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building pre-launch and crowdfunding storefronts for hardware makers, indie brands, and creators validating demand before producing stock.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '111'
+  title: Customer Loyalty & Rewards Program Platform
+  filename: prompts/111-customer-loyalty-rewards-program-platform.yaml
+  category: E-commerce & Retail
+  domain: Loyalty & Rewards
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers adding a configurable points-and-tiers loyalty layer for retail brands that want to drive repeat purchases and referrals.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '112'
+  title: Digital Gift Card & Store Credit System
+  filename: prompts/112-digital-gift-card-store-credit-system.yaml
+  category: E-commerce & Retail
+  domain: Gift Cards & Store Credit
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building gift-card and store-credit functionality for retailers, restaurants, or service businesses that want branded, trackable stored value.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '113'
+  title: Click & Collect (BOPIS) Order Management System
+  filename: prompts/113-click-and-collect-order-management-system.yaml
+  category: E-commerce & Retail
+  domain: Omnichannel Fulfillment & Click-and-Collect
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building buy-online-pickup-in-store fulfillment for multi-location retailers bridging their web store and physical shops.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '114'
+  title: Consignment & Resale Marketplace Platform
+  filename: prompts/114-consignment-resale-marketplace-platform.yaml
+  category: E-commerce & Retail
+  domain: Consignment & Resale
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building consignment shops and curated resale stores for thrift, vintage, and pre-owned goods where the store controls intake and pricing.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '115'
+  title: Online Grocery Store with Delivery Slots
+  filename: prompts/115-online-grocery-delivery-slot-store.yaml
+  category: E-commerce & Retail
+  domain: Grocery & Fresh Commerce
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building online grocery and fresh-food ordering for supermarkets and local stores that need slot booking and substitution handling, not a generic catalog.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '116'
+  title: Procurement & Purchase Order Management System
+  filename: prompts/116-procurement-purchase-order-system.yaml
+  category: Business Operations
+  domain: Procurement & Purchasing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building procurement and purchasing back-office tools for mid-size companies that buy from many vendors.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '117'
+  title: Fixed Asset & Equipment Tracking System
+  filename: prompts/117-fixed-asset-tracking-system.yaml
+  category: Business Operations
+  domain: Asset & Equipment Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building IT-asset and equipment-tracking tools for offices, schools, and operations teams (distinct from sellable-stock inventory).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '118'
+  title: Employee Expense Reimbursement System
+  filename: prompts/118-employee-expense-reimbursement-app.yaml
+  category: Business Operations
+  domain: Expense Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building expense-report and reimbursement tools for SMBs and distributed teams (distinct from outbound invoicing or generic approvals).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '119'
+  title: Vendor Management & Compliance Portal
+  filename: prompts/119-vendor-management-compliance-portal.yaml
+  category: Business Operations
+  domain: Vendor & Supplier Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building vendor-lifecycle and supplier-compliance tools for procurement and operations teams (distinct from a buyer ordering portal).
   recommended_tools:
   - Claude Code
   - Cursor
@@ -194,6 +479,156 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '120'
+  title: Contract Lifecycle Management System
+  filename: prompts/120-contract-lifecycle-management-system.yaml
+  category: Business Operations
+  domain: Contract Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building contract-management (CLM) tools for legal and ops teams (distinct from one-off proposal/contract generators that just create documents).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '121'
+  title: Quality Audit & Inspection Management System
+  filename: prompts/121-quality-audit-inspection-system.yaml
+  category: Business Operations
+  domain: Quality & Compliance
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building QA, inspection, and CAPA tools for manufacturing, food service, and facilities operators.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '122'
+  title: Employee Shift Scheduling System
+  filename: prompts/122-employee-shift-scheduling-system.yaml
+  category: Business Operations
+  domain: Workforce Scheduling
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building shift-rostering tools for retail, hospitality, healthcare, and warehouse teams (distinct from clock-in/out attendance tracking).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '123'
+  title: Visitor Management & Front Desk System
+  filename: prompts/123-visitor-management-front-desk-system.yaml
+  category: Business Operations
+  domain: Workplace & Front Desk
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building front-desk and visitor check-in systems for offices and secure facilities.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '124'
+  title: Manufacturing Production & Work Order System
+  filename: prompts/124-manufacturing-production-work-order-system.yaml
+  category: Business Operations
+  domain: Manufacturing Operations
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building lightweight MES/production-control tools for small manufacturers and job shops (distinct from sellable-stock inventory).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '125'
+  title: Sales Commission Tracking System
+  filename: prompts/125-sales-commission-tracking-system.yaml
+  category: Business Operations
+  domain: Sales Compensation
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building sales-compensation tools that sit alongside, but are distinct from, a CRM or pipeline app.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '126'
+  title: OKR & Goal Tracking Platform
+  filename: prompts/126-okr-goal-tracking-platform.yaml
+  category: Business Operations
+  domain: Strategy & Goal Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building OKR and goal-alignment tools for startups and scaling companies (distinct from task-level project management or HR reviews).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '127'
+  title: AI Meeting Notes & Action-Item Tracker
+  filename: prompts/127-ai-meeting-assistant-action-tracker-app.yaml
+  category: AI Apps
+  domain: Meeting Intelligence & Productivity
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building meeting-intelligence tools for distributed teams and agencies that run many calls; product teams wanting a self-hosted alternative to commercial note-takers.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '128'
+  title: AI Mock Interview & Career Coaching Platform
+  filename: prompts/128-ai-interview-prep-coaching-platform.yaml
+  category: AI Apps
+  domain: Career Coaching & Interview Prep
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building interview-prep or career-coaching products for bootcamps, universities, and outplacement services (distinct from a resume builder).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '129'
+  title: AI Internal Knowledge Base Assistant
+  filename: prompts/129-ai-internal-knowledge-base-assistant-platform.yaml
+  category: AI Apps
+  domain: Internal Knowledge & RAG Search
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building internal employee-facing RAG search for ops, HR, and support teams (distinct from an external customer support bot or single-document analyzer).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '13'
   title: Digital Product Store
   filename: prompts/13-digital-product-store.yaml
@@ -202,6 +637,156 @@ prompts:
   app_type: Production-grade full-stack web app scaffold
   difficulty: Intermediate
   best_for: Creators and freelancers building stores for templates, presets, graphics, and downloadable files.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '130'
+  title: AI Image Generation & Brand Asset Studio
+  filename: prompts/130-ai-brand-image-studio-platform.yaml
+  category: AI Apps
+  domain: Generative Image & Creative Studio
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building generative-image creative tools for marketing teams, agencies, and e-commerce brands; studios wanting a managed image workspace.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '131'
+  title: Contact Center Performance Analytics Dashboard
+  filename: prompts/131-contact-center-performance-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Contact Center Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building workforce and performance analytics for support and call-center operations, and contact-center managers who need live SLA and agent metrics in one place.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '132'
+  title: Manufacturing OEE Analytics Dashboard
+  filename: prompts/132-manufacturing-oee-analytics-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Manufacturing & OEE Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building plant-analytics tools for small and mid-size manufacturers, and operations leads who want OEE and downtime tracking without a heavy MES rollout.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '133'
+  title: Executive KPI & OKR Scorecard Dashboard
+  filename: prompts/133-executive-kpi-okr-scorecard-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Executive KPI & OKR Reporting
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building goal-tracking and reporting dashboards for leadership teams, and operators who want a structured KPI/OKR scorecard instead of spreadsheets.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '134'
+  title: Email Marketing Campaign Platform
+  filename: prompts/134-email-marketing-campaign-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Email Marketing & Automation
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers and agencies building a Mailchimp-style email tool for small businesses and newsletter creators who want to own their list and sending.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '135'
+  title: Landing Page Builder & A/B Testing Platform
+  filename: prompts/135-landing-page-builder-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Conversion Landing Pages
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building a funnel/landing-page builder SaaS for growth teams and agencies that need fast, testable campaign pages without a designer.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '136'
+  title: SaaS Revenue & Churn Analytics Dashboard
+  filename: prompts/136-saas-revenue-churn-analytics-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: SaaS Metrics & Subscription Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building revenue-analytics tooling for subscription businesses, and SaaS founders or RevOps teams who want self-hosted metrics instead of a third-party billing analytics suite.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '137'
+  title: Website Uptime & Incident Status Dashboard
+  filename: prompts/137-website-uptime-status-monitoring-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Uptime Monitoring & Status
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building monitoring and status-page tools for SaaS and agencies, and ops teams that want a self-hosted uptime dashboard with a customer-facing status page.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '138'
+  title: Marketing Attribution & Campaign ROI Dashboard
+  filename: prompts/138-marketing-attribution-roi-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Marketing Attribution & ROI
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building marketing-analytics dashboards for agencies and in-house teams, and marketing managers who need cross-channel ROI without enterprise BI tooling.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '139'
+  title: Customer Feedback & NPS Analytics Platform
+  filename: prompts/139-customer-feedback-nps-analytics-platform.yaml
+  category: Analytics & Dashboards
+  domain: Customer Experience Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building experience-analytics tools for product and CX teams, and businesses that want to run and analyze their own surveys instead of paying per-seat for an NPS SaaS.
   recommended_tools:
   - Claude Code
   - Cursor
@@ -224,6 +809,156 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '140'
+  title: Energy Consumption Monitoring Dashboard
+  filename: prompts/140-energy-consumption-monitoring-dashboard.yaml
+  category: Analytics & Dashboards
+  domain: Energy & Utility Monitoring
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building energy-management dashboards for facilities and property teams, and building or estate managers tracking utility usage and cost across multiple sites.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '141'
+  title: Referral & Affiliate Program Platform
+  filename: prompts/141-referral-affiliate-program-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Affiliate & Referral Marketing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building affiliate/referral program software for e-commerce brands and SaaS companies that want partner-driven growth and self-serve partner dashboards.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '142'
+  title: Quiz Funnel Lead Generation Platform
+  filename: prompts/142-quiz-funnel-lead-gen-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Interactive Quiz Funnels
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building interactive lead-gen quiz tools (LeadQuizzes-style) for marketers, coaches, and agencies that convert cold traffic with personalized funnels.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '143'
+  title: SMS Marketing Campaign Platform
+  filename: prompts/143-sms-marketing-campaign-platform.yaml
+  category: Marketing & Lead Gen
+  domain: SMS & Text Marketing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building SMS marketing software for retailers and local businesses that want compliant, high-engagement text campaigns separate from email.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '144'
+  title: Customer Testimonial & Review Collection Platform
+  filename: prompts/144-testimonial-collection-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Social Proof & Reviews
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building a social-proof/testimonial tool (Senja/Testimonial.to alternative) for SaaS companies, agencies, and creators that rely on customer proof.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '145'
+  title: Campaign UTM Tracking & Short-Link Dashboard
+  filename: prompts/145-campaign-link-tracking-dashboard.yaml
+  category: Marketing & Lead Gen
+  domain: Link Tracking & Attribution
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a campaign link-tracking and attribution tool for marketing teams that need to standardize UTMs and measure channel performance.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '146'
+  title: Curriculum & Lesson Plan Builder
+  filename: prompts/146-curriculum-lesson-plan-builder-platform.yaml
+  category: Education & Learning
+  domain: Curriculum Planning
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building planning tools for schools and teaching departments that want consistent, standards-mapped lesson plans instead of scattered documents.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '147'
+  title: Student Internship & Placement Management System
+  filename: prompts/147-student-internship-placement-system.yaml
+  category: Education & Learning
+  domain: Internships & Work Placement
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building placement-office software for universities, vocational programs, and career centers coordinating students, employers, and academic supervisors.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '148'
+  title: School Timetable & Scheduling System
+  filename: prompts/148-school-timetable-scheduling-system.yaml
+  category: Education & Learning
+  domain: Academic Scheduling
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building timetabling engines for schools and colleges that must allocate teachers and rooms across periods without double-booking.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '149'
+  title: Coding Assignment Autograder Platform
+  filename: prompts/149-coding-assignment-autograder-platform.yaml
+  category: Education & Learning
+  domain: Programming Education
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building submission-and-grading infrastructure for coding bootcamps, CS courses, and programming instructors (distinct from a content course platform).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '15'
   title: Online Course Platform
   filename: prompts/15-online-course-platform.yaml
@@ -232,6 +967,156 @@ prompts:
   app_type: Production-grade full-stack web app scaffold
   difficulty: Advanced
   best_for: Developers building course platforms for educators, coaches, and training businesses.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '150'
+  title: Special Education IEP Management System
+  filename: prompts/150-special-education-iep-management-system.yaml
+  category: Education & Learning
+  domain: Special Education & IEP
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building compliance-grade IEP tooling for special-education teams that must document goals, services, and legally required reviews for students with disabilities.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '151'
+  title: Driving School Management System
+  filename: prompts/151-driving-school-management-system.yaml
+  category: Education & Learning
+  domain: Vocational & Driving Education
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building operations software for driving schools and instructors who juggle vehicles, lesson slots, and per-student progress toward a license.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '152'
+  title: Music School Lesson Management Portal
+  filename: prompts/152-music-school-lesson-management-portal.yaml
+  category: Education & Learning
+  domain: Music & Arts Education
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building studio-management tools for music and performing-arts schools that run ongoing lessons rather than one-off bookings.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '153'
+  title: Continuing Education Credit Tracking Platform
+  filename: prompts/153-continuing-education-credit-tracking-platform.yaml
+  category: Education & Learning
+  domain: Professional Continuing Education
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building compliance-driven credit trackers for professional associations, accredited course providers, and licensed workforces (nurses, accountants, engineers).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '154'
+  title: Giveaway & Contest Marketing Platform
+  filename: prompts/154-giveaway-contest-marketing-platform.yaml
+  category: Marketing & Lead Gen
+  domain: Viral Giveaways & Contests
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building giveaway/contest marketing software (Gleam/KingSumo alternative) for brands and creators running list-growth and engagement campaigns.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '155'
+  title: Online Exam & Proctoring Platform
+  filename: prompts/155-online-exam-proctoring-platform.yaml
+  category: Education & Learning
+  domain: Assessment & Examinations
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building secure assessment tools for training providers, certification bodies, and schools that need cheating-resistant online testing rather than just content delivery.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '156'
+  title: Mental Health Therapy Practice Management System
+  filename: prompts/156-mental-health-therapy-practice-management-system.yaml
+  category: Healthcare & Wellness
+  domain: Behavioral Health Practice Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building practice-management and clinical-documentation tools for solo therapists, counselors, and small behavioral-health group practices.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '157'
+  title: Physical Therapy Exercise Prescription Portal
+  filename: prompts/157-physical-therapy-exercise-prescription-portal.yaml
+  category: Healthcare & Wellness
+  domain: Rehabilitation & Physical Therapy
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building home-exercise and outcome-tracking tools for physical therapy, sports rehab, and occupational therapy clinics.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '158'
+  title: Remote Patient Monitoring Dashboard
+  filename: prompts/158-remote-patient-monitoring-dashboard.yaml
+  category: Healthcare & Wellness
+  domain: Remote Patient Monitoring
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building remote-monitoring tools for chronic-care programs at clinics, accountable-care organizations, and digital-health startups.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '159'
+  title: Home Health Visit Scheduling & EVV System
+  filename: prompts/159-home-health-visit-scheduling-evv-system.yaml
+  category: Healthcare & Wellness
+  domain: Home Health & Caregiving
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building scheduling and visit-compliance tools for home-health and personal-care agencies.
   recommended_tools:
   - Claude Code
   - Cursor
@@ -254,6 +1139,156 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '160'
+  title: Blood Donation & Donor Management System
+  filename: prompts/160-blood-donation-donor-management-system.yaml
+  category: Healthcare & Wellness
+  domain: Blood Bank & Donor Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building donor-management and inventory tools for blood banks, donation drives, and hospital blood centers.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '161'
+  title: Patient Intake & Digital Forms Platform
+  filename: prompts/161-patient-intake-digital-forms-platform.yaml
+  category: Healthcare & Wellness
+  domain: Patient Intake & Forms
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building digital intake and paperless-registration tools for clinics and outpatient practices.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '162'
+  title: Assisted Living Resident Care System
+  filename: prompts/162-assisted-living-resident-care-system.yaml
+  category: Healthcare & Wellness
+  domain: Senior Living & Resident Care
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building resident-care and eMAR tools for assisted-living and senior-care facilities.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '163'
+  title: Prenatal & Maternity Care Tracking Portal
+  filename: prompts/163-prenatal-maternity-care-tracking-portal.yaml
+  category: Healthcare & Wellness
+  domain: Maternity & Prenatal Care
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building prenatal-tracking and patient-engagement portals for OB-GYN clinics and maternity programs.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '164'
+  title: Grant Management & Review System
+  filename: prompts/164-grant-management-review-system.yaml
+  category: Community, Civic & Nonprofit
+  domain: Grantmaking & Funder Operations
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building grants administration tools for foundations, community funds, and government grant programs.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '165'
+  title: Food Bank Inventory & Distribution System
+  filename: prompts/165-food-bank-distribution-system.yaml
+  category: Community, Civic & Nonprofit
+  domain: Food Security & Pantry Operations
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building operations tools for food banks, community pantries, and hunger-relief nonprofits.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '166'
+  title: Affordable Housing Waitlist & Application Portal
+  filename: prompts/166-affordable-housing-waitlist-portal.yaml
+  category: Community, Civic & Nonprofit
+  domain: Affordable Housing & Allocation
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building allocation tools for housing authorities, community land trusts, and affordable-housing nonprofits.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '167'
+  title: Blood Donation Drive Coordination Platform
+  filename: prompts/167-blood-donation-drive-platform.yaml
+  category: Community, Civic & Nonprofit
+  domain: Blood Donation & Drives
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building coordination tools for blood banks, donation centers, and hospital drive programs.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '168'
+  title: Payroll & Payslip Management System
+  filename: prompts/168-payroll-management-system.yaml
+  category: Finance, Legal & HR
+  domain: Payroll & Compensation
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building dedicated payroll engines for SMBs and payroll bureaus, distinct from broad HR suites or simple time-tracking.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '169'
+  title: Loan Origination & Servicing System
+  filename: prompts/169-loan-servicing-management-system.yaml
+  category: Finance, Legal & HR
+  domain: Lending & Loan Servicing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building loan books for microlenders, credit unions, and BNPL/lending startups.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '17'
   title: Webinar Registration Page
   filename: prompts/17-webinar-registration-page.yaml
@@ -262,6 +1297,156 @@ prompts:
   app_type: Production-grade full-stack web app scaffold
   difficulty: Beginner
   best_for: Creators, coaches, and marketers who need a fast, polished registration page for a live session.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '170'
+  title: Participatory Budgeting Platform
+  filename: prompts/170-participatory-budgeting-platform.yaml
+  category: Community, Civic & Nonprofit
+  domain: Participatory Democracy & Civic Budgeting
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building civic-engagement tools for municipalities, city councils, and community boards.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '171'
+  title: Public Records Request Portal
+  filename: prompts/171-public-records-request-portal.yaml
+  category: Community, Civic & Nonprofit
+  domain: Government Transparency & Records Requests
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building transparency and records-request tools for government agencies and public bodies.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '172'
+  title: Public Meeting & Agenda Management Portal
+  filename: prompts/172-public-meeting-agenda-portal.yaml
+  category: Community, Civic & Nonprofit
+  domain: Civic Governance & Public Meetings
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building governance tools for city councils, school boards, and public commissions.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '173'
+  title: Petition & Advocacy Campaign Platform
+  filename: prompts/173-petition-advocacy-campaign-platform.yaml
+  category: Community, Civic & Nonprofit
+  domain: Advocacy & Petitions
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building campaigning tools for advocacy groups, unions, and grassroots organizers.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '174'
+  title: Animal Shelter Adoption Management System
+  filename: prompts/174-animal-shelter-adoption-system.yaml
+  category: Community, Civic & Nonprofit
+  domain: Animal Welfare & Adoption
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building management tools for animal shelters, rescues, and humane societies.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '175'
+  title: Cap Table & Equity Management Platform
+  filename: prompts/175-cap-table-equity-management-platform.yaml
+  category: Finance, Legal & HR
+  domain: Equity & Cap Table Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building equity-management tooling for startups, founders, and fund administrators.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '176'
+  title: Freight Load Board & Brokerage Platform
+  filename: prompts/176-freight-load-board-brokerage-platform.yaml
+  category: Logistics & Field Service
+  domain: Freight Brokerage & Load Matching
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building freight brokerage, 3PL, or load-board platforms that connect shippers with carriers (distinct from parcel delivery tracking).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '177'
+  title: Warehouse Picking & Fulfillment System
+  filename: prompts/177-warehouse-picking-fulfillment-system.yaml
+  category: Logistics & Field Service
+  domain: Warehouse Operations & Fulfillment
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building warehouse operations or 3PL fulfillment workflow tools (distinct from stock-level inventory control).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '178'
+  title: Moving & Relocation Company Management System
+  filename: prompts/178-moving-relocation-company-management-system.yaml
+  category: Logistics & Field Service
+  domain: Moving & Relocation Services
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building end-to-end operations tools for moving, relocation, and removalist companies.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '179'
+  title: Pest Control Route & Treatment Scheduling Platform
+  filename: prompts/179-pest-control-route-scheduling-platform.yaml
+  category: Logistics & Field Service
+  domain: Recurring Field Service & Pest Control
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building recurring, route-based field service tools for pest control and lawn-care companies (distinct from one-off repair dispatch).
   recommended_tools:
   - Claude Code
   - Cursor
@@ -284,6 +1469,156 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '180'
+  title: Cold Chain Shipment Monitoring Platform
+  filename: prompts/180-cold-chain-shipment-monitoring-platform.yaml
+  category: Logistics & Field Service
+  domain: Cold Chain & Temperature Compliance
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building cold-chain monitoring and temperature-compliance tools for logistics providers and pharma distributors.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '181'
+  title: 360 Performance Review & OKR Platform
+  filename: prompts/181-performance-review-okr-platform.yaml
+  category: Finance, Legal & HR
+  domain: Performance Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building dedicated performance and goal-setting tools, separate from a general HR records system.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '182'
+  title: Employee Benefits & Open Enrollment Portal
+  filename: prompts/182-employee-benefits-enrollment-portal.yaml
+  category: Finance, Legal & HR
+  domain: Benefits Administration
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building benefits-administration portals for employers and brokers.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '183'
+  title: Compliance & Policy Management System
+  filename: prompts/183-compliance-policy-management-system.yaml
+  category: Finance, Legal & HR
+  domain: Governance, Risk & Compliance
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building GRC tooling for compliance officers in regulated mid-market firms, distinct from a generic approval workflow.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '184'
+  title: Accounts Receivable & Collections Dashboard
+  filename: prompts/184-accounts-receivable-collections-dashboard.yaml
+  category: Finance, Legal & HR
+  domain: Accounts Receivable & Collections
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building AR collections and dunning tools for finance teams, distinct from an invoice generator that only creates documents.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '185'
+  title: KYC & AML Customer Onboarding Platform
+  filename: prompts/185-kyc-aml-onboarding-platform.yaml
+  category: Finance, Legal & HR
+  domain: Identity Verification & Compliance
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building onboarding and due-diligence flows for fintechs, banks, and regulated marketplaces.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '186'
+  title: Roadside Assistance & Towing Dispatch System
+  filename: prompts/186-roadside-assistance-towing-dispatch-system.yaml
+  category: Logistics & Field Service
+  domain: Roadside Assistance & Towing
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building real-time dispatch platforms for towing, roadside assistance, and emergency vehicle services.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '187'
+  title: Field Inspection Management Platform
+  filename: prompts/187-field-inspection-management-platform.yaml
+  category: Logistics & Field Service
+  domain: Field Inspections & Compliance
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building inspection scheduling and reporting tools for property, safety, utility, or compliance inspectors (distinct from tenant maintenance requests).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '188'
+  title: Bulk Fuel & Propane Delivery Route Management System
+  filename: prompts/188-bulk-fuel-delivery-route-management-system.yaml
+  category: Logistics & Field Service
+  domain: Bulk Fuel Delivery & Route Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building delivery operations tools for fuel, propane, heating-oil, and bulk-liquid distributors (distinct from municipal waste routing).
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '189'
+  title: Personal Knowledge Base App
+  filename: prompts/189-personal-knowledge-base-app.yaml
+  category: Productivity & Personal
+  domain: Personal Knowledge Management
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building note-taking or 'second brain' tools for knowledge workers, students, and researchers; distinct from team document management or SOP portals.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '19'
   title: CRM Dashboard App
   filename: prompts/19-crm-dashboard-app.yaml
@@ -299,6 +1634,156 @@ prompts:
   - Bolt
   - Lovable
   - v0
+- prompt_id: '190'
+  title: Subscription & Bill Tracker App
+  filename: prompts/190-subscription-bill-tracker-app.yaml
+  category: Productivity & Personal
+  domain: Subscription & Bill Tracking
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: Developers building a focused personal-finance utility for recurring spend, distinct from a general budgeting app or a business subscription-box back end.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '191'
+  title: Event Venue Hire Booking Platform
+  filename: prompts/191-venue-hire-booking-platform.yaml
+  category: Booking & Reservations
+  domain: Venue Hire & Events
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Venue managers listing event spaces and event organizers searching and booking the right room for a date.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '192'
+  title: Workplace Desk & Meeting Room Hoteling Platform
+  filename: prompts/192-workplace-hoteling-platform.yaml
+  category: Booking & Reservations
+  domain: Workplace Hoteling
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Hybrid teams sharing limited desks and meeting rooms, and workplace admins managing floor capacity.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '193'
+  title: Campsite & RV Park Reservation System
+  filename: prompts/193-campsite-rv-park-reservation-system.yaml
+  category: Booking & Reservations
+  domain: Camping & RV Reservations
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Campers and RV travelers booking nightly stays, and park operators managing sites and seasonal pricing.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '194'
+  title: Self-Storage Unit Rental & Reservation System
+  filename: prompts/194-self-storage-rental-system.yaml
+  category: Booking & Reservations
+  domain: Self-Storage Rentals
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Intermediate
+  best_for: People needing storage who want to reserve a unit online, and facility managers tracking occupancy and rent.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '195'
+  title: Public Service Appointment Booking System
+  filename: prompts/195-public-service-appointment-system.yaml
+  category: Booking & Reservations
+  domain: Public Sector Appointments
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Residents booking visits to government offices and agency staff managing counters, queues, and capacity.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '196'
+  title: AI Adaptive Tutor & Learning Companion
+  filename: prompts/196-ai-adaptive-tutoring-platform.yaml
+  category: AI Apps
+  domain: AI Tutoring & Adaptive Learning
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building adaptive learning and AI tutoring platforms for schools, edtech startups, and self-learners.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '197'
+  title: AI Contract Review & Risk Analysis System
+  filename: prompts/197-ai-contract-review-system.yaml
+  category: AI Apps
+  domain: Contract Review & Risk Analysis
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building AI contract-review tools for legal teams, procurement, and startup founders.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '198'
+  title: AI Conversational Data Analytics Platform
+  filename: prompts/198-ai-conversational-data-analytics-platform.yaml
+  category: AI Apps
+  domain: Conversational Data Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building chat-with-your-data analytics tools for analysts and business teams.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '199'
+  title: AI Customer Feedback & Review Analysis Platform
+  filename: prompts/199-ai-customer-feedback-analysis-platform.yaml
+  category: AI Apps
+  domain: Voice-of-Customer & Feedback Analytics
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building voice-of-customer and review-analytics tools for product, support, and CX teams.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
 - prompt_id: '20'
   title: Project Management App
   filename: prompts/20-project-management-app.yaml
@@ -307,6 +1792,21 @@ prompts:
   app_type: Production-grade full-stack web app scaffold
   difficulty: Advanced
   best_for: Developers building team task tools for agencies, startups, and small teams.
+  recommended_tools:
+  - Claude Code
+  - Cursor
+  - Replit
+  - Bolt
+  - Lovable
+  - v0
+- prompt_id: '200'
+  title: AI Content Repurposing & Media Studio
+  filename: prompts/200-ai-media-repurposing-studio-platform.yaml
+  category: AI Apps
+  domain: Content Repurposing & Media AI
+  app_type: Production-grade full-stack web app scaffold
+  difficulty: Advanced
+  best_for: Developers building content-repurposing studios for creators, marketers, and podcasters.
   recommended_tools:
   - Claude Code
   - Cursor
