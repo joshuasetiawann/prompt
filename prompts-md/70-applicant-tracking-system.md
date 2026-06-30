@@ -7,7 +7,8 @@
 | **Prompt ID** | 70 |
 | **Title** | Applicant Tracking System |
 | **Slug** | applicant-tracking-system |
-| **Category** | Recruitment & ATS |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Recruitment & ATS |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Recruiter; Hiring Manager; Admin |

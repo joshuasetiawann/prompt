@@ -7,7 +7,8 @@
 | **Prompt ID** | 67 |
 | **Title** | Rental Equipment Booking System |
 | **Slug** | rental-equipment-booking-system |
-| **Category** | Rental & Reservations |
+| **Category** | Booking & Reservations |
+| **Domain** | Rental & Reservations |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Admin/Staff |

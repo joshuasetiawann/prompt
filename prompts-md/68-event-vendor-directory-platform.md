@@ -7,7 +7,8 @@
 | **Prompt ID** | 68 |
 | **Title** | Event Vendor Directory Platform |
 | **Slug** | event-vendor-directory-platform |
-| **Category** | Directory & Lead Generation |
+| **Category** | Marketing & Lead Gen |
+| **Domain** | Directory & Lead Generation |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Customer; Vendor; Admin |

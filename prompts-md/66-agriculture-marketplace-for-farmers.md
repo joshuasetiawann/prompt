@@ -7,7 +7,8 @@
 | **Prompt ID** | 66 |
 | **Title** | Agriculture Marketplace for Farmers |
 | **Slug** | agriculture-marketplace-for-farmers |
-| **Category** | Agriculture Marketplace |
+| **Category** | E-commerce & Retail |
+| **Domain** | Agriculture Marketplace |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Buyer; Farmer; Admin |

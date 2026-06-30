@@ -1,14 +1,18 @@
 prompt_id: '67'
 title: Rental Equipment Booking System
 slug: rental-equipment-booking-system
-category: Rental & Reservations
+category: Booking & Reservations
+domain: Rental & Reservations
 app_name: GearRent Rental Equipment Booking System
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building rental systems for tool, party, and construction equipment businesses.
 target_user: Customer; Admin/Staff
+target_users: customers renting equipment and staff managing the rental inventory and condition
+role_line: You are a senior full-stack engineer who builds rental and reservation systems for tools and equipment
 business_goal: Let customers reserve equipment for date ranges with deposits and let staff track availability and condition
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: sturdy, practical, industrial. Colors: yellow, charcoal, white. Clean, modern, equipment cards with specs, availability, and condition.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -154,6 +158,12 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Customer — reserve and manage rentals
+- Admin/Staff — manage inventory, condition, and bookings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~15 equipment items across categories, sample rentals and condition logs, maintenance, 1 admin and 2 customers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

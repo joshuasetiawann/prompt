@@ -1,14 +1,18 @@
 prompt_id: '66'
 title: Agriculture Marketplace for Farmers
 slug: agriculture-marketplace-for-farmers
-category: Agriculture Marketplace
+category: E-commerce & Retail
+domain: Agriculture Marketplace
 app_name: FarmGate Agriculture Marketplace for Farmers
 app_type: Production-grade full-stack web app scaffold
 difficulty: Advanced
 best_for: Developers building direct-to-buyer marketplaces for farms and local food systems.
 target_user: Buyer; Farmer; Admin
+target_users: farmers selling produce and buyers (shops, restaurants, individuals) sourcing directly
+role_line: You are a senior full-stack engineer who builds domain-specific produce marketplaces connecting farmers and buyers
 business_goal: Let farmers list produce with harvest dates and units and let buyers order directly with mock payment
 production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: fresh, honest, farm-to-table. Colors: leaf green, sun yellow, cream. Clean, modern, produce cards with farm profiles, units, and harvest dates.'
 recommended_tools:
 - Claude Code
 - Cursor
@@ -164,6 +168,13 @@ backend_logic:
 - Server-side validation on every mutation with Zod
 - Role-based authorization and protected routes for private pages
 - Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Buyer — browse and order produce
+- Farmer — list produce and fulfill orders
+- Admin — oversee farms and listings
+env_payments: true
+env_ai: false
+seed_data: '- Seed realistic demo data: ~5 farms, ~30 produce listings with harvest dates, sample orders and reviews, 1 admin, 2 farmers, 2 buyers. Provide a seed script and list the demo login credentials in the README.'
 security_requirements:
 - No hardcoded secrets — all secrets via environment variables
 - Server-side validation on every mutation

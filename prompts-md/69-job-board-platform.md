@@ -7,7 +7,8 @@
 | **Prompt ID** | 69 |
 | **Title** | Job Board Platform |
 | **Slug** | job-board-platform |
-| **Category** | Recruitment & Job Boards |
+| **Category** | Finance, Legal & HR |
+| **Domain** | Recruitment & Job Boards |
 | **App type** | Production-grade full-stack web app scaffold |
 | **Difficulty** | Advanced |
 | **Target user** | Job Seeker; Employer; Admin |
