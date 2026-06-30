@@ -1,0 +1,46 @@
+name: Catalog check
+
+# Fails the build if the generated catalog is out of sync with prompts/*.yaml.
+# Run `python3 scripts/build_prompts.py` locally and commit the result to fix.
+
+on:
+  push:
+    paths:
+      - "prompts/**"
+      - "prompts-md/**"
+      - "scripts/**"
+      - "PROMPT_INDEX.yaml"
+      - "ALL_PROMPTS.yaml"
+      - "assets/js/data.js"
+      - ".github/workflows/catalog-check.yml"
+  pull_request:
+    paths:
+      - "prompts/**"
+      - "prompts-md/**"
+      - "scripts/**"
+      - "PROMPT_INDEX.yaml"
+      - "ALL_PROMPTS.yaml"
+      - "assets/js/data.js"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Verify catalog is in sync
+        run: python3 scripts/build_prompts.py --check
+
+      - name: Show diff if out of sync
+        if: failure()
+        run: |
+          echo "::error::Catalog is out of date. Run 'python3 scripts/build_prompts.py' and commit the result."
+          git --no-pager diff --stat || true
