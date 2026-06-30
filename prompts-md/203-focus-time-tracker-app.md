@@ -1,0 +1,290 @@
+# FocusFlow Pomodoro Focus & Time Tracker
+
+> Help people do focused work by running customizable Pomodoro sessions, tracking time against tasks and projects, and reviewing where their focused hours went
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 203 |
+| **Title** | Pomodoro Focus & Time Tracker |
+| **Slug** | focus-time-tracker-app |
+| **Category** | Productivity & Personal |
+| **Domain** | Focus & Time Tracking |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Intermediate |
+| **Target user** | Indie developers; students, remote workers, and freelancers who want to focus |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building a focus timer and personal time-tracking app for individuals who use the Pomodoro technique for deep work; distinct from team time-billing tools, project management suites, or plain stopwatch apps.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Focus timer with the active Pomodoro session and a task picker
+2. Dashboard / today's focus overview with goal progress
+3. Tasks list with pomodoro estimates and completed counts
+4. Projects list and project detail with rolled-up time
+5. Session history timeline
+6. Reports and analytics (focus time by day, project, and task)
+7. Timer presets manager
+8. Settings (profile and notification preferences)
+9. Admin console (users and timer defaults)
+10. Auth (sign in / register)
+
+## Required features
+
+- Customizable Pomodoro timer with work, short-break, and long-break intervals
+- Task list with pomodoro estimates and an automatic count of completed sessions
+- Projects that group tasks and roll up total focused time
+- Automatic logging of each completed focus session against its task
+- Daily and weekly focus reports with charts by project and task
+- Daily focus-time goals with a focus streak
+- Distraction log to capture interruptions during a session
+- Configurable timer presets with auto-start of breaks and sessions
+- Browser notifications and sounds at each interval transition
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `dailyFocusGoalMinutes`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Project
+**Fields:** `id`, `ownerId`, `name`, `color`, `isArchived`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Task
+**Fields:** `id`, `ownerId`, `projectId`, `title`, `estimatePomodoros`, `completedPomodoros`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- projectId -> references the related record
+
+### FocusSession
+**Fields:** `id`, `ownerId`, `taskId`, `type`, `startedAt`, `endedAt`, `durationMinutes`, `completed`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+- taskId -> references the related record
+
+### TimerPreset
+**Fields:** `id`, `ownerId`, `name`, `workMinutes`, `shortBreakMinutes`, `longBreakMinutes`, `longBreakInterval`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- ownerId -> references the related record
+
+### Distraction
+**Fields:** `id`, `sessionId`, `ownerId`, `note`, `loggedAt`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- sessionId -> references the related record
+- ownerId -> references the related record
+
+## Backend logic
+
+- Start, pause, and complete a focus session and persist its duration against the selected task
+- Increment a task's completedPomodoros count when a work session finishes
+- Roll up focused minutes by task, project, and day for the reports dashboard
+- Track daily focus-time goals and compute the current focus streak from session dates
+- Apply a timer preset's work and break intervals and decide when a long break is due
+- Record distractions logged during an active session and attach them to it
+- Aggregate session history into a chronological timeline scoped to the current user
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] Completing a work session logs its duration against the selected task and increments that task's completedPomodoros count
+- [ ] After the preset's configured number of work sessions the timer offers a long break instead of a short break
+- [ ] The reports dashboard totals focused minutes per project and matches the sum of that project's logged sessions
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds focus and time-tracking apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: FocusFlow Pomodoro Focus & Time Tracker
+Type: Pomodoro Focus & Time Tracker (Focus & Time Tracking)
+Target users: individuals such as students, remote workers, and freelancers who run focus sessions with the Pomodoro technique and track time against their tasks and projects, plus an admin who manages the workspace.
+Business goal: Help people do focused work by running customizable Pomodoro sessions, tracking time against tasks and projects, and reviewing where their focused hours went.
+
+BRAND & DESIGN
+Brand style: focused, energetic, minimal. Colors: charcoal, tomato red, mint accent. A large central countdown timer with a task picker above it and a daily focus-stats strip below. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Focus timer with the active Pomodoro session and a task picker
+2. Dashboard / today's focus overview with goal progress
+3. Tasks list with pomodoro estimates and completed counts
+4. Projects list and project detail with rolled-up time
+5. Session history timeline
+6. Reports and analytics (focus time by day, project, and task)
+7. Timer presets manager
+8. Settings (profile and notification preferences)
+9. Admin console (users and timer defaults)
+10. Auth (sign in / register)
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- User — run focus sessions, manage tasks and projects, and view their own time reports
+- Admin — manage users, review workspace usage, and configure default timer settings
+
+CORE FEATURES
+- Customizable Pomodoro timer with work, short-break, and long-break intervals
+- Task list with pomodoro estimates and an automatic count of completed sessions
+- Projects that group tasks and roll up total focused time
+- Automatic logging of each completed focus session against its task
+- Daily and weekly focus reports with charts by project and task
+- Daily focus-time goals with a focus streak
+- Distraction log to capture interruptions during a session
+- Configurable timer presets with auto-start of breaks and sessions
+- Browser notifications and sounds at each interval transition
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, dailyFocusGoalMinutes, createdAt, updatedAt
+- Project: id, ownerId, name, color, isArchived, createdAt, updatedAt
+- Task: id, ownerId, projectId, title, estimatePomodoros, completedPomodoros, status, createdAt, updatedAt
+- FocusSession: id, ownerId, taskId, type, startedAt, endedAt, durationMinutes, completed, createdAt, updatedAt
+- TimerPreset: id, ownerId, name, workMinutes, shortBreakMinutes, longBreakMinutes, longBreakInterval, createdAt, updatedAt
+- Distraction: id, sessionId, ownerId, note, loggedAt, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Start, pause, and complete a focus session and persist its duration against the selected task
+- Increment a task's completedPomodoros count when a work session finishes
+- Roll up focused minutes by task, project, and day for the reports dashboard
+- Track daily focus-time goals and compute the current focus streak from session dates
+- Apply a timer preset's work and break intervals and decide when a long break is due
+- Record distractions logged during an active session and attach them to it
+- Aggregate session history into a chronological timeline scoped to the current user
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 3 projects, ~20 tasks, ~120 focus sessions across recent days, timer presets and sample distractions, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

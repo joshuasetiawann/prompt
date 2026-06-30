@@ -1,0 +1,329 @@
+prompt_id: '202'
+title: Daily Journal & Mood Tracker
+slug: journal-mood-tracker-app
+category: Productivity & Personal
+domain: Journaling & Wellbeing
+app_name: MoodLeaf Daily Journal & Mood Tracker
+app_type: Production-grade full-stack web app scaffold
+difficulty: Intermediate
+best_for: Developers building a private journaling and mood-tracking app for individuals focused on self-reflection and emotional wellbeing; distinct from clinical therapy tools, team wellness platforms, or generic note apps.
+target_user: Indie developers; people building a daily reflection and wellbeing habit
+target_users: individuals who want to write daily journal entries, log their mood and energy, and reflect on emotional patterns over time, plus an admin who manages the workspace
+role_line: You are a senior full-stack engineer who builds journaling and wellbeing apps
+business_goal: Help people build a daily reflection habit by writing journal entries, logging mood and energy, and surfacing emotional patterns and streaks over time
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: calm, reflective, gentle. Colors: soft sage, warm cream, dusty lavender. A distraction-free writing canvas paired with a mood-color calendar and weekly insight cards.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Today / new entry composer with a mood and energy check-in
+- Journal timeline of past entries
+- Entry detail and edit view
+- Mood calendar color-coded by daily mood
+- Insights and trends dashboard (mood and energy over time)
+- Reflection prompts library
+- Habits and gratitude tracker
+- Settings (profile, reminders, and privacy lock)
+- Admin console (users and prompt management)
+- Auth (sign in / register)
+required_features:
+- Rich daily journal entries with title, body, and optional photo attachments
+- Mood and energy check-ins on a defined scale with optional emotion tags
+- Color-coded mood calendar that shows each day at a glance
+- Insights dashboard charting mood and energy trends across weeks and months
+- Guided reflection prompts to overcome blank-page anxiety
+- Daily gratitude list and habit check-ins tied to each entry
+- Writing streaks and daily reminders to journal
+- Full-text search and filtering of entries by mood, emotion tag, or date
+- Optional privacy lock with a PIN to protect journal contents
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: JournalEntry
+  fields:
+  - id
+  - ownerId
+  - entryDate
+  - title
+  - body
+  - moodScore
+  - energyScore
+  - createdAt
+  - updatedAt
+  relationships:
+  - ownerId -> references the related record
+- name: EmotionTag
+  fields:
+  - id
+  - ownerId
+  - name
+  - color
+  - createdAt
+  - updatedAt
+  relationships:
+  - ownerId -> references the related record
+- name: EntryEmotion
+  fields:
+  - id
+  - entryId
+  - emotionTagId
+  - createdAt
+  - updatedAt
+  relationships:
+  - entryId -> references the related record
+  - emotionTagId -> references the related record
+- name: GratitudeItem
+  fields:
+  - id
+  - entryId
+  - ownerId
+  - text
+  - createdAt
+  - updatedAt
+  relationships:
+  - entryId -> references the related record
+  - ownerId -> references the related record
+- name: HabitCheck
+  fields:
+  - id
+  - ownerId
+  - entryId
+  - habitName
+  - completed
+  - checkDate
+  - createdAt
+  - updatedAt
+  relationships:
+  - ownerId -> references the related record
+  - entryId -> references the related record
+- name: Prompt
+  fields:
+  - id
+  - category
+  - text
+  - isActive
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+backend_logic:
+- Create or open the journal entry for a given date and attach the day's mood and energy check-in
+- Aggregate mood and energy scores into weekly and monthly trend series for the insights dashboard
+- Compute the current and longest writing streak from entry dates
+- Serve a randomized or category-filtered reflection prompt for the day
+- Run full-text search across entry titles and bodies filtered by mood, emotion tag, and date range
+- Correlate logged emotions and habit checks with mood scores to surface simple patterns
+- Verify a privacy PIN before unlocking and returning journal contents
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- User — write journal entries, log moods, and view their own insights and streaks
+- Admin — manage users, review aggregate usage, and curate the reflection-prompt library
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: ~60 journal entries across recent dates with mood and energy logs, emotion tags, gratitude items, a reflection-prompt library, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- Creating a second entry for a date that already has one opens the existing entry instead of creating a duplicate
+- The mood calendar colors each day by that day's logged mood and the insights chart reflects the same underlying data
+- The writing-streak counter increases on consecutive days with entries and resets after a missed day
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds journaling and wellbeing apps, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: MoodLeaf Daily Journal & Mood Tracker
+  Type: Daily Journal & Mood Tracker (Journaling & Wellbeing)
+  Target users: individuals who want to write daily journal entries, log their mood and energy, and reflect on emotional patterns over time, plus an admin who manages the workspace.
+  Business goal: Help people build a daily reflection habit by writing journal entries, logging mood and energy, and surfacing emotional patterns and streaks over time.
+
+  BRAND & DESIGN
+  Brand style: calm, reflective, gentle. Colors: soft sage, warm cream, dusty lavender. A distraction-free writing canvas paired with a mood-color calendar and weekly insight cards. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Today / new entry composer with a mood and energy check-in
+  2. Journal timeline of past entries
+  3. Entry detail and edit view
+  4. Mood calendar color-coded by daily mood
+  5. Insights and trends dashboard (mood and energy over time)
+  6. Reflection prompts library
+  7. Habits and gratitude tracker
+  8. Settings (profile, reminders, and privacy lock)
+  9. Admin console (users and prompt management)
+  10. Auth (sign in / register)
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - User — write journal entries, log moods, and view their own insights and streaks
+  - Admin — manage users, review aggregate usage, and curate the reflection-prompt library
+
+  CORE FEATURES
+  - Rich daily journal entries with title, body, and optional photo attachments
+  - Mood and energy check-ins on a defined scale with optional emotion tags
+  - Color-coded mood calendar that shows each day at a glance
+  - Insights dashboard charting mood and energy trends across weeks and months
+  - Guided reflection prompts to overcome blank-page anxiety
+  - Daily gratitude list and habit check-ins tied to each entry
+  - Writing streaks and daily reminders to journal
+  - Full-text search and filtering of entries by mood, emotion tag, or date
+  - Optional privacy lock with a PIN to protect journal contents
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, createdAt, updatedAt
+  - JournalEntry: id, ownerId, entryDate, title, body, moodScore, energyScore, createdAt, updatedAt
+  - EmotionTag: id, ownerId, name, color, createdAt, updatedAt
+  - EntryEmotion: id, entryId, emotionTagId, createdAt, updatedAt
+  - GratitudeItem: id, entryId, ownerId, text, createdAt, updatedAt
+  - HabitCheck: id, ownerId, entryId, habitName, completed, checkDate, createdAt, updatedAt
+  - Prompt: id, category, text, isActive, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Create or open the journal entry for a given date and attach the day's mood and energy check-in
+  - Aggregate mood and energy scores into weekly and monthly trend series for the insights dashboard
+  - Compute the current and longest writing streak from entry dates
+  - Serve a randomized or category-filtered reflection prompt for the day
+  - Run full-text search across entry titles and bodies filtered by mood, emotion tag, and date range
+  - Correlate logged emotions and habit checks with mood scores to surface simple patterns
+  - Verify a privacy PIN before unlocking and returning journal contents
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: ~60 journal entries across recent dates with mood and energy logs, emotion tags, gratitude items, a reflection-prompt library, 1 admin and 2 users. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
