@@ -1,0 +1,298 @@
+# LifeStream Blood Donation & Donor Management System
+
+> Let donors book donation slots and complete eligibility screening while staff track collections, blood-type inventory, and component stock against hospital demand
+
+| Field | Value |
+|---|---|
+| **Prompt ID** | 160 |
+| **Title** | Blood Donation & Donor Management System |
+| **Slug** | blood-donation-donor-management-system |
+| **Category** | Healthcare & Wellness |
+| **Domain** | Blood Bank & Donor Management |
+| **App type** | Production-grade full-stack web app scaffold |
+| **Difficulty** | Advanced |
+| **Target user** | Blood Bank Staff; Donor |
+| **Recommended tools** | Claude Code, Cursor, Replit, Bolt, Lovable, v0 |
+
+**Best for:** Developers building donor-management and inventory tools for blood banks, donation drives, and hospital blood centers.
+
+**Production standard:** Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+
+## Tech stack
+
+- **Frontend:** Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js Server Actions or API Routes, Prisma ORM, PostgreSQL for production, SQLite for local development
+- **Auth:** Auth.js or secure email/password authentication
+- **Validation:** Zod, React Hook Form
+- **Deployment:** Vercel-ready, Docker-ready
+
+**Local mode** (enabled)
+- App must run locally without paid API keys
+- Use mock notification log when email/SMS is needed
+
+**Production mode** (enabled)
+- .env.example included
+- Production database setup (PostgreSQL)
+- Deployment guide included
+- Real provider integration readiness
+- Production security checklist
+
+## Files to generate
+
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+
+## Required pages
+
+1. Staff dashboard with today's appointments, low-stock blood types, and expiring units
+2. Donation slot calendar (book and manage appointments and drives)
+3. Donor eligibility screening (questionnaire and deferral check)
+4. Collection recording (link donor, blood type, volume, and component)
+5. Inventory board (units on hand by blood type and component, with expiry)
+6. Hospital demand and requests (fulfill requests against stock)
+7. Donor portal (book slots, screening status, and donation history)
+8. Auth (sign in / register)
+9. Admin: drives, staff, eligibility rules, and reports
+10. Reports (collections, deferrals, and inventory turnover)
+
+## Required features
+
+- Donation slot booking against drives and center capacity with double-booking prevention
+- Eligibility screening questionnaire that auto-applies deferral rules (recent travel, low hemoglobin, donation interval)
+- Donation-interval enforcement that blocks donors who donated too recently
+- Collection recording that creates inventory units tagged by blood type and component
+- Blood-type and component inventory board with units on hand and expiry tracking
+- Hospital demand requests fulfilled against available compatible stock
+- Low-stock and expiring-unit alerts per blood type and component
+- Donor portal with booking, screening status, and donation history
+- Inventory and deferral reporting for drives and the center
+
+## Database models
+
+### User
+**Fields:** `id`, `email`, `passwordHash`, `name`, `role`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Donor
+**Fields:** `id`, `userId`, `bloodType`, `dateOfBirth`, `lastDonationDate`, `eligibilityStatus`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- userId -> references the related record
+
+### DonationSlot
+**Fields:** `id`, `location`, `driveName`, `startsAt`, `capacity`, `bookedCount`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+### Appointment
+**Fields:** `id`, `donorId`, `slotId`, `screeningStatus`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- donorId -> references the related record
+- slotId -> references the related record
+
+### ScreeningRecord
+**Fields:** `id`, `appointmentId`, `donorId`, `hemoglobin`, `answersJson`, `deferralReason`, `eligible`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- appointmentId -> references the related record
+- donorId -> references the related record
+
+### BloodUnit
+**Fields:** `id`, `donorId`, `appointmentId`, `bloodType`, `component`, `volumeMl`, `collectedAt`, `expiresAt`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- donorId -> references the related record
+- appointmentId -> references the related record
+
+### HospitalRequest
+**Fields:** `id`, `hospitalName`, `bloodType`, `component`, `unitsRequested`, `unitsFulfilled`, `status`, `createdAt`, `updatedAt`
+
+**Relationships:**
+- Standalone model (no outbound foreign keys)
+
+## Backend logic
+
+- Book donation slots against drive capacity and prevent overbooking
+- Run eligibility screening, auto-applying deferral rules for hemoglobin, travel, and donation interval
+- Enforce the minimum donation interval, blocking donors who donated too recently
+- Record collections and create inventory blood units tagged by type, component, and expiry
+- Maintain blood-type and component inventory with units on hand and expiry status
+- Fulfill hospital requests against available compatible stock and decrement inventory
+- Raise low-stock and expiring-unit alerts per blood type and component
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+
+## Security requirements
+
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+
+## Testing requirements
+
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+
+## Deployment requirements
+
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+
+## Acceptance checklist
+
+- [ ] App installs successfully
+- [ ] App runs locally with seed data
+- [ ] App builds successfully
+- [ ] Database migrates successfully
+- [ ] Seed data loads successfully
+- [ ] All navigation works
+- [ ] Forms validate on client and server
+- [ ] Protected routes are protected
+- [ ] Role permissions work
+- [ ] Admin pages work where included
+- [ ] Mock mode works without paid keys
+- [ ] Real provider setup is documented
+- [ ] No unresolved template tokens or dummy filler remains
+- [ ] No dead buttons or dead links remain
+- [ ] Responsive layout works
+- [ ] README setup steps are complete
+- [ ] Production deployment steps are documented
+- [ ] A donor who fails screening or is within the minimum donation interval is deferred and cannot complete a booking
+- [ ] Recording a collection creates inventory units tagged by blood type, component, and expiry date that appear on the inventory board
+- [ ] Fulfilling a hospital request decrements compatible units and triggers a low-stock alert when a blood type falls below its threshold
+
+## Ready-to-use prompt
+
+Copy everything in the block below and paste it into your AI coding tool.
+
+```text
+You are a senior full-stack engineer who builds blood bank and donor management products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+STANDARD
+Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+APP
+Name: LifeStream Blood Donation & Donor Management System
+Type: Blood Donation & Donor Management System (Blood Bank & Donor Management)
+Target users: blood bank staff who track collections and blood-type inventory and donors who book donation slots and complete eligibility screening.
+Business goal: Let donors book donation slots and complete eligibility screening while staff track collections, blood-type inventory, and component stock against hospital demand.
+
+BRAND & DESIGN
+Brand style: civic, urgent, trustworthy. Colors: donor red, clean white, steel grey. A donation-slot calendar beside a blood-type inventory board showing units on hand by component and expiry. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+TECH STACK
+- Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+- Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+- Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+- Zod and React Hook Form for both client-side and server-side validation
+- Vercel-ready and Docker-ready
+
+PAGES / SCREENS
+1. Staff dashboard with today's appointments, low-stock blood types, and expiring units
+2. Donation slot calendar (book and manage appointments and drives)
+3. Donor eligibility screening (questionnaire and deferral check)
+4. Collection recording (link donor, blood type, volume, and component)
+5. Inventory board (units on hand by blood type and component, with expiry)
+6. Hospital demand and requests (fulfill requests against stock)
+7. Donor portal (book slots, screening status, and donation history)
+8. Auth (sign in / register)
+9. Admin: drives, staff, eligibility rules, and reports
+10. Reports (collections, deferrals, and inventory turnover)
+
+NAVIGATION
+- Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+USER ROLES
+- Blood Bank Staff — manage slots, run screening, record collections, and track inventory against demand
+- Donor — book donation slots, complete eligibility screening, and view donation history
+- Admin — manage drives, staff, eligibility rules, and reports
+
+CORE FEATURES
+- Donation slot booking against drives and center capacity with double-booking prevention
+- Eligibility screening questionnaire that auto-applies deferral rules (recent travel, low hemoglobin, donation interval)
+- Donation-interval enforcement that blocks donors who donated too recently
+- Collection recording that creates inventory units tagged by blood type and component
+- Blood-type and component inventory board with units on hand and expiry tracking
+- Hospital demand requests fulfilled against available compatible stock
+- Low-stock and expiring-unit alerts per blood type and component
+- Donor portal with booking, screening status, and donation history
+- Inventory and deferral reporting for drives and the center
+
+DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+- User: id, email, passwordHash, name, role, createdAt, updatedAt
+- Donor: id, userId, bloodType, dateOfBirth, lastDonationDate, eligibilityStatus, createdAt, updatedAt
+- DonationSlot: id, location, driveName, startsAt, capacity, bookedCount, status, createdAt, updatedAt
+- Appointment: id, donorId, slotId, screeningStatus, status, createdAt, updatedAt
+- ScreeningRecord: id, appointmentId, donorId, hemoglobin, answersJson, deferralReason, eligible, createdAt, updatedAt
+- BloodUnit: id, donorId, appointmentId, bloodType, component, volumeMl, collectedAt, expiresAt, status, createdAt, updatedAt
+- HospitalRequest: id, hospitalName, bloodType, component, unitsRequested, unitsFulfilled, status, createdAt, updatedAt
+- Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+BACKEND / API LOGIC
+- Book donation slots against drive capacity and prevent overbooking
+- Run eligibility screening, auto-applying deferral rules for hemoglobin, travel, and donation interval
+- Enforce the minimum donation interval, blocking donors who donated too recently
+- Record collections and create inventory blood units tagged by type, component, and expiry
+- Maintain blood-type and component inventory with units on hand and expiry status
+- Fulfill hospital requests against available compatible stock and decrement inventory
+- Raise low-stock and expiring-unit alerts per blood type and component
+- Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+ENVIRONMENT & MODES
+- Provide a complete .env.example documenting every variable.
+- Local mode runs fully on seed data with mock modes and no paid keys.
+- Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+SEED DATA
+- Seed realistic demo data: 1 blood center running 2 drives, ~20 donors across blood types with donation histories, ~30 donation slots with bookings, eligibility screenings with some deferrals, ~40 collected blood units across components and expiry dates, open and fulfilled hospital requests, and demo logins for 1 admin, 2 staff, and 3 donors. Provide a seed script and list the demo login credentials in the README.
+
+UX REQUIREMENTS
+- Every data view has loading, empty, error, and success states.
+- All forms validate on client and server with inline messages and clear success/error feedback.
+- Realistic, human copywriting throughout — no dummy filler text.
+
+SECURITY
+- Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+TESTING
+- Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+DEPLOYMENT
+- Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+DELIVERABLES
+- Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+- Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+ACCEPTANCE CHECKLIST — the app must pass all of these
+- Installs and runs locally with the documented commands, on seed data, with no paid keys.
+- Builds successfully and migrates the database successfully.
+- Every page renders and is reachable from the navigation.
+- Forms validate on client and server; protected routes are protected; role permissions work.
+- Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+- Loading, empty, error, and success states are present; responsive layout works.
+- No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+- README setup steps and production deployment steps are complete.
+```

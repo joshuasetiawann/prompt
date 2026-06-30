@@ -1,0 +1,342 @@
+prompt_id: '158'
+title: Remote Patient Monitoring Dashboard
+slug: remote-patient-monitoring-dashboard
+category: Healthcare & Wellness
+domain: Remote Patient Monitoring
+app_name: VitalTrack Remote Patient Monitoring Dashboard
+app_type: Production-grade full-stack web app scaffold
+difficulty: Advanced
+best_for: Developers building remote-monitoring tools for chronic-care programs at clinics, accountable-care organizations, and digital-health startups.
+target_user: Nurse Care Manager; Patient
+target_users: nurse care managers who monitor chronic-care patients and document follow-up and patients who log vitals like blood pressure, glucose, and weight from home
+role_line: You are a senior full-stack engineer who builds remote patient monitoring products
+business_goal: Let chronic-care patients log vitals like blood pressure, glucose, and weight while care teams review trends, trigger threshold alerts, and document follow-up actions
+production_standard: Production-grade scaffold with local development support, deployment readiness, security guidance, test guidance, and real-service integration readiness
+brand_design: 'Brand style: clinical, reassuring, data-forward. Colors: medical blue, alert coral, clean white. A care-team queue of patients ranked by alert severity beside a patient detail view of vital trend charts and a follow-up log.'
+recommended_tools:
+- Claude Code
+- Cursor
+- Replit
+- Bolt
+- Lovable
+- v0
+tech_stack:
+  auth:
+  - Auth.js or secure email/password authentication
+  backend:
+  - Next.js Server Actions or API Routes
+  - Prisma ORM
+  - PostgreSQL for production
+  - SQLite for local development
+  deployment:
+  - Vercel-ready
+  - Docker-ready
+  frontend:
+  - Next.js App Router
+  - TypeScript
+  - Tailwind CSS
+  - shadcn/ui
+  local_mode:
+    enabled: true
+    notes:
+    - App must run locally without paid API keys
+    - Use mock notification log when email/SMS is needed
+  production_mode:
+    enabled: true
+    notes:
+    - .env.example included
+    - Production database setup (PostgreSQL)
+    - Deployment guide included
+    - Real provider integration readiness
+    - Production security checklist
+  validation:
+  - Zod
+  - React Hook Form
+files_to_generate:
+- Complete Next.js App Router structure
+- Prisma schema and migrations
+- Seed script with demo data
+- .env.example
+- README.md with setup and run commands
+- Dockerfile
+- docker-compose.yml when useful
+- Unit and integration test examples
+required_pages:
+- Care-team dashboard with patient queue ranked by alert severity
+- Patient detail (vital trend charts, alerts, follow-up log)
+- Vital entry (patient logs blood pressure, glucose, weight, and more)
+- Patient home dashboard (latest readings, targets, check-in survey)
+- Alerts inbox (open, acknowledged, and resolved threshold breaches)
+- Follow-up documentation (actions taken and clinical minutes logged)
+- Patient enrollment and threshold setup
+- Auth (sign in / register)
+- 'Admin: users, care-team assignments, thresholds, and reports'
+- Reports (alert volume, response time, and program adherence)
+required_features:
+- Patient vital logging for blood pressure, blood glucose, weight, heart rate, and oxygen saturation
+- Per-patient threshold rules that flag out-of-range readings automatically
+- Care-team queue ranking patients by alert severity and overdue readings
+- Vital trend charts with target ranges shown per reading type
+- Alert acknowledgment workflow (open, acknowledged, resolved) with assignment to a care manager
+- Follow-up documentation capturing actions taken and clinical minutes logged per patient
+- Reading-adherence tracking against each patient's expected logging schedule
+- Patient check-in surveys (symptoms, medication adherence) attached to readings
+- Care-team reporting on alert volume, response time, and program adherence
+database_models:
+- name: User
+  fields:
+  - id
+  - email
+  - passwordHash
+  - name
+  - role
+  - createdAt
+  - updatedAt
+  relationships:
+  - Standalone model (no outbound foreign keys)
+- name: Patient
+  fields:
+  - id
+  - careManagerId
+  - fullName
+  - dateOfBirth
+  - conditions
+  - enrollmentStatus
+  - createdAt
+  - updatedAt
+  relationships:
+  - careManagerId -> references the related record
+- name: VitalReading
+  fields:
+  - id
+  - patientId
+  - type
+  - value
+  - unit
+  - recordedAt
+  - source
+  - createdAt
+  - updatedAt
+  relationships:
+  - patientId -> references the related record
+- name: ThresholdRule
+  fields:
+  - id
+  - patientId
+  - vitalType
+  - minValue
+  - maxValue
+  - severity
+  - createdAt
+  - updatedAt
+  relationships:
+  - patientId -> references the related record
+- name: Alert
+  fields:
+  - id
+  - patientId
+  - vitalReadingId
+  - thresholdRuleId
+  - severity
+  - status
+  - acknowledgedById
+  - createdAt
+  - updatedAt
+  relationships:
+  - patientId -> references the related record
+  - vitalReadingId -> references the related record
+  - thresholdRuleId -> references the related record
+  - acknowledgedById -> references the related record
+- name: FollowUp
+  fields:
+  - id
+  - patientId
+  - alertId
+  - careManagerId
+  - actionTaken
+  - minutesLogged
+  - createdAt
+  - updatedAt
+  relationships:
+  - patientId -> references the related record
+  - alertId -> references the related record
+  - careManagerId -> references the related record
+- name: CheckInSurvey
+  fields:
+  - id
+  - patientId
+  - symptomsJson
+  - medicationAdherence
+  - submittedAt
+  - createdAt
+  - updatedAt
+  relationships:
+  - patientId -> references the related record
+backend_logic:
+- Record patient vital readings and evaluate each against the patient's threshold rules
+- Generate alerts with a severity when a reading breaches a threshold rule
+- Rank the care-team queue by open-alert severity and overdue readings per patient
+- Drive the alert lifecycle (open, acknowledged, resolved) with care-manager assignment
+- Log follow-up actions and clinical minutes against alerts and patients
+- Compute reading adherence against each patient's expected logging schedule
+- Aggregate program reports for alert volume, acknowledgment time, and adherence
+- Server-side validation on every mutation with Zod
+- Role-based authorization and protected routes for private pages
+- Scope every query to the current user/tenant (no cross-user data access)
+user_roles:
+- Nurse Care Manager — monitor patient vitals, review alerts and trends, and document follow-up actions
+- Patient — log vitals from home, view readings against targets, and complete check-in surveys
+- Program Admin — manage patients, care-team assignments, alert thresholds, and reports
+env_payments: false
+env_ai: false
+seed_data: '- Seed realistic demo data: 1 chronic-care program with 2 nurse care managers, ~15 enrolled patients with conditions and threshold rules, ~200 vital readings across blood pressure, glucose, and weight, generated threshold alerts in open and resolved states, follow-up notes with logged minutes, check-in surveys, and demo logins for 1 admin, 2 care managers, and 3 patients. Provide a seed script and list the demo login credentials in the README.'
+security_requirements:
+- No hardcoded secrets — all secrets via environment variables
+- Server-side validation on every mutation
+- Role-based access control where roles exist
+- Protected routes for all private pages
+- Safe file-upload handling where uploads exist
+- Rate-limiting guidance for public endpoints
+- Audit logs for sensitive actions where relevant
+testing_requirements:
+- Unit test examples for key business logic
+- Integration test examples for important flows where practical
+- Manual QA checklist
+- Production smoke-test checklist
+deployment_requirements:
+- Local development commands
+- Production build command
+- Database migration command
+- Seed command
+- Vercel deployment notes
+- Docker deployment notes
+- Post-deployment smoke test
+acceptance_checklist:
+- App installs successfully
+- App runs locally with seed data
+- App builds successfully
+- Database migrates successfully
+- Seed data loads successfully
+- All navigation works
+- Forms validate on client and server
+- Protected routes are protected
+- Role permissions work
+- Admin pages work where included
+- Mock mode works without paid keys
+- Real provider setup is documented
+- No unresolved template tokens or dummy filler remains
+- No dead buttons or dead links remain
+- Responsive layout works
+- README setup steps are complete
+- Production deployment steps are documented
+- Logging a vital reading outside its threshold rule automatically creates an alert at the configured severity
+- The care-team queue reorders so patients with the highest-severity open alerts appear first
+- Acknowledging an alert and recording a follow-up moves it out of the open queue and logs clinical minutes against the patient
+ready_to_use_prompt: |-
+  You are a senior full-stack engineer who builds remote patient monitoring products, building a production-grade full-stack app scaffold with local run support and deployment readiness. Build the complete application now. Do not ask any questions — every detail below is already decided.
+
+  STANDARD
+  Deliver a production-grade full-stack app scaffold with local run support and deployment readiness: the app must run end-to-end locally on seed data with mock modes and no paid API keys, and be structured for deployment with security, testing, and real-service integration guidance. This is a scaffold — going live still requires your own credentials, provider setup, migrations on a real database, and a security review. Do not assume it is live without that setup.
+
+  APP
+  Name: VitalTrack Remote Patient Monitoring Dashboard
+  Type: Remote Patient Monitoring Dashboard (Remote Patient Monitoring)
+  Target users: nurse care managers who monitor chronic-care patients and document follow-up and patients who log vitals like blood pressure, glucose, and weight from home.
+  Business goal: Let chronic-care patients log vitals like blood pressure, glucose, and weight while care teams review trends, trigger threshold alerts, and document follow-up actions.
+
+  BRAND & DESIGN
+  Brand style: clinical, reassuring, data-forward. Colors: medical blue, alert coral, clean white. A care-team queue of patients ranked by alert severity beside a patient detail view of vital trend charts and a follow-up log. Use Tailwind + shadcn/ui, consistent spacing, rounded cards, accessible contrast. Mobile-first and fully responsive across mobile, tablet, and desktop.
+
+  TECH STACK
+  - Next.js (App Router) with TypeScript, Tailwind CSS, and shadcn/ui
+  - Prisma ORM; PostgreSQL for production, with SQLite supported for local development
+  - Auth.js (or secure hashed email/password) wherever accounts and roles are needed
+  - Zod and React Hook Form for both client-side and server-side validation
+  - Vercel-ready and Docker-ready
+
+  PAGES / SCREENS
+  1. Care-team dashboard with patient queue ranked by alert severity
+  2. Patient detail (vital trend charts, alerts, follow-up log)
+  3. Vital entry (patient logs blood pressure, glucose, weight, and more)
+  4. Patient home dashboard (latest readings, targets, check-in survey)
+  5. Alerts inbox (open, acknowledged, and resolved threshold breaches)
+  6. Follow-up documentation (actions taken and clinical minutes logged)
+  7. Patient enrollment and threshold setup
+  8. Auth (sign in / register)
+  9. Admin: users, care-team assignments, thresholds, and reports
+  10. Reports (alert volume, response time, and program adherence)
+
+  NAVIGATION
+  - Real, working navigation (a top bar or sidebar as fits the app); every item routes to one of the pages above with no dead links; show only menu items the current role may use; clear active state; collapse to a mobile menu on small screens.
+
+  USER ROLES
+  - Nurse Care Manager — monitor patient vitals, review alerts and trends, and document follow-up actions
+  - Patient — log vitals from home, view readings against targets, and complete check-in surveys
+  - Program Admin — manage patients, care-team assignments, alert thresholds, and reports
+
+  CORE FEATURES
+  - Patient vital logging for blood pressure, blood glucose, weight, heart rate, and oxygen saturation
+  - Per-patient threshold rules that flag out-of-range readings automatically
+  - Care-team queue ranking patients by alert severity and overdue readings
+  - Vital trend charts with target ranges shown per reading type
+  - Alert acknowledgment workflow (open, acknowledged, resolved) with assignment to a care manager
+  - Follow-up documentation capturing actions taken and clinical minutes logged per patient
+  - Reading-adherence tracking against each patient's expected logging schedule
+  - Patient check-in surveys (symptoms, medication adherence) attached to readings
+  - Care-team reporting on alert volume, response time, and program adherence
+
+  DATABASE MODELS (Prisma — PostgreSQL in production, SQLite locally)
+  - User: id, email, passwordHash, name, role, createdAt, updatedAt
+  - Patient: id, careManagerId, fullName, dateOfBirth, conditions, enrollmentStatus, createdAt, updatedAt
+  - VitalReading: id, patientId, type, value, unit, recordedAt, source, createdAt, updatedAt
+  - ThresholdRule: id, patientId, vitalType, minValue, maxValue, severity, createdAt, updatedAt
+  - Alert: id, patientId, vitalReadingId, thresholdRuleId, severity, status, acknowledgedById, createdAt, updatedAt
+  - FollowUp: id, patientId, alertId, careManagerId, actionTaken, minutesLogged, createdAt, updatedAt
+  - CheckInSurvey: id, patientId, symptomsJson, medicationAdherence, submittedAt, createdAt, updatedAt
+  - Define explicit Prisma relations between these models (one-to-many and many-to-one per the foreign keys), with sensible indexes and cascade rules; include createdAt and updatedAt; generate and commit migrations.
+
+  BACKEND / API LOGIC
+  - Record patient vital readings and evaluate each against the patient's threshold rules
+  - Generate alerts with a severity when a reading breaches a threshold rule
+  - Rank the care-team queue by open-alert severity and overdue readings per patient
+  - Drive the alert lifecycle (open, acknowledged, resolved) with care-manager assignment
+  - Log follow-up actions and clinical minutes against alerts and patients
+  - Compute reading adherence against each patient's expected logging schedule
+  - Aggregate program reports for alert volume, acknowledgment time, and adherence
+  - Validate every mutation on the server with Zod; enforce role-based authorization; protect all private routes; scope every query to the current user/tenant so no one can read or modify another user's records.
+
+  ENVIRONMENT & MODES
+  - Provide a complete .env.example documenting every variable.
+  - Local mode runs fully on seed data with mock modes and no paid keys.
+  - Notifications: log mock email/SMS locally; structure the provider so a real one can be added via env vars without code changes elsewhere.
+
+  SEED DATA
+  - Seed realistic demo data: 1 chronic-care program with 2 nurse care managers, ~15 enrolled patients with conditions and threshold rules, ~200 vital readings across blood pressure, glucose, and weight, generated threshold alerts in open and resolved states, follow-up notes with logged minutes, check-in surveys, and demo logins for 1 admin, 2 care managers, and 3 patients. Provide a seed script and list the demo login credentials in the README.
+
+  UX REQUIREMENTS
+  - Every data view has loading, empty, error, and success states.
+  - All forms validate on client and server with inline messages and clear success/error feedback.
+  - Realistic, human copywriting throughout — no dummy filler text.
+
+  SECURITY
+  - Keep all secrets in environment variables (never in code). Apply role-based access control where roles exist, protect private routes, handle any file uploads safely, add rate-limiting guidance for public endpoints, and write audit logs for sensitive actions where relevant.
+
+  TESTING
+  - Include unit test examples for the core logic and integration test examples for the most important flows, plus a manual QA checklist and a production smoke-test checklist.
+
+  DEPLOYMENT
+  - Include a Dockerfile (and docker-compose where useful), the production build and database-migration commands, Vercel deployment notes, and a post-deployment smoke test.
+
+  DELIVERABLES
+  - Create every file needed to run locally and to deploy: the full Next.js App Router structure, the Prisma schema and migrations, a seed script, .env.example, a README with exact copy-paste setup commands (install, prisma generate and migrate, seed, dev), a Dockerfile, and test examples.
+  - Build only real, working screens: functional navigation, working forms, no dead buttons, no unfinished screens, no dummy filler, no leftover task comments, and no unresolved template tokens.
+
+  ACCEPTANCE CHECKLIST — the app must pass all of these
+  - Installs and runs locally with the documented commands, on seed data, with no paid keys.
+  - Builds successfully and migrates the database successfully.
+  - Every page renders and is reachable from the navigation.
+  - Forms validate on client and server; protected routes are protected; role permissions work.
+  - Admin pages work where included; mock modes work without paid keys; real-provider setup is documented.
+  - Loading, empty, error, and success states are present; responsive layout works.
+  - No unresolved template tokens or dummy filler remains; no dead buttons or dead links remain.
+  - README setup steps and production deployment steps are complete.
